@@ -1,0 +1,26 @@
+{
+  "manifest_version": 2,
+  "name": "DocFiller",
+  "version": "0.0.1",
+
+  "description": "Automatically fills google docs entries, powered by ChatGPT.",
+
+  "icons": {
+    "64": "icons/icon-form-64.png",
+    "98": "icons/icon-form-96.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.docs.google.com/*"],
+      "js": ["filler.js"]
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "test@example.com"
+    }
+  },
+  "browser_action": {
+      "default_popup": "popup/popup.html"
+  }
+}
