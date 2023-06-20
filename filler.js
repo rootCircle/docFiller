@@ -1,13 +1,12 @@
 function run() {
-	let questions = new docExtractorEngine().getValidQuestions();
-	console.log(typeof(questions[1]));
+	let questions = new DocExtractorEngine().getValidQuestions();
 }
 
 
 
-class docExtractorEngine {
+class DocExtractorEngine {
 
-	docExtractorEngine() {
+	constructor() {
 		// Generating enums to help getting 
 		this.questionTypes = {
 			singleLine: "SingleLine",
@@ -22,6 +21,7 @@ class docExtractorEngine {
 		// Return Type : Array
 		let questions = this.getQuestions();
 		questions = this.validateQuestions(questions);
+		this.detectType(questions);
 		return questions;
 	}
 
@@ -60,9 +60,87 @@ class docExtractorEngine {
 		return hasListRole;
 	}
 
-	detectType(element) {
-
+	detectType(questions) {
+		console.clear(); // Temporary code, while debugging
+		let checker = new DetectBoxType();
+		questions.forEach(question => {
+			checker.detectType(question);
+		});
 	}
+}
+
+
+class DetectBoxType {
+	// Detect Type of Input inside Box out of the 10 available inputs
+	// Possible : Dropdown, Checkbox Grid, Date,
+	//            Time, Multiple Choice, Paragraph,
+	//            Multiple Choice Grid, Linear Scale,
+	//            Text [number, email, phone, name, etc], Multicorrect 
+	// In case of Error, it will returns null, with suitable output in console
+
+	detectType(element) {
+		// console.log("Dropdown : " + this.isDropdown(element));
+		// console.log("Text : " + this.isText(element));
+		// console.log("Paragraph : " + this.isParagraph(element));
+		console.log("Text Email : " + this.isTextEmail(element));
+		console.log(element);
+	}
+
+
+	isDropdown(element) {
+		// Input Type : DOM object
+		// Checks if given DOM object is Dropdown or not
+		// Tweak : A dropdown has a div which has role = listbox in it.
+		// Return Type : Boolean
+		return Boolean(element.querySelector("div[role=listbox]"));
+	}
+
+	isText(element) {
+		// Input Type : DOM object
+		// Checks if given DOM object is Text Field or not
+		// Tweak : A text field has only one non-hidden input tag inside it.
+		// 		   But checkbox as well as Linear Scale turns out to be 
+		//         false positive to this check as they too have a input tag, but its hidden.
+		//		   Also, date and time also has input tags, but number is non 1.
+		// Return Type : Boolean
+		let inputFields = element.querySelectorAll("input");
+		return inputFields.length === 1 && !(inputFields[0].getAttribute("type") === "hidden");
+	}
+
+	isParagraph(element) {
+		// Input Type : DOM object
+		// Checks if given DOM object is Paragraph or not
+		// Tweak : Paragraph will have a textarea tag inside the DOM object
+		// Return Type : Boolean
+		let inputFields = element.querySelector("textarea");
+		return Boolean(inputFields);
+	}
+
+	isTextEmail(element) {
+		// Input Type : DOM object
+		// Checks if given DOM object is Email Text Field or not
+		// Tweak : The email text field will have input type as email
+		// Return Type : Boolean
+		return Boolean(element.querySelector("input[type=email"))
+	}
+
+	isTextNumeric(element) {
+		// Input Type : DOM object
+		// Checks if given DOM object is Numeric Text Field or not
+		// Tweak : The numeric text field will have input type as number
+		// Return Type : Boolean
+		return Boolean(element.querySelector("input[type=number"))
+	}
+
+	isTextTelephone(element) {
+		// Input Type : DOM object
+		// Checks if given DOM object is Telephonic Text Field or not
+		// Tweak : The telephonic text field will have input type as tel
+		// Return Type : Boolean
+		return Boolean(element.querySelector("input[type=tel"))
+	}
+
+
 }
 
 // Calling main function
