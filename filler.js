@@ -227,18 +227,23 @@ class DetectBoxType {
 	}
 
 	isDate(element) {
-
 		// Input Type : DOM object
-		// given DOM object is Text Field
-		// Tweak : This div should contain Year,Month, and Day inputs, so we are checking if these input fields are present and other input fields like Hour , Minutes should not be present.
+		// Checks if given DOM object is Date Field or not.
+		// It will validate existence of Date, Month, Year in the Box
+		// Tweak : - We are using aria-labels to check for fields like
+		//           date, month, hour etc. We believe aria-label to be very consistent 
+		//           and should change dramatically over time.
+		//         - As box should contain year, month and date inputs, 
+		//           so we are checking if these input fields are present 
+		//           and other input fields like hour, minutes should not be present.
 		// Return Type : Boolean
+		let hasYear = Boolean(element.querySelector('input[aria-label="Year"]'));
+		let hasMonth = Boolean(element.querySelector('input[aria-label="Month"]'));
+		let hasDate = Boolean(element.querySelector('input[aria-label="Day of the month"]'));
+		let hasHour = Boolean(element.querySelector('input[aria-label="Hour"]'));
+		let hasMinute = Boolean(element.querySelector('input[aria-label="Minute"]'));
 
-		let isYear = Boolean(element.querySelector('input[aria-label="Year"]'))
-		let isMonth = Boolean(element.querySelector('input[aria-label="Month"]'))
-		let Day_of_the_month = Boolean(element.querySelector('input[aria-label="Day of the month"]'))
-		let Hour = Boolean(element.querySelector('input[aria-label="Hour"]'));
-		let Minute = Boolean(element.querySelector('input[aria-label="Minute"]'));
-		return Boolean(isYear === true && isMonth === true && Day_of_the_month === true && Hour === false && Minute === false);
+		return (hasYear && hasMonth && hasDate && hasHour && hasMinute);
 	}
 
 
@@ -249,12 +254,13 @@ class DetectBoxType {
 		// Tweak : This div should contain Year,Month,Day,Hour,Minute inputs.
 		// Return Type : Boolean
 
-		let isYear = Boolean(element.querySelector('input[aria-label="Year"]'))
-		let isMonth = Boolean(element.querySelector('input[aria-label="Month"]'))
-		let Day_of_the_month = Boolean(element.querySelector('input[aria-label="Day of the month"]'))
-		let Hour = Boolean(element.querySelector('input[aria-label="Hour"]'));
-		let Minute = Boolean(element.querySelector('input[aria-label="Minute"]'));
-		return Boolean(isYear === true && isMonth === true && Day_of_the_month === true && Hour === true && Minute === true);
+		let hasYear = Boolean(element.querySelector('input[aria-label="Year"]'));
+		let hasMonth = Boolean(element.querySelector('input[aria-label="Month"]'));
+		let hasDate = Boolean(element.querySelector('input[aria-label="Day of the month"]'));
+		let hasHour = Boolean(element.querySelector('input[aria-label="Hour"]'));
+		let hasMinute = Boolean(element.querySelector('input[aria-label="Minute"]'));
+
+		return (hasYear && hasMonth && hasDate && hasHour && hasMinute);
 	}
 
 	isTime(element) {
@@ -264,12 +270,13 @@ class DetectBoxType {
 		// Tweak : This div should only contain Hour and Minute inputs, and should not contain Year Month and Day inputs.
 		// Return Type : Boolean
 
-		let isYear = Boolean(element.querySelector('input[aria-label="Year"]'))
-		let isMonth = Boolean(element.querySelector('input[aria-label="Month"]'))
-		let Day_of_the_month = Boolean(element.querySelector('input[aria-label="Day of the month"]'))
-		let Hour = Boolean(element.querySelector('input[aria-label="Hour"]'));
-		let Minute = Boolean(element.querySelector('input[aria-label="Minute"]'));
-		return Boolean(isYear === false && isMonth === false && Day_of_the_month === false && Hour === true && Minute === true);
+		let hasYear = Boolean(element.querySelector('input[aria-label="Year"]'));
+		let hasMonth = Boolean(element.querySelector('input[aria-label="Month"]'));
+		let hasDate = Boolean(element.querySelector('input[aria-label="Day of the month"]'));
+		let hasHour = Boolean(element.querySelector('input[aria-label="Hour"]'));
+		let hasMinute = Boolean(element.querySelector('input[aria-label="Minute"]'));
+
+		return (!hasYear && !hasMonth && !hasDate && hasHour && hasMinute);
 	}
 
 	isDuration(element) {
@@ -279,13 +286,14 @@ class DetectBoxType {
 		// Tweak : This div should only contain Hours,Minutes,Seconds inputs, and should not contain Year Month and Day inputs.
 		// Return Type : Boolean
 
-		let isYear = Boolean(element.querySelector('input[aria-label="Year"]'))
-		let isMonth = Boolean(element.querySelector('input[aria-label="Month"]'))
-		let Day_of_the_month = Boolean(element.querySelector('input[aria-label="Day of the month"]'))
-		let Hours = Boolean(element.querySelector('input[aria-label="Hours"]'));
-		let Minutes = Boolean(element.querySelector('input[aria-label="Minutes"]'));
-		let Seconds = Boolean(element.querySelector('input[aria-label="Seconds"]'));
-		return Boolean(isYear === false && isMonth === false && Day_of_the_month === false && Hours === true && Minutes === true && Seconds === true);
+		let hasYear = Boolean(element.querySelector('input[aria-label="Year"]'));
+		let hasMonth = Boolean(element.querySelector('input[aria-label="Month"]'));
+		let hasDate = Boolean(element.querySelector('input[aria-label="Day of the month"]'));
+		let hasHour = Boolean(element.querySelector('input[aria-label="Hour"]'));
+		let hasMinute = Boolean(element.querySelector('input[aria-label="Minute"]'));
+		let hasSecond = Boolean(element.querySelector('input[aria-label="Seconds"]'));
+
+		return (!hasYear && !hasMonth && !hasDate && hasHour && hasMinute && hasSecond);
 	}
 
 	isDateWithoutYear(element) {
@@ -295,13 +303,14 @@ class DetectBoxType {
 		// Tweak : This div should only contain Month and Day inputs, and should not contain Year,Hour,Minute and Second.
 		// Return Type : Boolean
 
-		let isYear = Boolean(element.querySelector('input[aria-label="Year"]'))
-		let isMonth = Boolean(element.querySelector('input[aria-label="Month"]'))
-		let Day_of_the_month = Boolean(element.querySelector('input[aria-label="Day of the month"]'))
-		let Hour = Boolean(element.querySelector('input[aria-label="Hour"]'));
-		let Minute = Boolean(element.querySelector('input[aria-label="Minute"]'));
-		let Second = Boolean(element.querySelector('input[aria-label="Second"]'));
-		return Boolean(isYear === false && isMonth === true && Day_of_the_month === true && Hour === false && Minute === false && Second === false);
+		let hasYear = Boolean(element.querySelector('input[aria-label="Year"]'));
+		let hasMonth = Boolean(element.querySelector('input[aria-label="Month"]'));
+		let hasDate = Boolean(element.querySelector('input[aria-label="Day of the month"]'));
+		let hasHour = Boolean(element.querySelector('input[aria-label="Hour"]'));
+		let hasMinute = Boolean(element.querySelector('input[aria-label="Minute"]'));
+		let hasSecond = Boolean(element.querySelector('input[aria-label="Seconds"]'));
+
+		return (!hasYear && hasMonth && hasDate && !hasHour && !hasMinute && !hasSecond);
 	}
 
 	isDateWithoutYearWithTime(element) {
@@ -311,17 +320,18 @@ class DetectBoxType {
 		// Tweak : This div should only contain Month,Day,Hour,Minute inputs, and should not contain Second
 		// Return Type : Boolean
 
-		let isYear = Boolean(element.querySelector('input[aria-label="Year"]'))
-		let isMonth = Boolean(element.querySelector('input[aria-label="Month"]'))
-		let Day_of_the_month = Boolean(element.querySelector('input[aria-label="Day of the month"]'))
-		let Hour = Boolean(element.querySelector('input[aria-label="Hour"]'));
-		let Minute = Boolean(element.querySelector('input[aria-label="Minute"]'));
-		let Second = Boolean(element.querySelector('input[aria-label="Second"]'));
-		return Boolean(isYear === false && isMonth === true && Day_of_the_month === true && Hour === true && Minute === true && Second === false);
+		let hasYear = Boolean(element.querySelector('input[aria-label="Year"]'));
+		let hasMonth = Boolean(element.querySelector('input[aria-label="Month"]'));
+		let hasDate = Boolean(element.querySelector('input[aria-label="Day of the month"]'));
+		let hasHour = Boolean(element.querySelector('input[aria-label="Hour"]'));
+		let hasMinute = Boolean(element.querySelector('input[aria-label="Minute"]'));
+		let hasSecond = Boolean(element.querySelector('input[aria-label="Seconds"]'));
+
+		return (!hasYear && hasMonth && hasDate && hasHour && hasMinute && !hasSecond);
 	}
 
 
-	isTimeWithAmPm(element) {
+	isTimeWithMeridiem(element) {
 
 		// Input Type : DOM object
 		// given DOM object is Text Field
@@ -332,16 +342,57 @@ class DetectBoxType {
 		//we are not checking Am Pm in other function in future we will make these values false in other function containing time.
 		//******************************************************************************************************* */
 
-		let isYear = Boolean(element.querySelector('input[aria-label="Year"]'))
-		let isMonth = Boolean(element.querySelector('input[aria-label="Month"]'))
-		let Day_of_the_month = Boolean(element.querySelector('input[aria-label="Day of the month"]'))
-		let Hour = Boolean(element.querySelector('input[aria-label="Hour"]'));
-		let Minute = Boolean(element.querySelector('input[aria-label="Minute"]'));
-		let Am = Boolean(temp5.querySelector('input[data-value="AM"]'));
-		let Pm = Boolean(temp6.querySelector('input[data-value="PM"]'));
-		let Role = Boolean(temp6.querySelector('input[role="option"]'));
+		let hasYear = Boolean(element.querySelector('input[aria-label="Year"]'));
+		let hasMonth = Boolean(element.querySelector('input[aria-label="Month"]'));
+		let hasDate = Boolean(element.querySelector('input[aria-label="Day of the month"]'));
+		let hasHour = Boolean(element.querySelector('input[aria-label="Hour"]'));
+		let hasMinute = Boolean(element.querySelector('input[aria-label="Minute"]'));
+		let hasSecond = Boolean(element.querySelector('input[aria-label="Seconds"]'));
 
-		return Boolean(isYear === false && isMonth === false && Day_of_the_month === false && Hour === true && Minute === true && ((Am === true || Pm === true) && Role === true));
+		// Works the same with data-value=PM
+		let hasMeridiemField = Boolean(element.querySelector("div[role=option][data-value=AM]"));
+
+		return (!hasYear && !hasMonth && !hasDate && hasHour && hasMinute && hasSecond && hasMeridiemField);
+	}
+
+	isDateWithoutYearWithTimeAndMeridiem(element) {
+
+		// Input Type : DOM object
+		// given DOM object is Text Field
+		// Tweak : This div should only contain Month,Day,Hour,Minute inputs, and should not contain Second
+		// Return Type : Boolean
+
+		let hasYear = Boolean(element.querySelector('input[aria-label="Year"]'));
+		let hasMonth = Boolean(element.querySelector('input[aria-label="Month"]'));
+		let hasDate = Boolean(element.querySelector('input[aria-label="Day of the month"]'));
+		let hasHour = Boolean(element.querySelector('input[aria-label="Hour"]'));
+		let hasMinute = Boolean(element.querySelector('input[aria-label="Minute"]'));
+		let hasSecond = Boolean(element.querySelector('input[aria-label="Seconds"]'));
+
+		// Works the same with data-value=PM
+		let hasMeridiemField = Boolean(element.querySelector("div[role=option][data-value=AM]"));
+
+
+		return (!hasYear && hasMonth && hasDate && hasHour && hasMinute && !hasSecond && hasMeridiemField);
+	}
+
+	isDateAndTimeWithMeridiem(element) {
+
+		// Input Type : DOM object
+		// given DOM object is Text Field
+		// Tweak : This div should contain Year,Month,Day,Hour,Minute inputs.
+		// Return Type : Boolean
+
+		let hasYear = Boolean(element.querySelector('input[aria-label="Year"]'));
+		let hasMonth = Boolean(element.querySelector('input[aria-label="Month"]'));
+		let hasDate = Boolean(element.querySelector('input[aria-label="Day of the month"]'));
+		let hasHour = Boolean(element.querySelector('input[aria-label="Hour"]'));
+		let hasMinute = Boolean(element.querySelector('input[aria-label="Minute"]'));
+
+		// Works the same with data-value=PM
+		let hasMeridiemField = Boolean(element.querySelector("div[role=option][data-value=AM]"));
+
+		return (hasYear && hasMonth && hasDate && hasHour && hasMinute && hasMeridiemField);
 	}
 }
 
