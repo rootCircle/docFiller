@@ -89,6 +89,7 @@ class DetectBoxType {
 		// console.log("Linear Scale : " + this.isLinearScale(element));
 		// console.log("Multiple Choice : " + this.isMultipleChoice(element));
 		// console.log("Multiple Choice Grid : " + this.isMultipleChoiceGrid(element));
+		console.log("Checkbox Grid : " + this.isCheckboxGrid(element));
 	
 		// console.log(element);
 	}
@@ -107,7 +108,7 @@ class DetectBoxType {
 		// Checks if given DOM object is Text Field or not
 		// Tweak : -  A text field has only one non-hidden input tag inside it.
 		// 		   -  But checkbox as well as Linear Scale turns out to be 
-		//         false positive to this check as they too have a input tag, but its hidden.
+		//            false positive to this check as they too have a input tag, but its hidden.
 		//		   -  Also, date and time also has input tags, but number is non 1.
 		//         -  MCQ seems to work even having an valid input tag, because of one extra hidden 
 		//         input tag
@@ -149,6 +150,14 @@ class DetectBoxType {
 		return Boolean(element.querySelector("input[type=tel"))
 	}
 
+	isTextURL(element) {
+		// Input Type : DOM object
+		// Checks if given DOM object is URL Text Field or not
+		// Tweak : The URL text field will have input type as url
+		// Return Type : Boolean
+		return Boolean(element.querySelector("input[type=url"))
+	}
+
 	isMultiCorrect(element) {
 		// Input Type : DOM object
 		// Checks if given DOM object is a Multi Correct Field or not
@@ -162,12 +171,49 @@ class DetectBoxType {
 	}
 
 	isLinearScale(element) {
+		// Input Type : DOM object
+		// Checks if given DOM object is a Linear Scale Field or not
+		// which basically is a set of radio buttons but in 1D
+		// Tweak : - The Linear Scale being horizontal in view had label 
+		//           and option box (technically a div rather than an input)
+		//           in top-bottom layout, so they must be contained inside in div
+		//           and properties like span will have no significance for DOM object
+		//           for each option pair.
+		//         - We could easily get to option as they are grouped inside a label
+		//         - Similar to Multiple Choice and Multiple Choice Grid, Linear Scale
+		//           too follows inside an div with `radiogroup` role, so this might help
+		//           in preliminary filters.
+		// Return Type : Boolean
 		let optionBox = element.querySelector("div[role=radiogroup] label");
 		return Boolean(optionBox && optionBox.querySelector("div") && !(optionBox.querySelector("span")));
 	}
 	
 	isMultipleChoice(element) {
+		// Input Type : DOM object
+		// Checks if given DOM object is a Multiple Choice Field or not
+		// which basically is a set of radio buttons but in 1D
+		// Tweak : - The Linear Scale being vertical w.r.t. options in view had label 
+		//           and option box in left-right layout.
+		//           So, they must be contained inside in a <span> tag
+		//         - We could easily get to option as they are grouped inside a label
+		//         - Similar to Linear Scale and Multiple Choice Grid, Multiple Choice
+		//           too follows inside an div with `radiogroup` role, so this might help
+		//           in preliminary filters.
+		// Return Type : Boolean
 		return Boolean(element.querySelector("div[role=radiogroup] label span"));
+	}
+
+	isCheckboxGrid(element) {
+		// Input Type : DOM object
+		// Checks if given DOM object is a Checkbox Grid or not
+		// which basically is a set of row column matching based on checkboxes in 2D
+		// Tweak : - Checkbox Grid are grouped horizontally for each row
+		//           It was shocking for us to know that each row have
+		//           `group` role for containing row.
+		//         - But for extra sanctity we had added label field,
+		//           which actually houses the checkbox inside a div with `checkbox` role
+		// Return Type : Boolean
+		return Boolean(element.querySelector("div[role=group] label div[role=checkbox]"));
 	}
 
 	isMultipleChoiceGrid(element) {
