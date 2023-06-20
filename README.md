@@ -41,6 +41,8 @@ Contributions are always welcome! If you would like to contribute to the develop
 4. Test your changes to make sure they work as expected.
 5. Submit a pull request to the original repository and explain the changes you made.
 
+I would recommend `web-ext` for development in Firefox, it significantly decrease development times. Devs can install it using `npm install --global web-ext`.
+
 ## License:
 
 This project is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0).
