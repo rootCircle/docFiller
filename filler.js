@@ -88,14 +88,14 @@ class DetectBoxType {
 		// console.log("MultiCorrect : " + this.isMultiCorrect(element));
 		// console.log("Linear Scale : " + this.isLinearScale(element));
 		// console.log("Multiple Choice : " + this.isMultipleChoice(element));
-		// console.log("Multiple Choice Grid : " + this.isMultipleChoiceGrid(element));
-		console.log("Checkbox Grid : " + this.isCheckboxGrid(element));
-    // console.log("Date : " + this.isDate(element))
-    // console.log("DateAndTime:"+this.isDateAndTime(element))
-    //  console.log("Time:"+this.isTime(element))
-    // console.log("Duration:"+this.isDuration(element))
-    // console.log("Datewithoutyear:"+this.isDateWithoutYear(element))
-    // console.log("DatewithoutyearWithTime:"+this.isDateWithoutYearWithTime(element))
+		console.log("Multiple Choice Grid : " + this.isMultipleChoiceGrid(element));
+		// console.log("Checkbox Grid : " + this.isCheckboxGrid(element));
+		// console.log("Date : " + this.isDate(element))
+		// console.log("DateAndTime:"+this.isDateAndTime(element))
+		// console.log("Time:"+this.isTime(element))
+		// console.log("Duration:"+this.isDuration(element))
+		// console.log("Date without Year:"+this.isDateWithoutYear(element))
+		// console.log("Date without Year with Time:"+this.isDateWithoutYearWithTime(element))
 		// console.log(element);
 	}
 
@@ -192,7 +192,7 @@ class DetectBoxType {
 		let optionBox = element.querySelector("div[role=radiogroup] label");
 		return Boolean(optionBox && optionBox.querySelector("div") && !(optionBox.querySelector("span")));
 	}
-	
+
 	isMultipleChoice(element) {
 		// Input Type : DOM object
 		// Checks if given DOM object is a Multiple Choice Field or not
@@ -222,58 +222,55 @@ class DetectBoxType {
 	}
 
 	isMultipleChoiceGrid(element) {
-
+		let radioGroups = element.querySelector("div[role=radiogroup] span[role=presentation]");
+		return Boolean(radioGroups && window.getComputedStyle(radioGroups).display === "table-row" && radioGroups.querySelector("div[role=radio]"));
 	}
 
 
-  isDate(element)
-  {
-
-    // Input Type : DOM object
-		// given DOM object is Text Field
+	isDate(element) {
+		// Input Type : DOM object
+		// Checks if given DOM object is Text Field
 		// Tweak : This div should contain Year,Month, and Day inputs, so we are checking if these input fields are present and other input fields like Hour , Minutes should not be present.
 		// Return Type : Boolean
 
-    let isYear=Boolean(element.querySelector('input[aria-label="Year"]'))
-    let isMonth=Boolean(element.querySelector('input[aria-label="Month"]'))
-    let Day_of_the_month =Boolean(element.querySelector('input[aria-label="Day of the month"]'))
-    let Hour=Boolean(element.querySelector('input[aria-label="Hour"]'));
-    let Minute=Boolean(element.querySelector('input[aria-label="Minute"]'));
-    return Boolean(isYear===true && isMonth===true && Day_of_the_month===true && Hour===false && Minute===false);
-  }
+		let isYear = Boolean(element.querySelector('input[aria-label="Year"]'))
+		let isMonth = Boolean(element.querySelector('input[aria-label="Month"]'))
+		let Day_of_the_month = Boolean(element.querySelector('input[aria-label="Day of the month"]'))
+		let Hour = Boolean(element.querySelector('input[aria-label="Hour"]'));
+		let Minute = Boolean(element.querySelector('input[aria-label="Minute"]'));
+		return Boolean(isYear === true && isMonth === true && Day_of_the_month === true && Hour === false && Minute === false);
+	}
 
 
-  isDateAndTime(element)
-  {
+	isDateAndTime(element) {
 
-    // Input Type : DOM object
+		// Input Type : DOM object
 		// given DOM object is Text Field
 		// Tweak : This div should contain Year,Month,Day,Hour,Minute inputs.
 		// Return Type : Boolean
 
-    let isYear=Boolean(element.querySelector('input[aria-label="Year"]'))
-    let isMonth=Boolean(element.querySelector('input[aria-label="Month"]'))
-    let Day_of_the_month =Boolean(element.querySelector('input[aria-label="Day of the month"]'))
-    let Hour=Boolean(element.querySelector('input[aria-label="Hour"]'));
-    let Minute=Boolean(element.querySelector('input[aria-label="Minute"]'));
-    return Boolean(isYear===true && isMonth===true && Day_of_the_month===true && Hour===true && Minute===true);
-  }
+		let isYear = Boolean(element.querySelector('input[aria-label="Year"]'))
+		let isMonth = Boolean(element.querySelector('input[aria-label="Month"]'))
+		let Day_of_the_month = Boolean(element.querySelector('input[aria-label="Day of the month"]'))
+		let Hour = Boolean(element.querySelector('input[aria-label="Hour"]'));
+		let Minute = Boolean(element.querySelector('input[aria-label="Minute"]'));
+		return Boolean(isYear === true && isMonth === true && Day_of_the_month === true && Hour === true && Minute === true);
+	}
 
-  isTime(element)
-  {
+	isTime(element) {
 
-    // Input Type : DOM object
+		// Input Type : DOM object
 		// given DOM object is Text Field
 		// Tweak : This div should only contain Hour and Minute inputs, and should not contain Year Month and Day inputs.
 		// Return Type : Boolean
 
-    let isYear=Boolean(element.querySelector('input[aria-label="Year"]'))
-    let isMonth=Boolean(element.querySelector('input[aria-label="Month"]'))
-    let Day_of_the_month =Boolean(element.querySelector('input[aria-label="Day of the month"]'))
-    let Hour=Boolean(element.querySelector('input[aria-label="Hour"]'));
-    let Minute=Boolean(element.querySelector('input[aria-label="Minute"]'));
-    return Boolean(isYear===false && isMonth===false && Day_of_the_month===false && Hour===true && Minute===true);
-  }
+		let isYear = Boolean(element.querySelector('input[aria-label="Year"]'))
+		let isMonth = Boolean(element.querySelector('input[aria-label="Month"]'))
+		let Day_of_the_month = Boolean(element.querySelector('input[aria-label="Day of the month"]'))
+		let Hour = Boolean(element.querySelector('input[aria-label="Hour"]'));
+		let Minute = Boolean(element.querySelector('input[aria-label="Minute"]'));
+		return Boolean(isYear === false && isMonth === false && Day_of_the_month === false && Hour === true && Minute === true);
+	}
 
 
 
