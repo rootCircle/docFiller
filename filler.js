@@ -82,8 +82,15 @@ class DetectBoxType {
 		// console.log("Dropdown : " + this.isDropdown(element));
 		// console.log("Text : " + this.isText(element));
 		// console.log("Paragraph : " + this.isParagraph(element));
-		console.log("Text Email : " + this.isTextEmail(element));
-		console.log(element);
+		// console.log("Text Email : " + this.isTextEmail(element));
+		// console.log("Text Numeric : " + this.isTextNumeric(element));
+		// console.log("Text Telephonic : " + this.isTextTelephone(element));
+		// console.log("MultiCorrect : " + this.isMultiCorrect(element));
+		// console.log("Linear Scale : " + this.isLinearScale(element));
+		// console.log("Multiple Choice : " + this.isMultipleChoice(element));
+		// console.log("Multiple Choice Grid : " + this.isMultipleChoiceGrid(element));
+	
+		// console.log(element);
 	}
 
 
@@ -98,10 +105,12 @@ class DetectBoxType {
 	isText(element) {
 		// Input Type : DOM object
 		// Checks if given DOM object is Text Field or not
-		// Tweak : A text field has only one non-hidden input tag inside it.
-		// 		   But checkbox as well as Linear Scale turns out to be 
+		// Tweak : -  A text field has only one non-hidden input tag inside it.
+		// 		   -  But checkbox as well as Linear Scale turns out to be 
 		//         false positive to this check as they too have a input tag, but its hidden.
-		//		   Also, date and time also has input tags, but number is non 1.
+		//		   -  Also, date and time also has input tags, but number is non 1.
+		//         -  MCQ seems to work even having an valid input tag, because of one extra hidden 
+		//         input tag
 		// Return Type : Boolean
 		let inputFields = element.querySelectorAll("input");
 		return inputFields.length === 1 && !(inputFields[0].getAttribute("type") === "hidden");
@@ -140,6 +149,30 @@ class DetectBoxType {
 		return Boolean(element.querySelector("input[type=tel"))
 	}
 
+	isMultiCorrect(element) {
+		// Input Type : DOM object
+		// Checks if given DOM object is a Multi Correct Field or not
+		// which basically is a set of multiple checkboxes based MCQs
+		// Tweak : Since as mentioned earlier in 
+		//         DocExtractorEngine().validateQuestions() multi correct has 
+		//         a div with `list` role 
+		//         and child of that div has `listitem` role
+		// Return Type : Boolean
+		return Boolean(element.querySelector("div[role=list]"));
+	}
+
+	isLinearScale(element) {
+		let optionBox = element.querySelector("div[role=radiogroup] label");
+		return Boolean(optionBox && optionBox.querySelector("div") && !(optionBox.querySelector("span")));
+	}
+	
+	isMultipleChoice(element) {
+		return Boolean(element.querySelector("div[role=radiogroup] label span"));
+	}
+
+	isMultipleChoiceGrid(element) {
+
+	}
 
 }
 
