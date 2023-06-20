@@ -32,3 +32,6 @@ package-lock.json
 # Temporary directory for debugging extension samples
 _debug
 _metadata
+
+# By web-ext tools
+web-ext-artifacts/
