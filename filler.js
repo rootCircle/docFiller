@@ -89,7 +89,7 @@ class DetectBoxType {
 		// console.log("Linear Scale : " + this.isLinearScale(element));
 		// console.log("Multiple Choice : " + this.isMultipleChoice(element));
 		// console.log("Multiple Choice Grid : " + this.isMultipleChoiceGrid(element));
-		console.log("Checkbox Grid : " + this.isCheckboxGrid(element));
+		// console.log("Checkbox Grid : " + this.isCheckboxGrid(element));
     // console.log("Date : " + this.isDate(element))
     // console.log("DateAndTime:"+this.isDateAndTime(element))
     //  console.log("Time:"+this.isTime(element))
