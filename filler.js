@@ -88,14 +88,14 @@ class DetectBoxType {
 		// console.log("MultiCorrect : " + this.isMultiCorrect(element));
 		// console.log("Linear Scale : " + this.isLinearScale(element));
 		// console.log("Multiple Choice : " + this.isMultipleChoice(element));
-		// console.log("Multiple Choice Grid : " + this.isMultipleChoiceGrid(element));
+		console.log("Multiple Choice Grid : " + this.isMultipleChoiceGrid(element));
 		// console.log("Checkbox Grid : " + this.isCheckboxGrid(element));
-    // console.log("Date : " + this.isDate(element))
-    // console.log("DateAndTime:"+this.isDateAndTime(element))
-    //  console.log("Time:"+this.isTime(element))
-    // console.log("Duration:"+this.isDuration(element))
-    // console.log("Datewithoutyear:"+this.isDateWithoutYear(element))
-    // console.log("DatewithoutyearWithTime:"+this.isDateWithoutYearWithTime(element))
+		// console.log("Date : " + this.isDate(element))
+		// console.log("DateAndTime:"+this.isDateAndTime(element))
+		// console.log("Time:"+this.isTime(element))
+		// console.log("Duration:"+this.isDuration(element))
+		// console.log("Date without Year:"+this.isDateWithoutYear(element))
+		// console.log("Date without Year with Time:"+this.isDateWithoutYearWithTime(element))
 		// console.log(element);
 	}
 
@@ -192,7 +192,7 @@ class DetectBoxType {
 		let optionBox = element.querySelector("div[role=radiogroup] label");
 		return Boolean(optionBox && optionBox.querySelector("div") && !(optionBox.querySelector("span")));
 	}
-	
+
 	isMultipleChoice(element) {
 		// Input Type : DOM object
 		// Checks if given DOM object is a Multiple Choice Field or not
@@ -222,7 +222,8 @@ class DetectBoxType {
 	}
 
 	isMultipleChoiceGrid(element) {
-
+		let radioGroups = element.querySelector("div[role=radiogroup] span[role=presentation]");
+		return Boolean(radioGroups && window.getComputedStyle(radioGroups).display === "table-row" && radioGroups.querySelector("div[role=radio]"));
 	}
 
 	isDate(element)
