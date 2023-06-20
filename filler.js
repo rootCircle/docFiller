@@ -1,51 +1,135 @@
-class docExtractorEngine {
-
-  docExtractorEngine() {
-    this.questionTypes = {
-      singleLine: "SingleLine",
-      multiLine: "MultiLine",
-      mcq: "MCQ",
-      mmcq: "MMCQ", // More than 1 correct
-
-    }
-  }
-
-  getValidQuestions() {
-    let questions = this.getQuestions();
-    questions = this.validateQuestions(questions);
-    console.log(questions);
-  }
-
-  getQuestions() {
-    return document.querySelectorAll("div[role=listitem]");
-  }
-
-  validateQuestions(questions) {
-    return Array.prototype.slice.call(questions).filter(question => {
-      return !this.isCheckBoxListItem(question)
-    });
-  }
-
-  isCheckBoxListItem(element) {
-    let hasListRole = false;
-    let parent = element.parentElement;
-
-    while (parent && !hasListRole) {
-      if (parent.getAttribute('role') === 'listitem') {
-        hasListRole = true;
-      }
-      parent = parent.parentElement;
-    }
-    return hasListRole;
-  }
-
-  detectType(element) {
-
-  }
+function run() {
+	let questions = new docExtractorEngine().getValidQuestions();
+	console.log(typeof(questions[1]));
 }
 
 
 
+class docExtractorEngine {
+
+	docExtractorEngine() {
+		// Generating enums to help getting 
+		this.questionTypes = {
+			singleLine: "SingleLine",
+			multiLine: "MultiLine",
+			mcq: "MCQ",
+			mmcq: "MMCQ", // More than 1 correct
+		}
+	}
+
+	getValidQuestions() {
+		// Returns an Array of DOM objects of Boxes present in Google Form
+		// Return Type : Array
+		let questions = this.getQuestions();
+		questions = this.validateQuestions(questions);
+		return questions;
+	}
+
+	getQuestions() {
+		// Returns all the Boxes in Google Docs
+		// But also as a garbage returns checkbox too
+		// Returns a node list array, where each element is a DOM containing complete information for questions
+		// Return Type : NodeList
+		return document.querySelectorAll("div[role=listitem]");
+	}
+
+	validateQuestions(questions) {
+		// Input Type : NodeList
+		// Weeds out Checkbox collected as a false positive in getQuestions method
+		// and returns only the correct ones
+		// Return Type : Array
+		return Array.prototype.slice.call(questions).filter(question => {
+			return !this.isCheckBoxListItem(question)
+		});
+	}
+
+	isCheckBoxListItem(element) {
+		// Input Type : DOM object
+		// Helper function for validateQuestions() method
+		// that helps detect if DOM element is checkbox or not 
+		// Return Type : Boolean
+		let hasListRole = false;
+		let parent = element.parentElement;
+
+		while (parent && !hasListRole) {
+			if (parent.getAttribute('role') === 'listitem') {
+				hasListRole = true;
+			}
+			parent = parent.parentElement;
+		}
+		return hasListRole;
+	}
+
+	detectType(element) {
+
+	}
+}
+
+// Calling main function
+run();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////
+// Dead Code down here. (Might be used later)
+///////////////////////////////////////////////////////////////////
 
 
 
@@ -63,22 +147,15 @@ class docExtractorEngine {
 //   input.dispatchEvent(inputEvent)
 // });
 
-
-console.log(new docExtractorEngine().getValidQuestions());
-
-
-
-
-
-class Data {
-  constructor(pageNo, sectionID, data, questionStatement, assumedImageContext, outputType, value) {
-    this.pageNo = pageNo;
-    this.sectionID = sectionID;
-    this.data = data;
-    this.questionStatement = questionStatement;
-    this.assumedImageContext = assumedImageContext;
-    this.outputType = outputType;
-    this.value = value;
-  }
-}
+// class Data {
+//   constructor(pageNo, sectionID, data, questionStatement, assumedImageContext, outputType, value) {
+//     this.pageNo = pageNo;
+//     this.sectionID = sectionID;
+//     this.data = data;
+//     this.questionStatement = questionStatement;
+//     this.assumedImageContext = assumedImageContext;
+//     this.outputType = outputType;
+//     this.value = value;
+//   }
+// }
 
