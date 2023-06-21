@@ -1,5 +1,13 @@
 function run() {
 	let questions = new DocExtractorEngine().getValidQuestions();
+
+	console.clear(); // Temporary code, while debugging
+	let checker = new DetectBoxType();
+	questions.forEach(question => {
+		console.log(question);
+		console.log(checker.detectType(question));
+		console.log();
+	});
 }
 
 
@@ -7,7 +15,7 @@ function run() {
 class DocExtractorEngine {
 
 	constructor() {
-		// Generating enums to help getting 
+		// Generating enums to help getting valid types
 		this.questionTypes = {
 			singleLine: "SingleLine",
 			multiLine: "MultiLine",
@@ -17,17 +25,16 @@ class DocExtractorEngine {
 	}
 
 	getValidQuestions() {
-		// Returns an Array of DOM objects of Boxes present in Google Form
+		// Returns an Array of DOM objects of validated Boxes present in Google Form
 		// Return Type : Array
 		let questions = this.getQuestions();
 		questions = this.validateQuestions(questions);
-		this.detectType(questions);
 		return questions;
 	}
 
 	getQuestions() {
 		// Returns all the Boxes in Google Docs
-		// But also as a garbage returns checkbox too
+		// But, as a garbage returns checkbox too
 		// Returns a node list array, where each element is a DOM containing complete information for questions
 		// Return Type : NodeList
 		return document.querySelectorAll("div[role=listitem]");
@@ -59,20 +66,13 @@ class DocExtractorEngine {
 		}
 		return hasListRole;
 	}
-
-	detectType(questions) {
-		console.clear(); // Temporary code, while debugging
-		let checker = new DetectBoxType();
-		questions.forEach(question => {
-			checker.detectType(question);
-		});
-	}
 }
 
 class DetectBoxTypeTimeCacher {
 	// A Cacher Engine for Date/Time based field boxes
 	// This can help eliminate calling multiple same DOM queries repeatedly
 	// Value validation is based on the argument, not the output
+	// An Utility class for DetectBoxType class.
 
 	constructor() {
 		// Initializing all values to null
@@ -88,7 +88,10 @@ class DetectBoxTypeTimeCacher {
 	}
 
 	getTimeParams(element, invalidateCache = false) {
+		// Input : element -> DOM Object
+		//         invalidateCache -> Boolean (Forcefully invalidate all Caches)
 		// DOM queries are only run, if forced to or if cache was not created for the element 
+		// Return Type : Array of length 8, with each element of type Boolean except first, which is an Integer.
 		if (element !== this.element || invalidateCache) {
 			// Storing input argument and output simultaneously	
 			this.element = element;
@@ -123,28 +126,73 @@ class DetectBoxType {
 	// In case of Error, it will returns null, with suitable output in console
 
 	constructor() {
+		// Initializing the Cacher engine
 		this.timeCacher = new DetectBoxTypeTimeCacher();
 	}
 
 	detectType(element) {
-		// console.log("Dropdown : " + this.isDropdown(element));
-		// console.log("Text : " + this.isText(element));
-		// console.log("Paragraph : " + this.isParagraph(element));
-		// console.log("Text Email : " + this.isTextEmail(element));
-		// console.log("Text Numeric : " + this.isTextNumeric(element));
-		// console.log("Text Telephonic : " + this.isTextTelephone(element));
-		// console.log("MultiCorrect : " + this.isMultiCorrect(element));
-		// console.log("Linear Scale : " + this.isLinearScale(element));
-		// console.log("Multiple Choice : " + this.isMultipleChoice(element));
-		// console.log("Multiple Choice Grid : " + this.isMultipleChoiceGrid(element));
-		// console.log("Checkbox Grid : " + this.isCheckboxGrid(element));
-		// console.log("Date : " + this.isDate(element))
-		// console.log("DateAndTime:"+this.isDateAndTime(element))
-		// console.log("Time:"+this.isTime(element))
-		// console.log("Duration:"+this.isDuration(element))
-		// console.log("Date without Year:"+this.isDateWithoutYear(element))
-		// console.log("Date without Year with Time:"+this.isDateWithoutYearWithTime(element))
-		// console.log(element);
+		// Input Type : DOM object
+		// Defining and asserting possible box type
+		// Return Type : Dictionary of length 1, in structure of {String: Boolean} pair
+		//               In case, no appropriate box is found, `null` is returned 
+		let possibleBoxes = {
+			"Dropdown": this.isDropdown(element),
+			"Text": this.isText(element),
+			"Paragraph": this.isParagraph(element),
+			"Text Email": this.isTextEmail(element),
+			"Text Numeric": this.isTextNumeric(element),
+			"Text Telephonic": this.isTextTelephone(element),
+			"MultiCorrect": this.isMultiCorrect(element),
+			"Linear Scale": this.isLinearScale(element),
+			"Multiple Choice": this.isMultipleChoice(element),
+			"Multiple Choice Grid": this.isMultipleChoiceGrid(element),
+			"Checkbox Grid": this.isCheckboxGrid(element),
+			"Date": this.isDate(element),
+			"DateAndTime": this.isDateAndTime(element),
+			"Time": this.isTime(element),
+			"Duration": this.isDuration(element),
+			"Date without Year": this.isDateWithoutYear(element),
+			"Date without Year with Time": this.isDateWithoutYearWithTime(element),
+			"Date with Time and Meridiem": this.isDateAndTimeWithMeridiem(element),
+			"Time and Meridiem": this.isTimeWithMeridiem(element),
+			"Date without Year with Time and Meridiem": this.isDateWithoutYearWithTimeAndMeridiem(element)
+		};
+
+		// Checking how many of the different boxTypes are satisfied by the row
+		// Satisfied Type are store in dictionary detectedSets
+		let collisionCount = 0;
+		let detectedSets = {};
+		for (var key in possibleBoxes) {
+			// console.log(key);
+
+			// If checker flags it as valid box type
+			if (possibleBoxes[key]) {
+				collisionCount += 1;
+
+				// Add this {key, value} to detectedSets dictionary
+				detectedSets[key] = possibleBoxes[key];
+			}
+		}
+
+		// console.log(detectedSets);
+
+		// Good Data
+		if (collisionCount === 1) {
+			// console.log("Found a Valid Box Type");
+			return detectedSets;
+		}
+		// No Data Found, Possible Tweaks with DetectBoxType Module Required
+		else if (collisionCount === 0) {
+			// No appropriate type found
+			// console.log("No value found");
+			return null;
+		}
+		// Collisions Found, Possible Tweaks with DetectBoxType Module Required
+		else {
+			// DetectBoxType module might be poisoned
+			// console.log("Collision Detected!");
+			return null;
+		}
 	}
 
 
@@ -167,7 +215,11 @@ class DetectBoxType {
 		//         input tag
 		// Return Type : Boolean
 		let inputFields = element.querySelectorAll("input");
-		return inputFields.length === 1 && !(inputFields[0].getAttribute("type") === "hidden");
+		let inputType;
+		if (inputFields.length === 1) {
+			inputType = inputFields[0].getAttribute("type");
+		}
+		return inputFields.length === 1 && !(inputType === "hidden") && !["email", "tel", "url", "number"].includes(inputType);
 	}
 
 	isParagraph(element) {
@@ -289,8 +341,8 @@ class DetectBoxType {
 		//           which is a div with role `radio`
 		// Return Type : Boolean
 		let radioGroups = element.querySelector("div[role=radiogroup] span[role=presentation]");
-		let hasTableRowDisplay = window.getComputedStyle(radioGroups).display === "table-row";
-		return Boolean(radioGroups && hasTableRowDisplay && radioGroups.querySelector("div[role=radio]"));
+		let hasTableRowDisplay = radioGroups && window.getComputedStyle(radioGroups).display === "table-row";
+		return Boolean(hasTableRowDisplay && radioGroups.querySelector("div[role=radio]"));
 	}
 
 	isDate(element) {
