@@ -143,8 +143,10 @@ class DetectBoxType {
 			"Text Numeric": this.isTextNumeric(element),
 			"Text Telephonic": this.isTextTelephone(element),
 			"MultiCorrect": this.isMultiCorrect(element),
+			"MultiCorrect With Other": this.isMultiCorrectWithOther(element),
 			"Linear Scale": this.isLinearScale(element),
 			"Multiple Choice": this.isMultipleChoice(element),
+			"Multiple Choice With Other": this.isMultipleChoiceWithOther(element),
 			"Multiple Choice Grid": this.isMultipleChoiceGrid(element),
 			"Checkbox Grid": this.isCheckboxGrid(element),
 			"Date": this.isDate(element),
@@ -270,9 +272,28 @@ class DetectBoxType {
 		// Tweak : Since as mentioned earlier in 
 		//         DocExtractorEngine().validateQuestions() multi correct has 
 		//         a div with `list` role 
-		//         and child of that div has `listitem` role
+		//         and child of that div has `listitem` role, we can easily use that tweak
 		// Return Type : Boolean
-		return Boolean(element.querySelector("div[role=list]"));
+		let options = element.querySelectorAll("div[role=list] label");
+		let optionCount = options.length;
+		return Boolean(element.querySelector("div[role=list]") && !(optionCount > 0 && options[optionCount - 1].nextElementSibling.querySelector("input:not([type=hidden])")));
+	}
+
+	isMultiCorrectWithOther(element) {
+		// Input Type : DOM object
+		// Checks if given DOM object is a Multi Correct Field or not with Other Field
+		// which basically is a set of multiple checkboxes based MCQs plus an extra input field
+		// Tweak : - Since as mentioned earlier in 
+		//           DocExtractorEngine().validateQuestions() multi correct has 
+		//           a div with `list` role 
+		//           and child of that div has `listitem` role, we can easily use that tweak
+		//         - To detect other text fields, we go to the last option with help of label
+		//           and then check if nextSibling (which instead of being in label is in div), 
+		//           has any non-hidden input box.
+		// Return Type : Boolean
+		let options = element.querySelectorAll("div[role=list] label");
+		let optionCount = options.length;
+		return Boolean(element.querySelector("div[role=list]") && (optionCount > 0 && options[optionCount - 1].nextElementSibling.querySelector("input:not([type=hidden])")));
 	}
 
 	isLinearScale(element) {
@@ -305,7 +326,29 @@ class DetectBoxType {
 		//           too follows inside an div with `radiogroup` role, so this might help
 		//           in preliminary filters.
 		// Return Type : Boolean
-		return Boolean(element.querySelector("div[role=radiogroup] label span"));
+		let options = element.querySelectorAll("div[role=radiogroup] label");
+		let optionCount = options.length;
+		return Boolean(element.querySelector("div[role=radiogroup] label span") && !(optionCount > 0 && options[optionCount - 1].nextElementSibling.querySelector("input:not([type=hidden])")));
+	}
+
+	isMultipleChoiceWithOther(element) {
+		// Input Type : DOM object
+		// Checks if given DOM object is a Multiple Choice Field or not and has Other Field
+		// which basically is a set of radio buttons but in 1D plus an extra input field at last
+		// Tweak : - The Linear Scale being vertical w.r.t. options in view had label 
+		//           and option box in left-right layout.
+		//           So, they must be contained inside in a <span> tag
+		//         - We could easily get to option as they are grouped inside a label
+		//         - Similar to Linear Scale and Multiple Choice Grid, Multiple Choice
+		//           too follows inside an div with `radiogroup` role, so this might help
+		//           in preliminary filters.
+		//         - To detect other text fields, we go to the last option with help of label
+		//           and then check if nextSibling (which instead of being in label is in div), 
+		//           has any non-hidden input box.
+		// Return Type : Boolean
+		let options = element.querySelectorAll("div[role=radiogroup] label");
+		let optionCount = options.length;
+		return Boolean(element.querySelector("div[role=radiogroup] label span") && optionCount > 0 && options[optionCount - 1].nextElementSibling.querySelector("input:not([type=hidden])"));
 	}
 
 	isCheckboxGrid(element) {
