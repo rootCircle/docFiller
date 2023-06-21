@@ -276,7 +276,9 @@ class DetectBoxType {
 		// Return Type : Boolean
 		let options = element.querySelectorAll("div[role=list] label");
 		let optionCount = options.length;
-		return Boolean(element.querySelector("div[role=list]") && !(optionCount > 0 && options[optionCount - 1].nextElementSibling.querySelector("input:not([type=hidden])")));
+		return Boolean(element.querySelector("div[role=list]") &&
+						 !(optionCount > 0 && options[optionCount - 1].nextElementSibling &&
+						 options[optionCount - 1].nextElementSibling.querySelector("input:not([type=hidden])")));
 	}
 
 	isMultiCorrectWithOther(element) {
@@ -293,7 +295,9 @@ class DetectBoxType {
 		// Return Type : Boolean
 		let options = element.querySelectorAll("div[role=list] label");
 		let optionCount = options.length;
-		return Boolean(element.querySelector("div[role=list]") && (optionCount > 0 && options[optionCount - 1].nextElementSibling.querySelector("input:not([type=hidden])")));
+		return Boolean(element.querySelector("div[role=list]") &&
+						(optionCount > 0 && options[optionCount - 1].nextElementSibling &&
+						 options[optionCount - 1].nextElementSibling.querySelector("input:not([type=hidden])")));
 	}
 
 	isLinearScale(element) {
@@ -328,7 +332,9 @@ class DetectBoxType {
 		// Return Type : Boolean
 		let options = element.querySelectorAll("div[role=radiogroup] label");
 		let optionCount = options.length;
-		return Boolean(element.querySelector("div[role=radiogroup] label span") && !(optionCount > 0 && options[optionCount - 1].nextElementSibling.querySelector("input:not([type=hidden])")));
+		return Boolean(element.querySelector("div[role=radiogroup] label span") &&
+						 !(optionCount > 0 && options[optionCount - 1].nextElementSibling &&
+							 options[optionCount - 1].nextElementSibling.querySelector("input:not([type=hidden])")));
 	}
 
 	isMultipleChoiceWithOther(element) {
@@ -348,7 +354,9 @@ class DetectBoxType {
 		// Return Type : Boolean
 		let options = element.querySelectorAll("div[role=radiogroup] label");
 		let optionCount = options.length;
-		return Boolean(element.querySelector("div[role=radiogroup] label span") && optionCount > 0 && options[optionCount - 1].nextElementSibling.querySelector("input:not([type=hidden])"));
+		return Boolean(element.querySelector("div[role=radiogroup] label span") &&
+						 optionCount > 0 && options[optionCount - 1].nextElementSibling &&
+						 options[optionCount - 1].nextElementSibling.querySelector("input:not([type=hidden])"));
 	}
 
 	isCheckboxGrid(element) {
