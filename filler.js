@@ -570,6 +570,26 @@ class DetectBoxType {
 }
 
 
+class FieldsExtractorEngine {
+	// Extracts the questions and description from the DOM object and returns it
+	// It might also extract the options in case of MCQs or other types, where answers do
+	// play a  critical role
+
+	constructor() {
+
+	}
+}
+
+class FillerEngine {
+	// Passes in the required field as form of input and fill in those values appropriately
+	// via DOM
+
+	constructor() {
+
+	}
+
+}
+
 // Calling main function
 run();
 
