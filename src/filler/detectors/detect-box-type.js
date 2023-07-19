@@ -1,4 +1,5 @@
 import { DetectBoxTypeTimeCacher } from "./detect-box-type-time-cacher";
+import QType from "../../utils/question-types";
 
 export class DetectBoxType {
   // Detect Type of Input inside Box out of the 10 available inputs
@@ -18,29 +19,32 @@ export class DetectBoxType {
     // Defining and asserting possible box type
     // Return Type : Dictionary of length 1, in structure of {String: Boolean} pair
     //               In case, no appropriate box is found, `null` is returned
+
+    // TODO: in /utils/question-types.js fill the enum with more fields
+    // import and use this enum wherever possible so that the code is consistent
     let possibleBoxes = {
-      Dropdown: this.isDropdown(element),
-      Text: this.isText(element),
-      Paragraph: this.isParagraph(element),
-      "Text Email": this.isTextEmail(element),
-      "Text Numeric": this.isTextNumeric(element),
-      "Text Telephonic": this.isTextTelephone(element),
-      MultiCorrect: this.isMultiCorrect(element),
-      "MultiCorrect With Other": this.isMultiCorrectWithOther(element),
-      "Linear Scale": this.isLinearScale(element),
-      "Multiple Choice": this.isMultipleChoice(element),
-      "Multiple Choice With Other": this.isMultipleChoiceWithOther(element),
-      "Multiple Choice Grid": this.isMultipleChoiceGrid(element),
-      "Checkbox Grid": this.isCheckboxGrid(element),
-      Date: this.isDate(element),
-      DateAndTime: this.isDateAndTime(element),
-      Time: this.isTime(element),
-      Duration: this.isDuration(element),
-      "Date without Year": this.isDateWithoutYear(element),
-      "Date without Year with Time": this.isDateWithoutYearWithTime(element),
-      "Date with Time and Meridiem": this.isDateAndTimeWithMeridiem(element),
-      "Time and Meridiem": this.isTimeWithMeridiem(element),
-      "Date without Year with Time and Meridiem":
+      [QType.DROPDOWN]: this.isDropdown(element),
+      [QType.TEXT]: this.isText(element),
+      [QType.PARAGRAPH]: this.isParagraph(element),
+      [QType.TEXT_EMAIL]: this.isTextEmail(element),
+      [QType.TEXT_NUMERIC]: this.isTextNumeric(element),
+      [QType.TEXT_TEL]: this.isTextTelephone(element),
+      [QType.MULTI_CORRECT]: this.isMultiCorrect(element),
+      [QType.MULTI_CORRECT_WITH_OTHER]: this.isMultiCorrectWithOther(element),
+      [QType.LINEAR_SCALE]: this.isLinearScale(element),
+      [QType.MULTIPLE_CHOICE]: this.isMultipleChoice(element),
+      [QType.MULTIPLE_CHOICE_WITH_OTHER]: this.isMultipleChoiceWithOther(element),
+      [QType.MULTIPLE_CHOICE_GRID]: this.isMultipleChoiceGrid(element),
+      [QType.CHECKBOX_GRID]: this.isCheckboxGrid(element),
+      [QType.DATE]: this.isDate(element),
+      [QType.DATE_AND_TIME]: this.isDateAndTime(element),
+      [QType.TIME]: this.isTime(element),
+      [QType.DURATION]: this.isDuration(element),
+      [QType.DATE_WITHOUT_YEAR]: this.isDateWithoutYear(element),
+      [QType.DATE_TIME_WITHOUT_YEAR]: this.isDateWithoutYearWithTime(element),
+      [QType.DATE_TIME_WITH_MERIDIEM]: this.isDateAndTimeWithMeridiem(element),
+      [QType.TIME_WITH_MERIDIEM]: this.isTimeWithMeridiem(element),
+      [QType.DATE_TIME_WITH_MERIDIEM_WITHOUT_YEAR]:
         this.isDateWithoutYearWithTimeAndMeridiem(element),
     };
 
