@@ -57,7 +57,7 @@ export class DocExtractorEngine {
     // clears the node from questions array if role=listitem includes the section heading (the purple colored one)
     questions = Array.from(
       document.querySelectorAll("div[role=listitem]")
-    ).filter((question) => !this.checkSectionHeading(question));
+      ).filter((question) => !this.checkSectionHeading(question));
     // -------------------------------------------------------
 
     return Array.prototype.slice.call(questions).filter((question) => {
