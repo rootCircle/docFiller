@@ -9,23 +9,22 @@ export class DocExtractorEngine {
     };
   }
 
-  // will return true if the node is a typical google form section name and heading node
   checkSectionHeading(divNode) {
-    // returns if the div selected by div[role=listitem] is a heading or not
+     // Input Type: DOM Object
+    // Checks if the node is a typical google form section or not. name and heading node
+    // Tweak : - If the first childnode of the selected div has role=heading then it is a suspected section heading
+    // Return Type: Boolean
 
-    // logic : if the first childnode of the selected div has role=heading then it is a section heading
-    // list the attributes
+    // List the attributes
     const attributes = divNode.firstChild.attributes;
 
-    // might Throw TypeError in case the node is a simple div with no attributes.getNamedItem() function, thus calling null() function will throw typeerror
+    // Might throw TypeError in case the node is a simple div with no attributes.getNamedItem() function, thus calling null() function will throw typeerror
     try {
-      // if it turns out to be heading, then return true
-      if (attributes.getNamedItem("role").nodeValue === "heading") {
-        return true;
-      }
-      return false;
+      // If it turns out to be heading, then return true
+      return attributes.getNamedItem("role").nodeValue === "heading";
+
     } catch (typeError) {
-      // in case of typeError, we conclude it cant be heading thus return false 👍
+      // In case of typeError, we conclude it cant be heading thus return false
       // console.log(typeError);
       return false;
     }
