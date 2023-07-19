@@ -54,7 +54,7 @@ I would recommend `web-ext` for development in Firefox, it significantly decreas
 2. Webpack is configured for the project
 3. Do not edit the manifest.json, webpack.config.js files
 4. Clone the repo
-5. Run `yarn install` in the terminal to install the required dependencies
+5. Run `yarn` in the terminal to install the required dependencies
 6. Run `yarn dev` to test the extension. A new firefox window will open with the extension loaded.
 
 ## License:
