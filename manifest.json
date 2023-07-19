@@ -12,7 +12,7 @@
   "content_scripts": [
     {
       "matches": ["*://*.docs.google.com/*"],
-      "js": ["filler.js"]
+      "js": ["filler.bundle.js"]
     }
   ],
   "browser_specific_settings": {
@@ -21,6 +21,6 @@
     }
   },
   "browser_action": {
-      "default_popup": "popup/popup.html"
+    "default_popup": "popup/popup.html"
   }
 }

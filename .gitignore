@@ -4,6 +4,7 @@
 *.rnote
 
 # Some verbose files
+dist/
 build/
 build-*/
 coverage/
