@@ -9,12 +9,15 @@ async function run() {
   let questions = new DocExtractorEngine().getValidQuestions();
 
   console.clear(); // Temporary code, while debugging
-  let checker = new DetectBoxType();
-  questions.forEach((question) => {
-    console.log(question);
-    console.log(checker.detectType(question));
-    console.log();
-  });
+	let checker = new DetectBoxType();
+	let fields = new FieldsExtractorEngine();
+	questions.forEach(question => {
+		console.log(question);
+		console.log(checker.detectType(question));
+		console.log(fields.getTitle(question));
+		console.log(fields.getDescription(question));
+		console.log();
+	});
 }
 
 // class FillerEngine {
