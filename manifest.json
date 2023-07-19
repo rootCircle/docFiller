@@ -7,7 +7,7 @@
 
   "icons": {
     "64": "icons/icon-form-64.png",
-    "98": "icons/icon-form-96.png"
+    "96": "icons/icon-form-96.png"
   },
   "content_scripts": [
     {
