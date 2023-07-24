@@ -9,12 +9,8 @@
     "64": "icons/icon-form-64.png",
     "96": "icons/icon-form-96.png"
   },
-  "content_scripts": [
-    {
-      "matches": ["*://*.docs.google.com/*"],
-      "js": ["filler.bundle.js"]
-    }
-  ],
+
+  "permissions": ["activeTab"],
   "browser_specific_settings": {
     "gecko": {
       "id": "test@example.com"

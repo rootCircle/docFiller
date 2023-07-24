@@ -4,21 +4,33 @@ import { DocExtractorEngine } from "./filler/engines/doc-extractor-engine";
 import { FieldsExtractorEngine } from "./filler/engines/fields-extractor-engine";
 import { DetectBoxType } from "./filler/detectors/detect-box-type";
 
-async function run() {
-  console.log("in main run() function");
-  let questions = new DocExtractorEngine().getValidQuestions();
+(async () => {
+  // checks if the content script has already been loaded and run, if yes, then don't do it again
+  if (window.hasExtRun) return;
+  window.hasExtRun = true;
 
-  console.clear(); // Temporary code, while debugging
-	let checker = new DetectBoxType();
-	let fields = new FieldsExtractorEngine();
-	questions.forEach(question => {
-		console.log(question);
-		console.log(checker.detectType(question));
-		console.log(fields.getTitle(question));
-		console.log(fields.getDescription(question));
-		console.log();
-	});
-}
+  // catch message from the extension
+  browser.runtime.onMessage.addListener((message) => {
+    // if message is FILL_FORM
+    if (message.data === "FILL_FORM") {
+      // ----------------------------
+      // execute the main() function
+      console.log("in main run() function");
+      let questions = new DocExtractorEngine().getValidQuestions();
+
+      console.clear(); // Temporary code, while debugging
+      let checker = new DetectBoxType();
+      let fields = new FieldsExtractorEngine();
+      questions.forEach((question) => {
+        console.log(question);
+        console.log(checker.detectType(question));
+        console.log(fields.getTitle(question));
+        console.log(fields.getDescription(question));
+        console.log();
+      });
+    }
+  });
+})();
 
 // class FillerEngine {
 // 	// Passes in the required field as form of input and fill in those values appropriately
@@ -29,10 +41,6 @@ async function run() {
 // 	}
 
 // }
-
-// Calling main function
-console.log("program ran now");
-run();
 
 ///////////////////////////////////////////////////////////////////
 // Dead Code down here. (Might be used later)
