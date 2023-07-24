@@ -18,7 +18,6 @@ import { DetectBoxType } from "./filler/detectors/detect-box-type";
       console.log("in main run() function");
       let questions = new DocExtractorEngine().getValidQuestions();
 
-      console.clear(); // Temporary code, while debugging
       let checker = new DetectBoxType();
       let fields = new FieldsExtractorEngine();
       questions.forEach((question) => {
