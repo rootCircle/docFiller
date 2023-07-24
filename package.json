@@ -1,8 +1,9 @@
 {
   "scripts": {
-    "build": "webpack",
-    "start:firefox": "cd dist && web-ext run",
-    "dev": "yarn build && yarn start:firefox"
+    "build": "webpack --no-watch",
+    "watch": "webpack",
+    "start:firefox": "web-ext run --source-dir=dist",
+    "dev": "(trap 'kill 0' SIGINT; yarn watch & yarn start:firefox & wait)"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^11.0.0",
