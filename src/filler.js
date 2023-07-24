@@ -5,10 +5,6 @@ import { FieldsExtractorEngine } from "./filler/engines/fields-extractor-engine"
 import { DetectBoxType } from "./filler/detectors/detect-box-type";
 
 (async () => {
-  // checks if the content script has already been loaded and run, if yes, then don't do it again
-  if (window.hasExtRun) return;
-  window.hasExtRun = true;
-
   // catch message from the extension
   browser.runtime.onMessage.addListener((message) => {
     // if message is FILL_FORM
