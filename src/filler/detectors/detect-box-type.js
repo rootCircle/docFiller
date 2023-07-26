@@ -17,7 +17,7 @@ export class DetectBoxType {
   detectType(element) {
     // Input Type : DOM object
     // Defining and asserting possible box type
-    // Return Type : Dictionary of length 1, in structure of {String: Boolean} pair
+    // Return Type : QType String specifying the type of Box
     //               In case, no appropriate box is found, `null` is returned
 
     // TODO: in /utils/question-types.js fill the enum with more fields
@@ -69,7 +69,7 @@ export class DetectBoxType {
     // Good Data
     if (collisionCount === 1) {
       // console.log("Found a Valid Box Type");
-      return detectedSets;
+      return Object.keys(detectedSets)[0];
     }
     // No Data Found, Possible Tweaks with DetectBoxType Module Required
     else if (collisionCount === 0) {
