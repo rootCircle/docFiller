@@ -30,6 +30,11 @@ export class FillerEngine {
 
   fillEmail(element, value) {
       // return true if value is successfully written, else false
+      var inputField = element.querySelectorAll('input[type=text], input[type=email]');
+      inputField=inputField[0];
+      inputField.value = value;
+      var inputEvent = new Event('input', { bubbles: true });
+      inputField.dispatchEvent(inputEvent)
       return true;
   }
 }
