@@ -23,7 +23,7 @@
     "build": "webpack --no-watch",
     "watch": "webpack",
     "start:firefox": "web-ext run --source-dir=dist",
-    "dev": "concurrently --kill-others \"yarn watch\" \"yarn start:firefox\""
+    "dev": "yarn build && concurrently --kill-others \"yarn watch\" \"yarn start:firefox\""
   },
   "devDependencies": {
     "copy-webpack-plugin": "^11.0.0",
