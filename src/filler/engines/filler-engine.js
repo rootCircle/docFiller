@@ -14,6 +14,7 @@ export class FillerEngine {
       else if (fieldType === QType.TEXT_EMAIL) {
         return this.fillEmail(element, value);
       }
+      
       else {
         return false;
       }
@@ -25,16 +26,22 @@ export class FillerEngine {
 
   fillText(element, value) {
     // return true if value is successfully written, else false
-    return true;
-}
-
-  fillEmail(element, value) {
-      // return true if value is successfully written, else false
-      var inputField = element.querySelectorAll('input[type=text], input[type=email]');
+    var inputField = element.querySelectorAll('input[type=text]');
       inputField=inputField[0];
       inputField.value = value;
       var inputEvent = new Event('input', { bubbles: true });
       inputField.dispatchEvent(inputEvent)
       return true;
-  }
+}
+
+fillEmail(element, value) {
+  // return true if value is successfully written, else false
+  var inputField = element.querySelectorAll('input[type=text], input[type=email]');
+  inputField=inputField[0];
+  inputField.value = value;
+  var inputEvent = new Event('input', { bubbles: true });
+  inputField.dispatchEvent(inputEvent)
+  return true;
+}
+
 }
