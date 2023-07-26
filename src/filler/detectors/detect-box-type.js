@@ -88,9 +88,11 @@ export class DetectBoxType {
   isDropdown(element) {
     // Input Type : DOM object
     // Checks if given DOM object is Dropdown or not
-    // Tweak : A dropdown has a div which has role = listbox in it.
+    // Tweak : A dropdown has a div which has role = listbox in it 
+    //         and necessarily doesn't have the input fields like in
+    //         time with meridiem.
     // Return Type : Boolean
-    return Boolean(element.querySelector("div[role=listbox]"));
+    return Boolean(element.querySelector("div[role=listbox]") && !element.querySelector("input"));
   }
 
   isText(element) {
@@ -568,13 +570,13 @@ export class DetectBoxType {
     ] = this.timeCacher.getTimeParams(element);
 
     return (
-      inputFieldCount === 3 &&
+      inputFieldCount === 2 &&
       !hasYear &&
       !hasMonth &&
       !hasDate &&
       hasHour &&
       hasMinute &&
-      hasSecond &&
+      !hasSecond &&
       hasMeridiemField
     );
   }
@@ -644,7 +646,7 @@ export class DetectBoxType {
     ] = this.timeCacher.getTimeParams(element);
 
     return (
-      inputFieldCount === 4 &&
+      inputFieldCount === 5 &&
       hasYear &&
       hasMonth &&
       hasDate &&
