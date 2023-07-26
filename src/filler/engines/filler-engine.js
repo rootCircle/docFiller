@@ -14,7 +14,9 @@ export class FillerEngine {
       else if (fieldType === QType.TEXT_EMAIL) {
         return this.fillEmail(element, value);
       }
-      
+      else if (fieldType === QType.PARAGRAPH) {
+        return this.fillParagraph(element, value);
+      }
       else {
         return false;
       }
@@ -42,6 +44,16 @@ fillEmail(element, value) {
   var inputEvent = new Event('input', { bubbles: true });
   inputField.dispatchEvent(inputEvent)
   return true;
+}
+
+fillParagraph(element, value) {
+  // return true if value is successfully written, else false
+  var inputField = element.querySelectorAll('textarea');
+    inputField=inputField[0];
+    inputField.value = value;
+    var inputEvent = new Event('input', { bubbles: true });
+    inputField.dispatchEvent(inputEvent)
+    return true;
 }
 
 }
