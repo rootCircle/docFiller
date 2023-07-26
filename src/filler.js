@@ -11,11 +11,16 @@ async function run() {
   console.clear(); // Temporary code, while debugging
 	let checker = new DetectBoxType();
 	let fields = new FieldsExtractorEngine();
+	let filler = new FillerEngine();
+
 	questions.forEach(question => {
 		console.log(question);
 		console.log(checker.detectType(question));
 		console.log(fields.getTitle(question));
 		console.log(fields.getDescription(question));
+
+		// Using Dummy Value for brevity
+		filler.fill(question, checker.detectType(question), "Dummy Value");
 		console.log();
 	});
 }
