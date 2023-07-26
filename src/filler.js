@@ -20,7 +20,7 @@ async function run() {
 		console.log(fields.getDescription(question));
 
 		// Using Dummy Value for brevity
-		filler.fill(question, checker.detectType(question), "Dummy Value");
+		filler.fill(question, checker.detectType(question), "01-11-2022");
 		console.log();
 	});
 }
