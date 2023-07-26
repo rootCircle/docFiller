@@ -14,28 +14,30 @@ import { DetectBoxType } from "./filler/detectors/detect-box-type";
       console.log("in main run() function");
       let questions = new DocExtractorEngine().getValidQuestions();
 
+      console.clear(); // Temporary code, while debugging
       let checker = new DetectBoxType();
       let fields = new FieldsExtractorEngine();
-      questions.forEach((question) => {
+      let filler = new FillerEngine();
+
+      questions.forEach(question => {
         console.log(question);
-        console.log(checker.detectType(question));
-        console.log(fields.getTitle(question));
-        console.log(fields.getDescription(question));
+
+        let fieldType = checker.detectType(question);
+        console.log("Field Type : " + fieldType);
+        console.log("Fields ↴")
+        console.log(fields.getFields(question, fieldType));
+
+        // Using Dummy Value for brevity
+        filler.fill(question, fieldType, "Dummy Value");
         console.log();
       });
     }
   });
 })();
 
-// class FillerEngine {
-// 	// Passes in the required field as form of input and fill in those values appropriately
-// 	// via DOM
+  
 
-// 	constructor() {
 
-// 	}
-
-// }
 
 ///////////////////////////////////////////////////////////////////
 // Dead Code down here. (Might be used later)

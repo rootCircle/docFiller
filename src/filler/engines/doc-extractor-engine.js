@@ -1,13 +1,5 @@
 export class DocExtractorEngine {
-  constructor() {
-    // Generating enums to help getting valid types
-    this.questionTypes = {
-      singleLine: "SingleLine",
-      multiLine: "MultiLine",
-      mcq: "MCQ",
-      mmcq: "MMCQ", // More than 1 correct
-    };
-  }
+  constructor() {}
 
   checkSectionHeading(divNode) {
      // Input Type: DOM Object
