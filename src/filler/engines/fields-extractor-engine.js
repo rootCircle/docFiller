@@ -41,7 +41,7 @@ export class FieldsExtractorEngine {
 		let required = element.querySelector('div[role="heading"]');
 		required = required.parentElement.children[1];
 		if(required === undefined || required.textContent === "") {
-			console.log("There is no description for this box!");
+			// console.log("There is no description for this box!");
 			return null;
 		}
 		

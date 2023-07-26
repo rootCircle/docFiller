@@ -25,15 +25,6 @@ async function run() {
 	});
 }
 
-// class FillerEngine {
-// 	// Passes in the required field as form of input and fill in those values appropriately
-// 	// via DOM
-
-// 	constructor() {
-
-// 	}
-
-// }
 
 // Calling main function
 console.log("program ran now");
