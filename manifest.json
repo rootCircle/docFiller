@@ -10,7 +10,7 @@
     "96": "icons/icon-form-96.png"
   },
 
-  "permissions": ["activeTab"],
+  "permissions": ["activeTab", "*://*.docs.google.com/*"],
   "browser_specific_settings": {
     "gecko": {
       "id": "test@example.com"
