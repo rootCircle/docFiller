@@ -3,12 +3,15 @@
     "build": "webpack --no-watch",
     "watch": "webpack",
     "start:firefox": "web-ext run --source-dir=dist",
-    "dev": "(trap 'kill 0' SIGINT; yarn watch & yarn start:firefox & wait)"
+    "dev": "concurrently --kill-others \"yarn watch\" \"yarn start:firefox\""
   },
   "devDependencies": {
     "copy-webpack-plugin": "^11.0.0",
     "watch": "^1.0.2",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.0"
   }
 }
