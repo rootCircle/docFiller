@@ -4,14 +4,30 @@ import { DocExtractorEngine } from "./filler/engines/doc-extractor-engine";
 import { FieldsExtractorEngine } from "./filler/engines/fields-extractor-engine";
 import { DetectBoxType } from "./filler/detectors/detect-box-type";
 
+let debugging = true;
+if (debugging) {
+	main();
+	debugging = false;
+}
+
 (async () => {
-  // catch message from the extension
+	// catch message from the extension
+	
   browser.runtime.onMessage.addListener((message) => {
     // if message is FILL_FORM
     if (message.data === "FILL_FORM") {
       // ----------------------------
       // execute the main() function
-      console.log("in main run() function");
+      main();
+      // to prevent code from simultaneous multiple execution
+      message.data = null;
+    }
+  });
+})();
+
+
+async function main() {
+	console.log("in main run() function");
       let questions = new DocExtractorEngine().getValidQuestions();
 
       console.clear(); // Temporary code, while debugging
@@ -31,9 +47,7 @@ import { DetectBoxType } from "./filler/detectors/detect-box-type";
         filler.fill(question, fieldType, "Dummy Value");
         console.log();
       });
-    }
-  });
-})();
+}
 
   
 
