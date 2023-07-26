@@ -23,9 +23,13 @@ async function run() {
 
 		// Using Dummy Value for brevity
 		filler.fill(question, fieldType, "Dummy Value");
+		console.log(fields.getQuestionOptions(question));
 		console.log();
-	});
+
+	  });
+	
 }
+
 
 
 // Calling main function

@@ -49,6 +49,7 @@ export class FieldsExtractorEngine {
 	}
 
 	// Testing on Different Forms required
+
 	getDescription(element) {
 		// Input Type: DOM Object
 		// Extracts the description of the question
@@ -73,9 +74,77 @@ export class FieldsExtractorEngine {
 				content += element.textContent + "\n";
 			}
 		});
-
+		console.log("checkpoint1");
 		// Remove trailing whitespace at the end
 		return content.trimEnd();
 	}
 
-}
+
+
+
+	 
+// Function to extract options for a given question
+  // Import DetectBoxType class
+
+  getQuestionOptions(questionElement) {
+	console.log("questionElement")
+	const boxTypeDetector = new DetectBoxType();
+	const questionType = boxTypeDetector.detectType(questionElement);
+  
+	if (!questionType) {
+	  return []; // Return empty array for questions without options
+	}
+  
+	switch (Object.keys(questionType)[0]) {
+	  case QType.MULTIPLE_CHOICE:
+	  case QType.MULTIPLE_CHOICE_WITH_OTHER:
+		return this.getSingleChoiceOptions(questionElement);
+	  case QType.MULTIPLE_CHOICE_GRID:
+	  case QType.CHECKBOX_GRID:
+		return this.getGridOptions(questionElement);
+	  default:
+		return [];
+	}
+  }
+  
+
+  getSingleChoiceOptions(questionElement) {
+	const optionElements = questionElement.querySelectorAll('div[data-value]');
+	const options = [];
+	for (const optionElement of optionElements) {
+	  const optionText = optionElement.textContent.trim();
+	  options.push(optionText);
+	}
+	return options;
+  }
+  
+
+  getGridOptions(questionElement) {
+    const rowElements = questionElement.querySelectorAll('[role=row]');
+    const colElements = questionElement.querySelectorAll('[role=cell]');
+    const options = [];
+
+    for (const rowElement of rowElements) {
+      const rowLabel = rowElement.textContent.trim();
+      const rowOptions = [];
+      for (const colElement of colElements) {
+        const colLabel = colElement.textContent.trim();
+        rowOptions.push(colLabel);
+      }
+      options.push(rowOptions);
+    }
+
+    return options;
+  }
+
+  // Function to extract Linear scale bounds (left and right numbers)
+  getLinearScaleBounds(questionElement) {
+    const scaleLabels = questionElement.querySelectorAll('span[role=radio] span');
+    if (scaleLabels.length >= 2) {
+      const lowerBound = parseFloat(scaleLabels[0].textContent.trim());
+      const upperBound = parseFloat(scaleLabels[scaleLabels.length - 1].textContent.trim());
+      return [lowerBound, upperBound];
+    }
+    return [NaN, NaN]; // If bounds are not found, return NaN values
+  }
+	}
