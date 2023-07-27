@@ -14,6 +14,9 @@ export class FillerEngine {
       else if (fieldType === QType.TEXT_EMAIL) {
         return this.fillEmail(element, value);
       }
+      else if (fieldType === QType.MULTI_CORRECT_WITH_OTHER) {
+        return this.fillCheckBox(element, ["Day 1","Day 2",{optionTitle : "Other:" , optionText : "My name is Monark Jain"}]);
+      }
       else {
         return false;
       }
@@ -32,4 +35,51 @@ export class FillerEngine {
       // return true if value is successfully written, else false
       return true;
   }
+
+
+  fillCheckBox(element, value) {
+    // Function for interacting with 'MULTI_CORRECT_WITH_OTHER' type question.
+    // Tick the checkbox with a matching 'value' string or object.
+    // If ('value' is String ) => { Ticks the matching option if correct }
+    // If ('value' is Object ) => { Ticks the Other option and enters the text in input box }
+    
+    // Uses 'input' event to trigger UI changes.
+    // Returns true if checkbox is ticked, else false.
+
+    let inputFields = element.querySelectorAll(("div[role=list] div[role=listitem]"));
+    inputFields.forEach(element => {
+      
+      let option = element.querySelectorAll("div[role=checkbox]");
+      let optionValue = option[0].getAttribute("aria-label");
+
+      let otherOption = element.querySelectorAll("div[data-other-checkbox=true]");
+      if (otherOption.length != 0) {
+        var otherOptionName = otherOption[0].getAttribute("aria-label");
+      }
+
+      value.forEach(val => {
+
+        if(typeof(val)==="string"){
+          if(optionValue===val){
+            console.log("Ticked Value:: "+val)
+            var inputEvent = new Event('input', { bubbles: true });
+            option[0].click();
+            return true;
+          }
+        }
+        else if (typeof (val) === "object" && val.optionTitle===otherOptionName){
+          let otherOptionTextBox = element.querySelectorAll("input");
+          otherOptionTextBox[0].setAttribute("value",val.optionText);
+          var inputEvent = new Event('input', { bubbles: true });
+          option[0].click();
+          return true;
+        }
+        
+      });
+    });
+
+    return false;
+  }
+
 }
+
