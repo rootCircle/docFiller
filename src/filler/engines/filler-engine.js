@@ -39,6 +39,10 @@ export class FillerEngine {
         return this.fillDateWithoutYear(fieldValue, '11-11')
       } else if (fieldType === QType.DATE_TIME_WITHOUT_YEAR) {
         return this.fillDateTimeWithoutYear(fieldValue, '22-01-01-01')
+      } else if (fieldType === QType.LINEAR_SCALE) {
+        setTimeout(() => {
+          return this.fillLinearScale(element, "2");
+        }, 1000);
       } else {
         return false
       }
@@ -392,4 +396,28 @@ export class FillerEngine {
 
     return false
   }
+
+
+  fillLinearScale(element, value){
+
+    // Function for interacting with 'LINEAR_SCALE' type question.
+    // Tick the radio button with a matching 'value' .
+    // Searched the value using "role" and "aria-label" attributes
+
+    // Uses 'input' event to trigger UI changes.
+    // Returns true if checkbox is ticked, else false.
+
+    let inputFields = element.querySelectorAll(("div[role=radiogroup] span[role=presentation]"));
+    inputFields = inputFields[0];
+
+    let scales = inputFields.querySelectorAll("div[role=radio]");
+    scales.forEach(scale => {
+      if(scale.getAttribute("aria-label")===value){
+        var inputEvent = new Event('input', { bubbles: true });
+        scale.click();
+      }
+    });
+
+  }
+
 }
