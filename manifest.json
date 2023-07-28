@@ -9,17 +9,18 @@
     "64": "icons/icon-form-64.png",
     "96": "icons/icon-form-96.png"
   },
+  "permissions": ["activeTab", "*://*.docs.google.com/*"],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "test@example.com"
+    }
+  },
   "content_scripts": [
     {
       "matches": ["*://*.docs.google.com/*"],
       "js": ["filler.bundle.js"]
     }
   ],
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "test@example.com"
-    }
-  },
   "browser_action": {
     "default_popup": "popup/popup.html"
   }

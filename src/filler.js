@@ -6,11 +6,34 @@ import { DetectBoxType } from "./filler/detectors/detect-box-type";
 import { PromptEngine } from "./filler/engines/prompt-engine";
 import GPTEngine from "./utils/gpt-engines";
 
-async function run() {
-  console.log("in main run() function");
-  let questions = new DocExtractorEngine().getValidQuestions();
+let debugging = true;
+if (debugging) {
+	main();
+	debugging = false;
+}
 
-  console.clear(); // Temporary code, while debugging
+
+(async () => {
+	// catch message from the extension
+
+	browser.runtime.onMessage.addListener((message) => {
+		// if message is FILL_FORM
+		if (message.data === "FILL_FORM") {
+			// ----------------------------
+			// execute the main() function
+			main();
+			// to prevent code from simultaneous multiple execution
+			message.data = null;
+		}
+	});
+})();
+
+
+async function main() {
+	console.log("in main run() function");
+	let questions = new DocExtractorEngine().getValidQuestions();
+
+	console.clear(); // Temporary code, while debugging
 	let checker = new DetectBoxType();
 	let fields = new FieldsExtractorEngine();
 	let filler = new FillerEngine();
@@ -26,18 +49,18 @@ async function run() {
 			console.log(fieldValue);
 
 			console.log(prompt.getResponse(fieldType, fieldValue));
-			
+
 			// Using Dummy Value for brevity
 			filler.fill(question, fieldType, "Dummy Value");
 		}
 		console.log();
 	});
+
 }
 
 
-// Calling main function
-console.log("program ran now");
-run();
+
+
 
 ///////////////////////////////////////////////////////////////////
 // Dead Code down here. (Might be used later)
