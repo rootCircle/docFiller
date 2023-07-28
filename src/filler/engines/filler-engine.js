@@ -1,5 +1,9 @@
 import QType from "../../utils/question-types";
 
+function sleep(milliseconds) {
+  return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
+
 export class FillerEngine {
   // Passes in the required field as form of input and fill in those values appropriately
   // via DOM
@@ -37,7 +41,12 @@ export class FillerEngine {
   }
 
 
-  fillCheckBox(element, value) {
+  async fillCheckBox(element, value) {
+    
+    //! To avoid any unwanted and incomplete answer this sleep function is necessary 
+    //! to avoid the race around between our answer and default NULL value
+    await sleep(1000);
+
     // Function for interacting with 'MULTI_CORRECT_WITH_OTHER' type question.
     // Tick the checkbox with a matching 'value' string or object.
     // If ('value' is String ) => { Ticks the matching option if correct }
@@ -45,7 +54,8 @@ export class FillerEngine {
     
     // Uses 'input' event to trigger UI changes.
     // Returns true if checkbox is ticked, else false.
-
+    
+    
     let inputFields = element.querySelectorAll(("div[role=list] div[role=listitem]"));
     inputFields.forEach(element => {
       
@@ -61,8 +71,6 @@ export class FillerEngine {
 
         if(typeof(val)==="string"){
           if(optionValue===val){
-            console.log("Ticked Value:: "+val)
-            var inputEvent = new Event('input', { bubbles: true });
             option[0].click();
             return true;
           }
@@ -70,7 +78,6 @@ export class FillerEngine {
         else if (typeof (val) === "object" && val.optionTitle===otherOptionName){
           let otherOptionTextBox = element.querySelectorAll("input");
           otherOptionTextBox[0].setAttribute("value",val.optionText);
-          var inputEvent = new Event('input', { bubbles: true });
           option[0].click();
           return true;
         }
