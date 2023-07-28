@@ -47,10 +47,10 @@ export class PromptEngine {
         // Return personalized prompt for respective fieldType 
         // Output Type : string containing type, or null if invalid fieldType
 
-        if (fieldType === QType.DATE) {
-            return "This prompt " + value;
+        if (fieldType === QType.MULTIPLE_CHOICE) {
+            return "Please provide the correct option(just option and don’t write anything else) corresponding to the right answer for the following multiple-choice question:" + value.description+value.title;
         }
-        else if (fieldType === QType.MULTIPLE_CHOICE) {
+        else if (fieldType === QType.DATE) {
             return "This prompt " + value.title;
         }
         else {
