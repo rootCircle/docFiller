@@ -10,30 +10,30 @@ let debugging = true;
 if (debugging) {
 	main();
 	debugging = false;
+}
 
-  
 
 (async () => {
 	// catch message from the extension
-	
-  browser.runtime.onMessage.addListener((message) => {
-    // if message is FILL_FORM
-    if (message.data === "FILL_FORM") {
-      // ----------------------------
-      // execute the main() function
-      main();
-      // to prevent code from simultaneous multiple execution
-      message.data = null;
-    }
-  });
+
+	browser.runtime.onMessage.addListener((message) => {
+		// if message is FILL_FORM
+		if (message.data === "FILL_FORM") {
+			// ----------------------------
+			// execute the main() function
+			main();
+			// to prevent code from simultaneous multiple execution
+			message.data = null;
+		}
+	});
 })();
 
 
 async function main() {
-  console.log("in main run() function");
-  let questions = new DocExtractorEngine().getValidQuestions();
+	console.log("in main run() function");
+	let questions = new DocExtractorEngine().getValidQuestions();
 
-  console.clear(); // Temporary code, while debugging
+	console.clear(); // Temporary code, while debugging
 	let checker = new DetectBoxType();
 	let fields = new FieldsExtractorEngine();
 	let filler = new FillerEngine();
@@ -49,7 +49,7 @@ async function main() {
 			console.log(fieldValue);
 
 			console.log(prompt.getResponse(fieldType, fieldValue));
-			
+
 			// Using Dummy Value for brevity
 			filler.fill(question, fieldType, "Dummy Value");
 		}
@@ -58,7 +58,7 @@ async function main() {
 
 }
 
-  
+
 
 
 
