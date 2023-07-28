@@ -28,6 +28,11 @@ export class FillerEngine {
           return this.fillLinearScale(element, "2");
         }, 1000);
       }
+      else if (fieldType === QType.DROPDOWN) {
+        setTimeout(() => {
+          return this.fillDropDown(element, "Option 1");
+        }, 1000);
+      }
       else {
         return false;
       }
@@ -117,6 +122,26 @@ export class FillerEngine {
     });
 
   }
+
+
+  fillDropDown(element, value) {
+  let optionElements = element.querySelectorAll("div[role=option]");
+
+  optionElements.forEach(option => {
+    console.log(option.getAttribute("data-value"));
+    if (option.getAttribute("data-value") === value) {
+      option.setAttribute("aria-selected", "true");
+      option.setAttribute("tabindex", "0");
+      option.click();
+    } else {
+      option.setAttribute("aria-selected", "false");
+      option.setAttribute("tabindex", "-1");
+    }
+  });
+  // setTimeout(() => {
+  //   document.querySelector("body").click();
+  // }, 1100);
+}
 
 }
 
