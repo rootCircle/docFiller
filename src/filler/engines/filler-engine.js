@@ -18,8 +18,8 @@ export class FillerEngine {
       else if (fieldType === QType.TEXT_EMAIL) {
         return this.fillEmail(element, value);
       }
-      else if (fieldType === QType.MULTI_CORRECT_WITH_OTHER) {
-        return this.fillCheckBox(element, ["Day 1","Day 2",{optionTitle : "Other:" , optionText : "My name is Monark Jain"}]);
+      else if (fieldType === QType.MULTI_CORRECT_WITH_OTHER || fieldType === QType.MULTI_CORRECT) {
+        return this.fillCheckBox(element, ["Sightseeing","Day 2",{optionTitle : "Other:" , optionText : "My name is Monark Jain"}]);
       }
       else {
         return false;
