@@ -43,11 +43,14 @@ export class FillerEngine {
         setTimeout(() => {
           return this.fillLinearScale(element, "2");
         }, 1000);
-      } else {
-        return false
+      } else if (fieldType === QType.DROPDOWN) {
+        setTimeout(() => {
+          return this.fillDropDown(element, "Option 1");
+        }, 1000);
       }
-    } else {
-      return false
+      else {
+        return false;
+      }
     }
   }
 
@@ -398,7 +401,7 @@ export class FillerEngine {
   }
 
 
-  fillLinearScale(element, value){
+  fillLinearScale(element, value) {
 
     // Function for interacting with 'LINEAR_SCALE' type question.
     // Tick the radio button with a matching 'value' .
@@ -412,12 +415,32 @@ export class FillerEngine {
 
     let scales = inputFields.querySelectorAll("div[role=radio]");
     scales.forEach(scale => {
-      if(scale.getAttribute("aria-label")===value){
+      if (scale.getAttribute("aria-label") === value) {
         var inputEvent = new Event('input', { bubbles: true });
         scale.click();
       }
     });
 
+  }
+
+
+  fillDropDown(element, value) {
+    let optionElements = element.querySelectorAll("div[role=option]");
+
+    optionElements.forEach(option => {
+      console.log(option.getAttribute("data-value"));
+      if (option.getAttribute("data-value") === value) {
+        option.setAttribute("aria-selected", "true");
+        option.setAttribute("tabindex", "0");
+        option.click();
+      } else {
+        option.setAttribute("aria-selected", "false");
+        option.setAttribute("tabindex", "-1");
+      }
+    });
+    // setTimeout(() => {
+    //   document.querySelector("body").click();
+    // }, 1100);
   }
 
 }
