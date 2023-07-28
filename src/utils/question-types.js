@@ -6,6 +6,7 @@ const QType = {
   TEXT_EMAIL: "Text Email",
   TEXT_NUMERIC: "Text Numeric",
   TEXT_TEL: "Text Telephonic",
+  TEXT_URL: "Text URL",
   MULTI_CORRECT: "Multi Correct",
   MULTI_CORRECT_WITH_OTHER: "MultiCorrect With Other",
   MULTIPLE_CHOICE: "Multiple Choice",

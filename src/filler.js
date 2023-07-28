@@ -3,12 +3,15 @@ import { FillerEngine } from "./filler/engines/filler-engine";
 import { DocExtractorEngine } from "./filler/engines/doc-extractor-engine";
 import { FieldsExtractorEngine } from "./filler/engines/fields-extractor-engine";
 import { DetectBoxType } from "./filler/detectors/detect-box-type";
+import { PromptEngine } from "./filler/engines/prompt-engine";
+import GPTEngine from "./utils/gpt-engines";
 
 let debugging = true;
 if (debugging) {
 	main();
 	debugging = false;
-}
+
+  
 
 (async () => {
 	// catch message from the extension
@@ -27,26 +30,32 @@ if (debugging) {
 
 
 async function main() {
-	console.log("in main run() function");
-      let questions = new DocExtractorEngine().getValidQuestions();
+  console.log("in main run() function");
+  let questions = new DocExtractorEngine().getValidQuestions();
 
-      console.clear(); // Temporary code, while debugging
-      let checker = new DetectBoxType();
-      let fields = new FieldsExtractorEngine();
-      let filler = new FillerEngine();
+  console.clear(); // Temporary code, while debugging
+	let checker = new DetectBoxType();
+	let fields = new FieldsExtractorEngine();
+	let filler = new FillerEngine();
+	let prompt = new PromptEngine(GPTEngine.CHATGPT);
 
-      questions.forEach(question => {
-        console.log(question);
+	questions.forEach(question => {
+		console.log(question)
+		let fieldType = checker.detectType(question);
+		console.log("Field Type : " + fieldType);
+		console.log("Fields ↴")
+		if (fieldType !== null) {
+			let fieldValue = fields.getFields(question, fieldType);
+			console.log(fieldValue);
 
-        let fieldType = checker.detectType(question);
-        console.log("Field Type : " + fieldType);
-        console.log("Fields ↴")
-        console.log(fields.getFields(question, fieldType));
+			console.log(prompt.getResponse(fieldType, fieldValue));
+			
+			// Using Dummy Value for brevity
+			filler.fill(question, fieldType, "Dummy Value");
+		}
+		console.log();
+	});
 
-        // Using Dummy Value for brevity
-        filler.fill(question, fieldType, "Dummy Value");
-        console.log();
-      });
 }
 
   
