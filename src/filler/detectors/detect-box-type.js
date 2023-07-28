@@ -29,6 +29,7 @@ export class DetectBoxType {
       [QType.TEXT_EMAIL]: this.isTextEmail(element),
       [QType.TEXT_NUMERIC]: this.isTextNumeric(element),
       [QType.TEXT_TEL]: this.isTextTelephone(element),
+      [QType.TEXT_URL]: this.isTextURL(element),
       [QType.MULTI_CORRECT]: this.isMultiCorrect(element),
       [QType.MULTI_CORRECT_WITH_OTHER]: this.isMultiCorrectWithOther(element),
       [QType.LINEAR_SCALE]: this.isLinearScale(element),

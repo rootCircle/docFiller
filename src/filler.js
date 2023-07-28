@@ -14,15 +14,16 @@ async function run() {
 	let filler = new FillerEngine();
 
 	questions.forEach(question => {
-		console.log(question);
-
+		console.log(question)
 		let fieldType = checker.detectType(question);
 		console.log("Field Type : " + fieldType);
 		console.log("Fields ↴")
-		console.log(fields.getFields(question, fieldType));
-
-		// Using Dummy Value for brevity
-		filler.fill(question, fieldType, "Dummy Value");
+		if (fieldType !== null) {
+			console.log(fields.getFields(question, fieldType));
+			
+			// Using Dummy Value for brevity
+			filler.fill(question, fieldType, "Dummy Value");
+		}
 		console.log();
 	});
 }
