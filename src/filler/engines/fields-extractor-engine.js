@@ -18,12 +18,24 @@ export class FieldsExtractorEngine {
           // Get options based on the field type and append them to the 'fields' object
     
 
-     // Extracting the options if the field type is MultiCorrect With Other or MultiCorrect
-    if (fieldType === QType.MULTI_CORRECT_WITH_OTHER || fieldType === QType.MULTI_CORRECT) {
-      //Handles both cases - `MultiCorrect With Other` and `MultiCorrect`
+     // Extracting the options if the field type is MultiCorrect
+    if (fieldType === QType.MULTI_CORRECT) {
+      //Handles `MultiCorrect`
       //We get Options in an array
       fields.options = this.getOptions_MULTI_CORRECT(element);
   }
+
+
+    // Extracting the options if the field type is MultiCorrect_WITH_OTHER
+  else if (fieldType === QType.MULTI_CORRECT_WITH_OTHER) {
+    //Handles - `MultiCorrect With Other`.
+    // We get options in the form of an OBJECT which has two properties
+      //1. options - which contain options array
+      //2. other - which contain `other:` which need to deal in seeperate way to ask Chatbot
+    fields.options = this.getOptions_MULTI_CORRECT_WITH_OTHER(element).options;
+    fields.other = this.getOptions_MULTI_CORRECT_WITH_OTHER(element).other;
+  }
+
 
      // Extracting the options if the field type is Dropdown
   else if (fieldType === QType.DROPDOWN) {
@@ -31,26 +43,39 @@ export class FieldsExtractorEngine {
       fields.options = this.getOptions_Dropdown(element);
   }
 
-  // Extracting the options if the field type is 'Multiple Choice With Other' or 'Multiple Choice'
-  if (fieldType === QType.MULTIPLE_CHOICE_WITH_OTHER || fieldType === QType.MULTIPLE_CHOICE) {
-      // We get options in the form of an array
-      fields.options = this.getOptions_MULTIPLE_CHOICE(element);
+
+   // Extracting the options if the field type is 'Multiple Choice'
+  else if (fieldType === QType.MULTIPLE_CHOICE) {
+    // We get options in the form of an array
+    fields.options = this.getOptions_MULTIPLE_CHOICE(element);
+  
+}
+
+
+  // Extracting the options if the field type is 'Multiple Choice With Other'.
+  if (fieldType === QType.MULTIPLE_CHOICE_WITH_OTHER) {
+      // We get options in the form of an OBJECT which has two properties
+      //1. options - which contain options array
+      //2. other - which contain `other:` which need to deal in seeperate way to ask Chatbot
+    fields.options = this.getOptions_MULTIPLE_CHOICE_WITH_OTHER(element).options;
+    fields.other = this.getOptions_MULTIPLE_CHOICE_WITH_OTHER(element).other;
   }
+
 
   // Extracting the options if the field type is 'Linear Scale'
   if (fieldType === QType.LINEAR_SCALE) {
-      //We get options in an array
+      //We get options in an object {filteredoptions,filterLowerUpper}
       //In Linear_Scale Left and Right Bounds are given and options are distributed uniformally between these bounds.
       //These elements which we are saying Upper_bound and Lower_bound may be strings or characters.
       
       /*
       Note
-      1.ReturnedArray[0] is lower bound
-      2.Last index value i.e ReturnedArray[ReturnedArray.size()-1] is upper bound
-      3.In between will be options whick need to be tick.
+      We added one more attribute to fields `lowerUpperBounds` whose value will have an array containing LowerBound,UpperBound.
       */
-      fields.options = this.getOptions_LINEAR_SCALE(element);
+      fields.options = this.getOptions_LINEAR_SCALE(element).filteredoptions;
+      fields.lowerUpperBounds = this.getOptions_LINEAR_SCALE(element).filterLowerUpper;
   }
+
 
   // Extracting the options if the field type is `Checkbox Grid` or `Multiple Choice Grid`
   if (fieldType === QType.CHECKBOX_GRID || fieldType === QType.MULTIPLE_CHOICE_GRID) {
@@ -61,6 +86,8 @@ export class FieldsExtractorEngine {
   //Returning the object fields.It contains title , description , options (if that question has) keys .
 		return fields;
 	}
+
+
 
 	// Testing on Different Forms required
 	getTitle(element) {
@@ -88,8 +115,9 @@ export class FieldsExtractorEngine {
 		return content.trimEnd();
 	}
 
-	// Testing on Different Forms required
 
+
+	// Testing on Different Forms required
 	getDescription(element) {
 		// Input Type: DOM Object
 		// Extracts the description of the question
@@ -123,7 +151,6 @@ export class FieldsExtractorEngine {
 
 
 	// Functions for Extracting Options
-
     //Extracting the options for field type = MultiCorrect With Other or MultiCorrect
     getOptions_MULTI_CORRECT(element)
     {
@@ -149,6 +176,37 @@ export class FieldsExtractorEngine {
         }
 
 
+    getOptions_MULTI_CORRECT_WITH_OTHER(element)
+    {
+      // Input Type: DOM Object
+        // Extracts the options of the question
+        // Tweak : - The extraction is based on the DOM tree
+        //         - The required node is obtained by selecting the span as options were inside them , also these span has dir="auto"
+        // Return Type : OBJECT which has two properties
+                   //1. options - which contain options array
+                  //2. other - which contain `other:` which need to deal in seeperate way to ask Chatbot 
+                          //it will contain an input field and in case no option match , we need to write our answer there
+
+      const optionLabels = element.querySelectorAll('span[dir="auto"]');
+      if (!optionLabels || optionLabels.length === 0) {
+        // If no option labels are found, return an empty array
+        return [];
+      }
+      
+          const options = [];
+          //we will go through all spans and extract its text content and store in our answer array.
+        optionLabels.forEach((label) => {
+         options.push(label.textContent.trim());
+         });
+       // Remove the last option and add 'Other' field in the object
+      const lastOptionIndex = options.length - 1;
+      const otherOption = options.splice(lastOptionIndex, 1)[0];
+
+      return { options, other: otherOption };
+          
+        }
+
+
         //Extracting the options for field type = MultipleChoice With Other or MultipleChoice
     getOptions_MULTIPLE_CHOICE(element){
          // Input Type: DOM Object
@@ -169,52 +227,88 @@ export class FieldsExtractorEngine {
         options.push(label.textContent.trim());
         });
 
+        
+        
   return options;
           }
 
-          //Extracting the options for field type = LinearScale
-    getOptions_LINEAR_SCALE(element)
-        {
-             // Input Type: DOM Object
-        // Extracts the options of the question
-        // Tweak : - The extraction is based on the DOM tree
-        //         - The required node for Lower and Upper bound is obtained by selecting the span whose role="presentation" and then need to traverse more 
-                     //since no attribute can be found which can help
-        //         -Option are present in in divs inside elements which has dir="auto".
-        // Return Type : Array (containing option's data) =>null if no options are present
-        
-            const elementsWithHierarchy = element.querySelector('span[role="presentation"]').querySelectorAll('div > div:last-child > div:last-child');
-            let lowerBound = null;
-            let upperBound = null;
-            //In elementWithHierarchy many nodes are present but we are sure 1st node is Lower bound and last node is Upper bound.
-            elementsWithHierarchy.forEach((el) => {
-             const textContent = el.textContent.trim();
 
-             if (lowerBound === null && textContent !== '') {
-             lowerBound = textContent;             //Assigning lowerBound with 1st node
-            }
+          getOptions_MULTIPLE_CHOICE_WITH_OTHER(element){
+            // Input Type: DOM Object
+           // Extracts the options of the question
+           // Tweak : - The extraction is based on the DOM tree
+           //         - The required node is obtained by selecting the span as options were inside them , also these span has dir="auto"
+            // Return Type : OBJECT which has two properties
+                   //1. options - which contain options array
+                  //2. other - which contain `other:` which need to deal in seeperate way to ask Chatbot 
+                          //it will contain an input field and in case no option match , we need to write our answer there
+
+           const optionLabels = element.querySelectorAll('span[dir="auto"]');
+           if (!optionLabels || optionLabels.length === 0) {
+             // If no option labels are found, return an empty array
+             return [];
+           }
+             
+               const options = [];
+                //we will go through all spans and extract its text content and store in our answer array.
+           optionLabels.forEach((label) => {
+           options.push(label.textContent.trim());
+           });
+   
+           
+           // Remove the last option and add 'Other' field in the object
+      const lastOptionIndex = options.length - 1;
+      const otherOption = options.splice(lastOptionIndex, 1)[0];
+
+      return { options, other: otherOption };
+     
+             }
+
+
+  //Extracting the options for field type = LinearScale
+  getOptions_LINEAR_SCALE(element)
+     {
+     // Input Type: DOM Object
+    // Extracts the options of the question
+    // Tweak : - The extraction is based on the DOM tree
+    //         - The required node for Lower and Upper bound is obtained by selecting the span whose role="presentation" and then need to traverse more 
+                 //since no attribute can be found which can help
+    //         -Option are present in in divs inside elements which has dir="auto".
+    // Return Type : Object containing two arrays - {filterLowerUpper,filteredoptions}
+                  //filterLowerUpper- ArraySize=2 , contain lowerbound , upperbound
+                  //filteredoptions- It will contain options.
+    
+    const elementsWithHierarchy = element.querySelector('span[role="presentation"]').querySelectorAll('div > div:last-child > div:last-child');
+    let lowerBound = null;
+    let upperBound = null;
+    //In elementWithHierarchy many nodes are present but we are sure 1st node is Lower bound and last node is Upper bound.
+    elementsWithHierarchy.forEach((el) => {
+     const textContent = el.textContent.trim();
+     if (lowerBound === null && textContent !== '') {
+     lowerBound = textContent;             //Assigning lowerBound with 1st node
+    }
 
         else if (lowerBound !== null && textContent !== '') {
              upperBound = textContent;             //Assigning upperBound with each node we are at during traversal so last node will be assigned to upperBound. 
             }
 
            });
-      
+
+      //Storing options in `options` array.
         const optionElements = element.querySelectorAll('div[dir="auto"]');
         const options = Array.from(optionElements).map((optionElement) => optionElement.textContent.trim());
       
-        // Combining linear scale data into an array
-        // The linearScaleData array is constructed by spreading the values of lowerBound, followed by all the options,
-        // and finally, adding upperBound to the array. This results in a single array containing all the elements needed to
-        // represent a linear scale, with the lower bound at the beginning, the options in the middle, and the upper bound at the end.
-        const linearScaleData = [lowerBound, ...options, upperBound];
+        // Storing LowerBound and UpperBound data
+        // lowerUpperBound array - the lower bound at the beginning (0th index) , and the upper bound at the end (1st index)
+        const lowerUpperBound = [lowerBound,upperBound];
       
         // Filter out any null or empty string elements from the array
         //This was creating an unexpected problem!
-        const filteredLinearScaleData = linearScaleData.filter(item => item !== null && item !== '');
+        const filteredoptions = options.filter(item => item !== null && item !== '');
+        const filterLowerUpper = lowerUpperBound.filter(item => item !== null && item !== '');
       
-        return filteredLinearScaleData;
-}
+        return {filterLowerUpper,filteredoptions};
+    }
 
 
     //Extracting the options for field type = Multiple Choice Grid or Checkbox Grid.
@@ -231,6 +325,7 @@ getOptions_GRID(element) {
 
     //No property can be found so need to traverse this way only!
     const path = "div:first-child > div:first-child > div:nth-child(2) > div:first-child > div:nth-child(2) > div";
+
 
     //After getting to this path,
     //its first child contains a div which contains all columns.
@@ -279,7 +374,7 @@ getOptions_GRID(element) {
           }
         });
         
-        //All options were extracted but 1st elemnt was choose so removing that.
+        //All options were extracted but 1st elemnt was `choose` so removed that.
         // Remove the first element ("Choose" option) from the array
         const optionsWithoutChoose = optionTexts.slice(1);
         return optionsWithoutChoose;
