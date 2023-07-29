@@ -3,38 +3,63 @@ import { FillerEngine } from "./filler/engines/filler-engine";
 import { DocExtractorEngine } from "./filler/engines/doc-extractor-engine";
 import { FieldsExtractorEngine } from "./filler/engines/fields-extractor-engine";
 import { DetectBoxType } from "./filler/detectors/detect-box-type";
+import { PromptEngine } from "./filler/engines/prompt-engine";
+import GPTEngine from "./utils/gpt-engines";
 
-async function run() {
-  console.log("in main run() function");
-  let questions = new DocExtractorEngine().getValidQuestions();
+let debugging = true;
+if (debugging) {
+	main();
+	debugging = false;
+}
 
-  console.clear(); // Temporary code, while debugging
+
+(async () => {
+	// catch message from the extension
+
+	browser.runtime.onMessage.addListener((message) => {
+		// if message is FILL_FORM
+		if (message.data === "FILL_FORM") {
+			// ----------------------------
+			// execute the main() function
+			main();
+			// to prevent code from simultaneous multiple execution
+			message.data = null;
+		}
+	});
+})();
+
+
+async function main() {
+	console.log("in main run() function");
+	let questions = new DocExtractorEngine().getValidQuestions();
+
+	console.clear(); // Temporary code, while debugging
 	let checker = new DetectBoxType();
 	let fields = new FieldsExtractorEngine();
 	let filler = new FillerEngine();
+	let prompt = new PromptEngine(GPTEngine.CHATGPT);
 
 	questions.forEach(question => {
-		console.log(question);
-
+		console.log(question)
 		let fieldType = checker.detectType(question);
 		console.log("Field Type : " + fieldType);
 		console.log("Fields ↴")
-		console.log(fields.getFields(question, fieldType));
+		if (fieldType !== null) {
+			let fieldValue = fields.getFields(question, fieldType);
+			console.log(fieldValue);
+
+			console.log(prompt.getResponse(fieldType, fieldValue));
 
 		// Using Dummy Value for brevity
 		filler.fill(question, fieldType, "Dummy Value");
-		console.log(fields.getQuestionOptions(question));
 		console.log();
-
-	  });
-	
+	});
 }
 
 
 
-// Calling main function
-console.log("program ran now");
-run();
+
+
 
 ///////////////////////////////////////////////////////////////////
 // Dead Code down here. (Might be used later)
