@@ -53,7 +53,7 @@ async function main() {
 		// Using Dummy Value for brevity
 		filler.fill(question, fieldType, "Dummy Value");
 		console.log();
-	});
+	}});
 }
 
 
