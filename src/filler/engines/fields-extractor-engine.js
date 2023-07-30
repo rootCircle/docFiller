@@ -142,7 +142,7 @@ export class FieldsExtractorEngine {
         content += element.textContent + "\n";
       }
     });
-    console.log("checkpoint1");
+    // console.log("checkpoint1");
     // Remove trailing whitespace at the end
     return content.trimEnd();
   }
