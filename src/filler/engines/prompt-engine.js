@@ -50,10 +50,10 @@ export class PromptEngine {
         if (fieldType === QType.MULTIPLE_CHOICE) {
             return "Please provide the correct option(just option and don’t write anything else) corresponding to the right answer for the following multiple-choice question:" + value.description+value.title;
         }
-        else if (fieldType === QType.DATE) {
-            return "This prompt " + value.title;
-        }else if(fieldType === QType.PARAGRAPH){
+        else if(fieldType === QType.PARAGRAPH){
             return "Please provide a detailed response in the paragraph form for the following question: "+value.description+value.title;
+        }else if (fieldType === QType.DATE_WITHOUT_YEAR) {
+            return "Please enter the date (month and day)-(in format MM/DD) -(only return MM/DD date , nothing else) that best corresponds to your response for the following question: " + +value.description+value.title;
         }
         else {
             return null;
