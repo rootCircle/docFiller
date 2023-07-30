@@ -52,6 +52,8 @@ export class PromptEngine {
         }
         else if (fieldType === QType.DATE) {
             return "This prompt " + value.title;
+        }else if(fieldType === QType.PARAGRAPH){
+            return "Please provide a detailed response in the paragraph form for the following question: "+value.description+value.title;
         }
         else {
             return null;
