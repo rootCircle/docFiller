@@ -51,7 +51,7 @@ async function main() {
 			console.log(prompt.getResponse(fieldType, fieldValue));
 
 			// Using Dummy Value for brevity
-			filler.fill(question, fieldType, "Dummy Value");
+			filler.fill(question, fieldType,"1");
 		}
 		console.log();
 	});
