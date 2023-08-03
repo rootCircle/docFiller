@@ -20,7 +20,7 @@ export class FillerEngine {
       }
       else if (fieldType === QType.MULTI_CORRECT_WITH_OTHER) {
         setTimeout(() => {
-          return this.fillCheckBox(element, ["Day 1","Day 2",{optionTitle : "Other:" , optionText : "My name is Monark Jain"}]);
+          return this.fillCheckBox(element, ["Day 1", "Day 2", { optionTitle: "Other:", optionText: "My name is Monark Jain" }]);
         }, 1000);
       }
       else if (fieldType === QType.LINEAR_SCALE) {
@@ -30,7 +30,12 @@ export class FillerEngine {
       }
       else if (fieldType === QType.DROPDOWN) {
         setTimeout(() => {
-          return this.fillDropDown(element, "Option 3");
+          return this.fillDropDown(element, "Option 2");
+        }, 1000);
+      }
+      else if (fieldType === QType.CHECKBOX_GRID) {
+        setTimeout(() => {
+          return this.fillCheckboxGrid(element, [{ row: "Row 1", Optionvalues: ["Column 1", "Column 3"] }, { row: "Row 2", Optionvalues: ["Column 2"] }]);
         }, 1000);
       }
       else {
@@ -45,16 +50,16 @@ export class FillerEngine {
   fillText(element, value) {
     // return true if value is successfully written, else false
     return true;
-}
+  }
 
   fillEmail(element, value) {
-      // return true if value is successfully written, else false
-      return true;
+    // return true if value is successfully written, else false
+    return true;
   }
 
 
   async fillCheckBox(element, value) {
-    
+
     //! To avoid any unwanted and incomplete answer this sleep function is necessary 
     //! to avoid the race around between our answer and default NULL value
     await sleep(1000);
@@ -63,14 +68,14 @@ export class FillerEngine {
     // Tick the checkbox with a matching 'value' string or object.
     // If ('value' is String ) => { Ticks the matching option if correct }
     // If ('value' is Object ) => { Ticks the Other option and enters the text in input box }
-    
+
     // Uses 'input' event to trigger UI changes.
     // Returns true if checkbox is ticked, else false.
-    
-    
+
+
     let inputFields = element.querySelectorAll(("div[role=list] div[role=listitem]"));
     inputFields.forEach(element => {
-      
+
       let option = element.querySelectorAll("div[role=checkbox]");
       let optionValue = option[0].getAttribute("aria-label");
 
@@ -81,19 +86,18 @@ export class FillerEngine {
 
       value.forEach(val => {
 
-        if(typeof(val)==="string"){
-          if(optionValue===val){
+        if (typeof (val) === "string") {
+          if (optionValue === val) {
             option[0].click();
             return true;
           }
         }
-        else if (typeof (val) === "object" && val.optionTitle===otherOptionName){
+        else if (typeof (val) === "object" && val.optionTitle === otherOptionName) {
           let otherOptionTextBox = element.querySelectorAll("input");
-          otherOptionTextBox[0].setAttribute("value",val.optionText);
+          otherOptionTextBox[0].setAttribute("value", val.optionText);
           option[0].click();
           return true;
         }
-        
       });
     });
 
@@ -101,12 +105,12 @@ export class FillerEngine {
   }
 
 
-  fillLinearScale(element, value){
+  fillLinearScale(element, value) {
 
     // Function for interacting with 'LINEAR_SCALE' type question.
     // Tick the radio button with a matching 'value' .
     // Searched the value using "role" and "aria-label" attributes
-    
+
     // Uses 'input' event to trigger UI changes.
     // Returns true if checkbox is ticked, else false.
 
@@ -115,9 +119,10 @@ export class FillerEngine {
 
     let scales = inputFields.querySelectorAll("div[role=radio]");
     scales.forEach(scale => {
-      if(scale.getAttribute("aria-label")===value){
+      if (scale.getAttribute("aria-label") === value) {
         var inputEvent = new Event('input', { bubbles: true });
         scale.click();
+        return true;
       }
     });
 
@@ -125,23 +130,46 @@ export class FillerEngine {
 
 
   fillDropDown(element, value) {
-  let optionElements = element.querySelectorAll("div[role=option]");
+    let optionElements = element.querySelectorAll("div[role=option]");
 
-  optionElements.forEach(option => {
-    console.log(option.getAttribute("data-value"));
-    if (option.getAttribute("data-value") === value) {
-      option.setAttribute("aria-selected", "true");
-      option.setAttribute("tabindex", "0");
-      option.click();
-    } else {
-      option.setAttribute("aria-selected", "false");
-      option.setAttribute("tabindex", "-1");
-    }
-  });
-  // setTimeout(() => {
-  //   document.querySelector("body").click();
-  // }, 1100);
-} 
+    optionElements.forEach(option => {
+      if (option.getAttribute("data-value") === value) {
+        option.setAttribute("aria-selected", "true");
+        option.setAttribute("tabindex", "0");
+        option.click();
+        return true;
+      } else {
+        option.setAttribute("aria-selected", "false");
+        option.setAttribute("tabindex", "-1");
+      }
+    });
+
+    return false;
+  }
+
+
+
+
+  fillCheckboxGrid(element,value){
+    let rows = element.querySelectorAll("div[role=group]");
+    rows.forEach(row => {
+      let rowName = row.querySelector("div").innerHTML;
+      value.forEach(object => {
+        if(object.row===rowName){
+          let columnOptions = row.querySelectorAll("div[role=checkbox]");
+          columnOptions.forEach(columnCheckbox => {
+            let columnValue = columnCheckbox.getAttribute("data-answer-value");
+            object.Optionvalues.forEach(val => {
+              if(columnValue===val){
+                columnCheckbox.click();
+              }
+            });
+          });
+
+        }
+      });
+    });
+  }
 
 }
 
