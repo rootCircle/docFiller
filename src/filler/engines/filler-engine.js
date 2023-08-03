@@ -25,12 +25,12 @@ export class FillerEngine {
       }
       else if (fieldType === QType.LINEAR_SCALE) {
         setTimeout(() => {
-          return this.fillLinearScale(element, "2");
+          return this.fillLinearScale(element, "1");
         }, 1000);
       }
       else if (fieldType === QType.DROPDOWN) {
         setTimeout(() => {
-          return this.fillDropDown(element, "Option 1");
+          return this.fillDropDown(element, "Option 3");
         }, 1000);
       }
       else {
@@ -141,7 +141,7 @@ export class FillerEngine {
   // setTimeout(() => {
   //   document.querySelector("body").click();
   // }, 1100);
-}
+} 
 
 }
 
