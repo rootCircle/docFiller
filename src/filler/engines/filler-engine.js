@@ -135,6 +135,12 @@ export class FillerEngine {
 
 
   fillDropDown(element, value) {
+    // Input Type : DOM object { Drop-Down List }
+    // Checks if given gpt response matches any Dropdown option or not
+    // Tweak : A dropdown has many div(s) which have role = option in it
+    //         if for each such div, the value matches the option is selected
+    // Return Type : Boolean
+
     let optionElements = element.querySelectorAll("div[role=option]");
 
     optionElements.forEach(option => {
@@ -156,6 +162,11 @@ export class FillerEngine {
 
 
   fillCheckboxGrid(element,value){
+    // Input Type : DOM object { Multicorrect Checkbox Grid }
+    // Checks if given gpt response matches any option or not
+    // Tweak : A grid has many div(s) which have role = group in it
+    //         if for each such div, the value matches the option is selected
+
     let rows = element.querySelectorAll("div[role=group]");
     rows.forEach(row => {
       let rowName = row.querySelector("div").innerHTML;
@@ -180,6 +191,11 @@ export class FillerEngine {
 
 
   fillMultipleChoiceGrid(element,value){
+    // Input Type : DOM object { Multiple Choice List }
+    // Checks if given gpt response matches any option or not
+    // Tweak : A grid has many span(s) which have role = presentation in it
+    //         if for each such span, the value matches the option is selected
+
     let rows = element.querySelectorAll("div[role=radiogroup] span[role=presentation]");
     rows.forEach(row => {
       let rowName = row.querySelector("div").innerHTML;
