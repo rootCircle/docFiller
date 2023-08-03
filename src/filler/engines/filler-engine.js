@@ -38,6 +38,11 @@ export class FillerEngine {
           return this.fillCheckboxGrid(element, [{ row: "Row 1", Optionvalues: ["Column 1", "Column 3"] }, { row: "Row 2", Optionvalues: ["Column 2"] }]);
         }, 1000);
       }
+      else if (fieldType === QType.MULTIPLE_CHOICE_GRID) {
+        setTimeout(() => {
+          return this.fillMultipleChoiceGrid(element, [{ row: "Row 1", Optionvalue: "Column 1" }, { row: "Row 2", Optionvalue: "Column 2" }, { row: "Brooooo", Optionvalue: "Column 2" }]);
+        }, 1000);
+      }
       else {
         return false;
       }
@@ -164,6 +169,28 @@ export class FillerEngine {
                 columnCheckbox.click();
               }
             });
+          });
+
+        }
+      });
+    });
+  }
+
+
+
+
+  fillMultipleChoiceGrid(element,value){
+    let rows = element.querySelectorAll("div[role=radiogroup] span[role=presentation]");
+    rows.forEach(row => {
+      let rowName = row.querySelector("div").innerHTML;
+      value.forEach(object => {
+        if(object.row===rowName){
+          let columnOptions = row.querySelectorAll("div[role=radio]");
+          columnOptions.forEach(columnCheckbox => {
+            let columnValue = columnCheckbox.getAttribute("data-value");
+              if(columnValue===object.Optionvalue){
+                columnCheckbox.click();
+              }
           });
 
         }
