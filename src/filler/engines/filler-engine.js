@@ -41,11 +41,11 @@ export class FillerEngine {
         return this.fillDateTimeWithoutYear(fieldValue, '22-01-01-01')
       } else if (fieldType === QType.LINEAR_SCALE) {
         setTimeout(() => {
-          return this.fillLinearScale(element, "2");
+          return this.fillLinearScale(element, "1");
         }, 1000);
       } else if (fieldType === QType.DROPDOWN) {
         setTimeout(() => {
-          return this.fillDropDown(element, "Option 1");
+          return this.fillDropDown(element, "Option 3");
         }, 1000);
       }
       else {
@@ -427,20 +427,20 @@ export class FillerEngine {
   fillDropDown(element, value) {
     let optionElements = element.querySelectorAll("div[role=option]");
 
-    optionElements.forEach(option => {
-      console.log(option.getAttribute("data-value"));
-      if (option.getAttribute("data-value") === value) {
-        option.setAttribute("aria-selected", "true");
-        option.setAttribute("tabindex", "0");
-        option.click();
-      } else {
-        option.setAttribute("aria-selected", "false");
-        option.setAttribute("tabindex", "-1");
-      }
-    });
-    // setTimeout(() => {
-    //   document.querySelector("body").click();
-    // }, 1100);
-  }
+  optionElements.forEach(option => {
+    console.log(option.getAttribute("data-value"));
+    if (option.getAttribute("data-value") === value) {
+      option.setAttribute("aria-selected", "true");
+      option.setAttribute("tabindex", "0");
+      option.click();
+    } else {
+      option.setAttribute("aria-selected", "false");
+      option.setAttribute("tabindex", "-1");
+    }
+  });
+  // setTimeout(() => {
+  //   document.querySelector("body").click();
+  // }, 1100);
+} 
 
 }
