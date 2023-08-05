@@ -84,9 +84,70 @@ export class FieldsExtractorEngine {
         //This object will contain 2 arrays 'rowsArray' and `columnsArray` which contains `row values` and `column values` respectively
         return this.getOptions_MULTIPLECHOICEGRID(element);
 
-        // Extracting the options if the field type is Dropdown
+      // Extracting the options if the field type is Dropdown
       case QType.DROPDOWN:
         return this.getOptions_Dropdown(element);
+
+      // Extracting the options if the field type is 'Text'.
+      case QType.TEXT:
+        //
+        return this.getDom_TEXT(element);
+
+      // Extracting the options if the field type is 'Paragraph'.
+      case QType.PARAGRAPH:
+        return this.getDom_paragraph(element);
+
+      // Extracting the options if the field type is 'Email'.
+      case QType.TEXT_EMAIL:
+        return this.getDom_email(element);
+
+      // Extracting the options if the field type is 'Text Numeric'.
+      case QType.TEXT_NUMERIC:
+        return this.getDom_TEXT(element);
+
+      // Extracting the options if the field type is 'Text Telephonic'.
+      case QType.TEXT_TEL:
+        return this.getDom_texttel(element);
+
+      // Extracting the options if the field type is 'Text URL'.
+      case QType.TEXT_URL:
+        return this.getDom_texturl(element);
+
+      // Extracting the options if the field type is 'Date'.
+      case QType.DATE:
+        return this.getDom_date(element);
+
+      // Extracting the options if the field type is 'Date And Time'.
+      case QType.DATE_AND_TIME:
+        return this.getDom_dateandtime(element);
+
+      // Extracting the options if the field type is 'Time'.
+      case QType.TIME:
+        return this.getDom_time(element);
+
+      // Extracting the options if the field type is 'Duration'.
+      case QType.DURATION:
+        return this.getDom_duration(element);
+
+      // Extracting the options if the field type is 'Date without Year'.
+      case QType.DATE_WITHOUT_YEAR:
+        return this.getDom_date_without_year(element);
+
+      // Extracting the options if the field type is 'Date without Year with Time'.
+      case QType.DATE_TIME_WITHOUT_YEAR:
+        return this.getDom_date_time_without_year(element);
+
+      // Extracting the options if the field type is 'Date with Time and Meridiem'.
+      case QType.DATE_TIME_WITH_MERIDIEM:
+        return this.getDom_date_time_with_meridiem(element);
+
+      // Extracting the options if the field type is 'Time and Meridiem'.
+      case QType.TIME_WITH_MERIDIEM:
+        return this.getDom_time_with_meridiem(element);
+
+      // Extracting the options if the field type is 'Date without Year with Time and Meridiem'.
+      case QType.DATE_TIME_WITH_MERIDIEM_WITHOUT_YEAR:
+        return this.getDom_date_time_with_meridiem_withoutyear(element);
     }
   }
 
@@ -388,7 +449,7 @@ export class FieldsExtractorEngine {
     }
 
     // Storing LowerBound and UpperBound data
-    const lowerUpperBound = {lowerBound, upperBound};
+    const lowerUpperBound = { lowerBound, upperBound };
 
     // Filter out any null or empty string elements from the array.
     // const filterLowerUpper = lowerUpperBound.filter(item => item !== null && item !== '');
@@ -552,5 +613,131 @@ export class FieldsExtractorEngine {
       }
     }
     return { options: options };
+  }
+
+  getDom_TEXT(element) {
+    // Input Type: DOM Object
+    // Extracts the Dom object from Question type ="TEXT"
+    // Return Type :Returns the input field.
+    let inputField = element.querySelectorAll('input[type=text]')
+    return { dom: inputField };
+  }
+
+  getDom_email(element) {
+    // Input Type: DOM Object
+    // Extracts the Dom object from Question type ="TEXT_EMAIL"
+    // Return Type :Returns the input field.
+
+    let inputField = element.querySelectorAll('input[type=text], input[type=email]')
+    return { dom: inputField };
+  }
+  getDom_paragraph(element) {
+    // Input Type: DOM Object
+    // Extracts the Dom object from Question type ="PARAGRAPH"
+    // Return Type :Returns the input field.
+
+    let inputField = element.querySelectorAll('textarea')
+    return { dom: inputField };
+  }
+  getDom_date(element) {
+    // Input Type: DOM Object
+    // Extracts the Dom object from Question type ="DATE"
+    // Return Type :Returns the input field.Its returns input field as a Nodelist
+    //Its 0th index give Month_field , 1st index give Day_field , 2nd index has Year_field
+    let inputField = element.querySelectorAll('input[type=text], input[type=date]')
+    return { dom: inputField };
+  }
+  getDom_dateandtime(element) {
+    // Input Type: DOM Object
+    // Extracts the Dom object from Question type ="DATE_AND_TIME"
+    // Return Type :Returns the input field.Its return in form of a Nodelist
+    //Its 0th index give Month_field , 1st index give Day_field , 2nd index has Year_field , 3rd index give Hour_field , 4th index give Minute_field
+
+    let inputField = element.querySelectorAll('input[type=text], input[type=date]')
+    return { dom: inputField };
+  }
+  getDom_duration(element) {
+    // Input Type: DOM Object
+    // Extracts the Dom object from Question type ="DURATION"
+    // Return Type :Returns the input field.Its return in form of Nodelist 
+    //Its 0th index give Hour_field , 1st index give Minute_field , 2nd index has Seconds field
+    let inputField = element.querySelectorAll('input[type=text]')
+    return { dom: inputField };
+  }
+  getDom_date_without_year(element) {
+    // Input Type: DOM Object
+    // Extracts the Dom object from Question type ="DATE_WITHOUT_YEAR"
+    // Return Type :Returns the input field.Its return in form of Nodelist 
+    //Its 0th index give month_field , 1st index give Day_field
+    let inputField = element.querySelectorAll('input[type=text], input[type=date]')
+    return { dom: inputField };
+  }
+  getDom_date_time_without_year(element) {
+    // Input Type: DOM Object
+    // Extracts the Dom object from Question type ="DATE_WITHOUT_YEAR"
+    // Return Type :Returns the input field.Its return in form of Nodelist 
+    //Its 0th index give Month_field , 1st index give Day_field , 2nd index give Hour_field , 3rd index give Minute_field
+    let inputField = element.querySelectorAll('input[type=text], input[type=date]')
+    return { dom: inputField };
+  }
+  getDom_textNumeric(element) {
+    // Input Type: DOM Object
+    // Extracts the Dom object from Question type ="TEXT_NUMERI"
+    // Return Type :Returns the input field.
+    let inputField = element.querySelectorAll('input[type=text]')
+    return { dom: inputField };
+  }
+  getDom_texttel(element) {
+    // Input Type: DOM Object
+    // Extracts the Dom object from Question type ="TEXT_TEL"
+    // Return Type :Returns the input field.
+    let inputField = element.querySelectorAll('input[type=text]')
+    return { dom: inputField };
+  }
+  getDom_texturl(element) {
+    // Input Type: DOM Object
+    // Extracts the Dom object from Question type ="TEXT_URL"
+    // Return Type :Returns the input field.
+    let inputField = element.querySelectorAll('input[type=url]')
+    return { dom: inputField };
+  }
+  getDom_date_time_with_meridiem(element) {
+    // Input Type: DOM Object
+    // Extracts the Dom object from Question type ="DATE_TIME_WITH_MERIDIEM"
+    // Return Type :Returns the input field as an array which contain two nodelists
+    //- First nodelist- 0th index will has dom of Month , 1st index will contain Day, 2nd index-dom of year , 3rd index-dom of hour , 4th index-dom of minutes
+    //- Second nodelist - 0th index will contain dom of `AM` and 1st index will contain dom of `PM` option
+    let inputField_datetime = element.querySelectorAll('input[type=text]')
+    let meridiem = element.querySelectorAll('div[role=option]')
+    let inputField = [inputField_datetime, meridiem]
+    return { dom: inputField };
+  }
+  getDom_time_with_meridiem(element) {
+    // Input Type: DOM Object
+    // Extracts the Dom object from Question type ="TIME_WITH_MERIDIEM"
+    // Return Type :Returns the input field as an array of 2 NodeLists 
+    //- First nodelist- 0th index will has dom of hour , 1st index will contain minutes , 3rd index-dom of seconds
+    //- Second nodelist - 0th index will contain dom of `AM` and 1st index will contain dom of `PM` option
+    let inputField_time = element.querySelectorAll('input[type=text]')
+    let meridiem = element.querySelectorAll('div[role=option]')
+    let inputField = [inputField_time, meridiem]
+    return { dom: inputField };
+  }
+  getDom_date_time_with_meridiem_withoutyear(element) {
+    // Input Type: DOM Object
+    // Extracts the Dom object from Question type ="DATE_TIME_WITH_MERIDIEM_WITHOUT_YEAR"
+    //- First nodelist- 0th index will has dom of Month , 1st index will contain Day, 3rd index-dom of hour , 4th index-dom of minutes
+    //- Second nodelist - 0th index will contain dom of `AM` and 1st index will contain dom of `PM` option
+    let inputField_datetime = element.querySelectorAll('input[type=text]')
+    let meridiem = element.querySelectorAll('div[role=option]')
+    let inputField = [inputField_datetime, meridiem]
+    return { dom: inputField };
+  }
+  getDom_time(element) {
+    // Input Type: DOM Object
+    // Extracts the Dom object from Question type ="DATE_TIME_WITH_MERIDIEM_WITHOUT_YEAR"
+    // Return Type :Returns the input field.
+    let inputField = element.querySelectorAll('input[type=text]')
+    return { dom: inputField };
   }
 }
