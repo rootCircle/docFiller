@@ -20,13 +20,13 @@ export class FieldsExtractorEngine {
     // the function is is highly abstracted
 
     // TODO : the getOptions() can be broken down into further functions if needed, just ensure that the return type is consistent so that the below line still works
-    let optionFields = this.getOptions(fieldType, element);
+    let optionFields = this.getParams(fieldType, element);
     fields = { ...fields, ...optionFields };
 
     return fields;
   }
 
-  getOptions(questionType, element) {
+  getParams(questionType, element) {
     // Function for Extracting Options
     // Input Type: DOM Object
     // Extracts the options of the question
@@ -37,7 +37,7 @@ export class FieldsExtractorEngine {
 
       // Extracting the options if the field type is MultiCorrect
       case QType.MULTI_CORRECT:
-        return this.getOptions_MULTI_CORRECT(element);
+        return this.getParamsMultiCorrect(element);
 
       // Extracting the options if the field type is MultiCorrect_WITH_OTHER
 
@@ -46,12 +46,12 @@ export class FieldsExtractorEngine {
         //1. options - which contain options array
         //2. other - which contain `other:` which need to deal in separate way to ask Chatbot
 
-        return this.getOptions_MULTI_CORRECT_WITH_OTHER(element);
+        return this.getParamsMultiCorrectWithOther(element);
 
       // Extracting the options if the field type is 'Multiple Choice'
 
       case QType.MULTIPLE_CHOICE:
-        return this.getOptions_MULTIPLE_CHOICE(element);
+        return this.getParamsMultipleChoice(element);
 
       // Extracting the options if the field type is 'Multiple Choice With Other'.
 
@@ -60,7 +60,7 @@ export class FieldsExtractorEngine {
         //1. options - which contain options array
         //2. other - which contain `other:` which need to deal in separate way to ask Chatbot
 
-        return this.getOptions_MULTIPLE_CHOICE_WITH_OTHER(element);
+        return this.getParamsMultipleChoiceWithOther(element);
 
       // Extracting the options if the field type is 'Linear Scale'
 
@@ -73,81 +73,81 @@ export class FieldsExtractorEngine {
         Note
         We added one more attribute to fields `lowerUpperBounds` whose value will have an array containing LowerBound,UpperBound.
         */
-        return this.getOptions_LINEAR_SCALE(element);
+        return this.getParamsLinearScale(element);
 
       // Extracting the options if the field type is `Checkbox Grid` or `Multiple Choice Grid`
       case QType.CHECKBOX_GRID:
-        return this.getOptions_CHECKBOXGRID(element);
+        return this.getParamsCheckboxGrid(element);
 
       case QType.MULTIPLE_CHOICE_GRID:
         //We get options in form of an object
         //This object will contain 2 arrays 'rowsArray' and `columnsArray` which contains `row values` and `column values` respectively
-        return this.getOptions_MULTIPLECHOICEGRID(element);
+        return this.getParamsMultipleChoiceGrid(element);
 
       // Extracting the options if the field type is Dropdown
       case QType.DROPDOWN:
-        return this.getOptions_Dropdown(element);
+        return this.getParamsDropdown(element);
 
       // Extracting the options if the field type is 'Text'.
       case QType.TEXT:
         //
-        return this.getDom_TEXT(element);
+        return this.getDomText(element);
 
       // Extracting the options if the field type is 'Paragraph'.
       case QType.PARAGRAPH:
-        return this.getDom_paragraph(element);
+        return this.getDomTextParagraph(element);
 
       // Extracting the options if the field type is 'Email'.
       case QType.TEXT_EMAIL:
-        return this.getDom_email(element);
+        return this.getDomTextEmail(element);
 
       // Extracting the options if the field type is 'Text Numeric'.
       case QType.TEXT_NUMERIC:
-        return this.getDom_TEXT(element);
+        return this.getDomText(element);
 
       // Extracting the options if the field type is 'Text Telephonic'.
       case QType.TEXT_TEL:
-        return this.getDom_texttel(element);
+        return this.getDomTextTel(element);
 
       // Extracting the options if the field type is 'Text URL'.
       case QType.TEXT_URL:
-        return this.getDom_texturl(element);
+        return this.getDomTextUrl(element);
 
       // Extracting the options if the field type is 'Date'.
       case QType.DATE:
-        return this.getDom_date(element);
+        return this.getDomDate(element);
 
       // Extracting the options if the field type is 'Date And Time'.
       case QType.DATE_AND_TIME:
-        return this.getDom_dateandtime(element);
+        return this.getDomDateAndTime(element);
 
       // Extracting the options if the field type is 'Time'.
       case QType.TIME:
-        return this.getDom_time(element);
+        return this.getDomTime(element);
 
       // Extracting the options if the field type is 'Duration'.
       case QType.DURATION:
-        return this.getDom_duration(element);
+        return this.getDomDuration(element);
 
       // Extracting the options if the field type is 'Date without Year'.
       case QType.DATE_WITHOUT_YEAR:
-        return this.getDom_date_without_year(element);
+        return this.getDomDateWithoutYear(element);
 
       // Extracting the options if the field type is 'Date without Year with Time'.
       case QType.DATE_TIME_WITHOUT_YEAR:
-        return this.getDom_date_time_without_year(element);
+        return this.getDomDateTimeWithoutYear(element);
 
       // Extracting the options if the field type is 'Date with Time and Meridiem'.
       case QType.DATE_TIME_WITH_MERIDIEM:
-        return this.getDom_date_time_with_meridiem(element);
+        return this.getDomDateTimeWithMeridiem(element);
 
       // Extracting the options if the field type is 'Time and Meridiem'.
       case QType.TIME_WITH_MERIDIEM:
-        return this.getDom_time_with_meridiem(element);
+        return this.getDomTimeWithMeridiem(element);
 
       // Extracting the options if the field type is 'Date without Year with Time and Meridiem'.
       case QType.DATE_TIME_WITH_MERIDIEM_WITHOUT_YEAR:
-        return this.getDom_date_time_with_meridiem_withoutyear(element);
+        return this.getDomDateTimeWithMeridiemWithoutYear(element);
     }
   }
 
@@ -207,7 +207,7 @@ export class FieldsExtractorEngine {
 
   // Functions for Extracting Options
   //Extracting the options for field type = MultiCorrect With Other or MultiCorrect
-  getOptions_MULTI_CORRECT(element) {
+  getParamsMultiCorrect(element) {
     // Input Type: DOM Object
     // Extracts the options of the question
     // Tweak : - The extraction is based on the DOM tree
@@ -221,25 +221,25 @@ export class FieldsExtractorEngine {
     }
 
     //Extracting divs which has radio buttons.
-    const super_Divs = element.querySelectorAll('div[role="checkbox"]');
+    const superDivs = element.querySelectorAll('div[role="checkbox"]');
     const clickElements = [];
-    //For each option child of 2nd child of super_Divs' div will contain a div whose 1st child is responsible on selecting an option.
+    //For each option child of 2nd child of superDivs' div will contain a div whose 1st child is responsible on selecting an option.
     //By using click() method on clickDiv.firstElementChild which we pushed in array 'ClickElements' will mark that particular option
-    super_Divs.forEach((optionDiv) => {
+    superDivs.forEach((optionDiv) => {
       const thirdDiv = optionDiv.children[2];
       const clickDiv = thirdDiv.firstElementChild;
       clickElements.push(clickDiv.firstElementChild);
     });
     const options = [];
-    const optiondata = [];
-    //we will go through all spans and extract its text content and store in our answer array as optiondata.
+    const optionData = [];
+    //we will go through all spans and extract its text content and store in our answer array as optionData.
     optionLabels.forEach((label) => {
-      optiondata.push(label.textContent.trim());
+      optionData.push(label.textContent.trim());
     });
 
-    if (clickElements.length > 0 && clickElements.length === optiondata.length) {
+    if (clickElements.length > 0 && clickElements.length === optionData.length) {
       for (let i = 0; i < clickElements.length; i++) {
-        options.push({ option_data: optiondata[i], option_dom: clickElements[i] });
+        options.push({ data: optionData[i], dom: clickElements[i] });
       }
     }
 
@@ -247,7 +247,7 @@ export class FieldsExtractorEngine {
   }
 
 
-  getOptions_MULTI_CORRECT_WITH_OTHER(element) {
+  getParamsMultiCorrectWithOther(element) {
     // Input Type: DOM Object
     // Extracts the options of the question
     // Tweak : - The extraction is based on the DOM tree
@@ -264,32 +264,32 @@ export class FieldsExtractorEngine {
     }
 
     //Extracting divs which has role=checkbox.
-    const super_Divs = element.querySelectorAll('div[role="checkbox"]');
+    const superDivs = element.querySelectorAll('div[role="checkbox"]');
     const clickElements = [];
-    //For each option child of 2nd child of super_Divs' div will contain a div which is responsible on selecting an option.
+    //For each option child of 2nd child of superDivs' div will contain a div which is responsible on selecting an option.
     //By using click() method on clickDiv which we pushed in array 'ClickOption' will mark that particular option
-    super_Divs.forEach((optionDiv) => {
+    superDivs.forEach((optionDiv) => {
       const thirdDiv = optionDiv.children[2];
       const clickDiv = thirdDiv.firstElementChild;
       clickElements.push(clickDiv.firstElementChild);
     });
 
     const options = [];
-    const optiondata = [];
+    const optionData = [];
     //we will go through all spans and extract its text content and store in an array.
     optionLabels.forEach((label) => {
-      optiondata.push(label.textContent.trim());
+      optionData.push(label.textContent.trim());
     });
-    // Remove the last option and add 'other_option' field in the object, `other_option` is itself an object containing option_data, option_dom,inputBoxdom
-    const lastOptionIndex = optiondata.length - 1;
-    const otherOption = optiondata.splice(lastOptionIndex, 1)[0];
-    console.log(otherOption)
+    // Remove the last option and add 'other_option' field in the object, `other_option` is itself an object containing option_data, option_dom,inputBoxDom
+    const lastOptionIndex = optionData.length - 1;
+    const otherOption = optionData.splice(lastOptionIndex, 1)[0];
+    // console.log(otherOption)
     const other_option = []
-    if (clickElements.length > 0 && clickElements.length === optiondata.length + 1) {
+    if (clickElements.length > 0 && clickElements.length === optionData.length + 1) {
       for (let i = 0; i < clickElements.length - 1; i++) {
-        options.push({ data: optiondata[i], dom: clickElements[i], });
+        options.push({ data: optionData[i], dom: clickElements[i], });
       }
-      const input_in_mcwo = element.querySelector('input[dir="auto"]');
+      const input_in_mcwo = element.querySelector('input[dir="auto"]');// mcwo is an acronym for multi choice with others
       other_option.push({ data: otherOption, dom: clickElements[clickElements.length - 1], inputBoxDom: input_in_mcwo });
     }
 
@@ -299,7 +299,7 @@ export class FieldsExtractorEngine {
 
 
   //Extracting the options for field type = MultipleChoice With Other or MultipleChoice
-  getOptions_MULTIPLE_CHOICE(element) {
+  getParamsMultipleChoice(element) {
     // Input Type: DOM Object
     // Extracts the options of the question
     // Tweak : - The extraction is based on the DOM tree
@@ -313,26 +313,26 @@ export class FieldsExtractorEngine {
     }
 
     //Extracting divs which has radio buttons.
-    const super_Divs = element.querySelectorAll('div[role="radio"]');
+    const superDivs = element.querySelectorAll('div[role="radio"]');
     const clickElements = [];
-    //For each option child of 2nd child of super_Divs' div will contain a div which is responsible on selecting an option.
+    //For each option child of 2nd child of superDivs' div will contain a div which is responsible on selecting an option.
     //By using click() method on clickDiv which we pushed in array 'ClickOption' will mark that particular option
-    super_Divs.forEach((optionDiv) => {
+    superDivs.forEach((optionDiv) => {
       const thirdDiv = optionDiv.children[2];
       const clickDiv = thirdDiv.firstElementChild;
       clickElements.push(clickDiv);
     });
 
     const options = [];
-    const optiondata = [];
+    const optionData = [];
     //we will go through all spans and extract its text content and store in option_data array.
     optionLabels.forEach((label) => {
-      optiondata.push(label.textContent.trim());
+      optionData.push(label.textContent.trim());
     });
 
-    if (clickElements.length > 0 && clickElements.length === optiondata.length) {
+    if (clickElements.length > 0 && clickElements.length === optionData.length) {
       for (let i = 0; i < clickElements.length; i++) {
-        options.push({ option_data: optiondata[i], option_dom: clickElements[i] });
+        options.push({ data: optionData[i], dom: clickElements[i] });
       }
     }
 
@@ -340,7 +340,7 @@ export class FieldsExtractorEngine {
   }
 
 
-  getOptions_MULTIPLE_CHOICE_WITH_OTHER(element) {
+  getParamsMultipleChoiceWithOther(element) {
     // Input Type: DOM Object
     // Extracts the options of the question
     // Tweak : - The extraction is based on the DOM tree
@@ -357,45 +357,45 @@ export class FieldsExtractorEngine {
     }
 
     //Extracting divs which has radio buttons.
-    const super_Divs = element.querySelectorAll('div[role="radio"]');
+    const superDivs = element.querySelectorAll('div[role="radio"]');
     const clickElements = [];
-    //For each option child of 2nd child of super_Divs' div will contain a div which is responsible on selecting an option.
+    //For each option child of 2nd child of superDivs' div will contain a div which is responsible on selecting an option.
     //By using click() method on clickDiv which we pushed in array 'ClickOption' will mark that particular option
-    super_Divs.forEach((optionDiv) => {
+    superDivs.forEach((optionDiv) => {
       const thirdDiv = optionDiv.children[2];
       const clickDiv = thirdDiv.firstElementChild;
       clickElements.push(clickDiv.firstElementChild);
     });
 
     const options = [];
-    const optiondata = [];
+    const optionData = [];
     //we will go through all spans and extract its text content and store in our answer array.
     optionLabels.forEach((label) => {
-      optiondata.push(label.textContent.trim());
+      optionData.push(label.textContent.trim());
     });
 
-    // console.log(optiondata)
+    // console.log(optionData)
     // Remove the last option and add 'Other' field in the object
-    const lastOptionIndex = optiondata.length - 1;
-    const otherOption = optiondata.splice(lastOptionIndex, 1)[0];
-    console.log(otherOption)
-    const other_dom = []
-    if (clickElements.length > 0 && clickElements.length === optiondata.length + 1) {
+    const lastOptionIndex = optionData.length - 1;
+    const otherOption = optionData.splice(lastOptionIndex, 1)[0];
+    // console.log(otherOption)
+    const otherDom = []
+    if (clickElements.length > 0 && clickElements.length === optionData.length + 1) {
       for (let i = 0; i < clickElements.length - 1; i++) {
-        options.push({ data: optiondata[i], dom: clickElements[i] });
+        options.push({ data: optionData[i], dom: clickElements[i] });
       }
-      const input_in_mcwo = element.querySelector('input[dir="auto"]');
+      const input_in_mcwo = element.querySelector('input[dir="auto"]');  // mcwo is an acronym for multiple choice with others
 
-      other_dom.push({ other_data: otherOption, other_dom: clickElements[clickElements.length - 1], inputBoxDom: input_in_mcwo });
+      otherDom.push({ data: otherOption, dom: clickElements[clickElements.length - 1], inputBoxDom: input_in_mcwo });
     }
 
-    return { options: options, other: other_dom };
+    return { options: options, other: otherDom };
 
   }
 
 
   //Extracting the options for field type = LinearScale
-  getOptions_LINEAR_SCALE(element) {
+  getParamsLinearScale(element) {
     // Input Type: DOM Object
     // Extracts the options of the question
     // Tweak : - The extraction is based on the DOM tree
@@ -412,10 +412,10 @@ export class FieldsExtractorEngine {
     let lowerBound = null;
     let upperBound = null;
 
-    const super_Divs = element.querySelectorAll('div[role="radio"]');
+    const superDivs = element.querySelectorAll('div[role="radio"]');
     const domsArray = [];
 
-    super_Divs.forEach((optionDiv) => {
+    superDivs.forEach((optionDiv) => {
       const thirdDiv = optionDiv.children[2];
       const clickDiv = thirdDiv.firstElementChild;
       const targetDom = clickDiv.firstElementChild;
@@ -459,7 +459,7 @@ export class FieldsExtractorEngine {
 
 
   //Extracting the options for field type = Multiple Choice Grid.
-  getOptions_MULTIPLECHOICEGRID(element) {
+  getParamsMultipleChoiceGrid(element) {
     // Input Type: DOM Object
     // Extracts the options of the question
     // Tweak : - The extraction is based on the DOM tree
@@ -505,11 +505,11 @@ export class FieldsExtractorEngine {
 
     });
 
-    let option_dom = []
+    let optionDom = []
     for (let i = 0; i < rowsArray.length; i++) {
       for (let j = 0; j < columnsArray.length; j++) {
         //lets consider 2X3 multiple choice grid then option dom will be [{option:column1 dom:dom1} , {option:column2 dom:dom2} , {option:column3 dom:dom3} , {option:column1 dom:dom4} , {option:column2 dom:dom5} ,{option:column3 dom:dom6}]
-        option_dom.push({ option: columnsArray[j], dom: optionsArray[i][j] })
+        optionDom.push({ data: columnsArray[j], dom: optionsArray[i][j] })
       }
     }
     let row_col_dom = []
@@ -518,7 +518,7 @@ export class FieldsExtractorEngine {
     for (let i = 0; i < rowsArray.length; i++) {
       arr = [];
       for (let p = q; p < columnsArray.length * (i + 1); p++, q++) {
-        arr.push(option_dom[p]);
+        arr.push(optionDom[p]);
       }
       row_col_dom.push({ row: rowsArray[i], cols: arr })
     }
@@ -529,7 +529,7 @@ export class FieldsExtractorEngine {
   }
 
   //Extracting the options for field type = Checkbox Grid.
-  getOptions_CHECKBOXGRID(element) {
+  getParamsCheckboxGrid(element) {
     // Input Type: DOM Object
     // Extracts the options of the question
     // Tweak : - The extraction is based on the DOM tree
@@ -590,7 +590,7 @@ export class FieldsExtractorEngine {
 
 
   //Extracting the options for field type = Dropdown.
-  getOptions_Dropdown(element) {
+  getParamsDropdown(element) {
     // Input Type: DOM Object
     // Extracts the options of the question
     // Tweak : - The extraction is based on the DOM tree
@@ -609,13 +609,13 @@ export class FieldsExtractorEngine {
       const span = optionDiv.querySelector("span");
 
       if (span) {
-        options.push({ option_data: span.textContent.trim(), option_dom: optionDiv });
+        options.push({ data: span.textContent.trim(), dom: optionDiv });
       }
     }
     return { options: options };
   }
 
-  getDom_TEXT(element) {
+  getDomText(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="TEXT"
     // Return Type :Returns the input field.
@@ -623,7 +623,7 @@ export class FieldsExtractorEngine {
     return { dom: inputField };
   }
 
-  getDom_email(element) {
+  getDomTextEmail(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="TEXT_EMAIL"
     // Return Type :Returns the input field.
@@ -631,7 +631,7 @@ export class FieldsExtractorEngine {
     let inputField = element.querySelectorAll('input[type=text], input[type=email]')
     return { dom: inputField };
   }
-  getDom_paragraph(element) {
+  getDomTextParagraph(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="PARAGRAPH"
     // Return Type :Returns the input field.
@@ -639,7 +639,7 @@ export class FieldsExtractorEngine {
     let inputField = element.querySelectorAll('textarea')
     return { dom: inputField };
   }
-  getDom_date(element) {
+  getDomDate(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="DATE"
     // Return Type :Returns the input field.Its returns input field as a Nodelist
@@ -647,7 +647,7 @@ export class FieldsExtractorEngine {
     let inputField = element.querySelectorAll('input[type=text], input[type=date]')
     return { dom: inputField };
   }
-  getDom_dateandtime(element) {
+  getDomDateAndTime(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="DATE_AND_TIME"
     // Return Type :Returns the input field.Its return in form of a Nodelist
@@ -656,7 +656,7 @@ export class FieldsExtractorEngine {
     let inputField = element.querySelectorAll('input[type=text], input[type=date]')
     return { dom: inputField };
   }
-  getDom_duration(element) {
+  getDomDuration(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="DURATION"
     // Return Type :Returns the input field.Its return in form of Nodelist 
@@ -664,7 +664,7 @@ export class FieldsExtractorEngine {
     let inputField = element.querySelectorAll('input[type=text]')
     return { dom: inputField };
   }
-  getDom_date_without_year(element) {
+  getDomDateWithoutYear(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="DATE_WITHOUT_YEAR"
     // Return Type :Returns the input field.Its return in form of Nodelist 
@@ -672,7 +672,7 @@ export class FieldsExtractorEngine {
     let inputField = element.querySelectorAll('input[type=text], input[type=date]')
     return { dom: inputField };
   }
-  getDom_date_time_without_year(element) {
+  getDomDateTimeWithoutYear(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="DATE_WITHOUT_YEAR"
     // Return Type :Returns the input field.Its return in form of Nodelist 
@@ -680,60 +680,60 @@ export class FieldsExtractorEngine {
     let inputField = element.querySelectorAll('input[type=text], input[type=date]')
     return { dom: inputField };
   }
-  getDom_textNumeric(element) {
+  getDomTextNumeric(element) {
     // Input Type: DOM Object
-    // Extracts the Dom object from Question type ="TEXT_NUMERI"
+    // Extracts the Dom object from Question type ="TEXT_NUMERIC"
     // Return Type :Returns the input field.
     let inputField = element.querySelectorAll('input[type=text]')
     return { dom: inputField };
   }
-  getDom_texttel(element) {
+  getDomTextTel(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="TEXT_TEL"
     // Return Type :Returns the input field.
     let inputField = element.querySelectorAll('input[type=text]')
     return { dom: inputField };
   }
-  getDom_texturl(element) {
+  getDomTextUrl(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="TEXT_URL"
     // Return Type :Returns the input field.
     let inputField = element.querySelectorAll('input[type=url]')
     return { dom: inputField };
   }
-  getDom_date_time_with_meridiem(element) {
+  getDomDateTimeWithMeridiem(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="DATE_TIME_WITH_MERIDIEM"
     // Return Type :Returns the input field as an array which contain two nodelists
     //- First nodelist- 0th index will has dom of Month , 1st index will contain Day, 2nd index-dom of year , 3rd index-dom of hour , 4th index-dom of minutes
     //- Second nodelist - 0th index will contain dom of `AM` and 1st index will contain dom of `PM` option
-    let inputField_datetime = element.querySelectorAll('input[type=text]')
+    let inputFieldDateTime = element.querySelectorAll('input[type=text]')
     let meridiem = element.querySelectorAll('div[role=option]')
-    let inputField = [inputField_datetime, meridiem]
+    let inputField = [inputFieldDateTime, meridiem]
     return { dom: inputField };
   }
-  getDom_time_with_meridiem(element) {
+  getDomTimeWithMeridiem(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="TIME_WITH_MERIDIEM"
     // Return Type :Returns the input field as an array of 2 NodeLists 
     //- First nodelist- 0th index will has dom of hour , 1st index will contain minutes , 3rd index-dom of seconds
     //- Second nodelist - 0th index will contain dom of `AM` and 1st index will contain dom of `PM` option
-    let inputField_time = element.querySelectorAll('input[type=text]')
+    let inputFieldTime = element.querySelectorAll('input[type=text]')
     let meridiem = element.querySelectorAll('div[role=option]')
-    let inputField = [inputField_time, meridiem]
+    let inputField = [inputFieldTime, meridiem]
     return { dom: inputField };
   }
-  getDom_date_time_with_meridiem_withoutyear(element) {
+  getDomDateTimeWithMeridiemWithoutYear(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="DATE_TIME_WITH_MERIDIEM_WITHOUT_YEAR"
     //- First nodelist- 0th index will has dom of Month , 1st index will contain Day, 3rd index-dom of hour , 4th index-dom of minutes
     //- Second nodelist - 0th index will contain dom of `AM` and 1st index will contain dom of `PM` option
-    let inputField_datetime = element.querySelectorAll('input[type=text]')
+    let inputFieldDateTime = element.querySelectorAll('input[type=text]')
     let meridiem = element.querySelectorAll('div[role=option]')
-    let inputField = [inputField_datetime, meridiem]
+    let inputField = [inputFieldDateTime, meridiem]
     return { dom: inputField };
   }
-  getDom_time(element) {
+  getDomTime(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="DATE_TIME_WITH_MERIDIEM_WITHOUT_YEAR"
     // Return Type :Returns the input field.
