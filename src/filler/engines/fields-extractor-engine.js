@@ -432,7 +432,6 @@ export class FieldsExtractorEngine {
       else if (lowerBound !== null && textContent !== '') {
         upperBound = textContent;  //Assigning upperBound with each node we are at during traversal so last node will be assigned to upperBound. 
       }
-
     });
     // Extracting the options from element
     const optionElements = element.querySelectorAll('div[dir="auto"]');
