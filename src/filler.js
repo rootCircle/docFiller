@@ -55,6 +55,10 @@ async function main() {
 
 			console.log("Response : " + response);
 
+			let prompt_for_ques= prompt.prompt(fieldType, fieldValue);
+            console.log("prompt_for_ques : " + prompt_for_ques);
+
+
 			let parsed_response = parser.parse(fieldType, fieldValue, response);
 			console.log("Parsed Response : " + parsed_response)
 

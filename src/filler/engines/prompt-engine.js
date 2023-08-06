@@ -47,15 +47,25 @@ export class PromptEngine {
         // Return personalized prompt for respective fieldType 
         // Output Type : string containing type, or null if invalid fieldType
 
-        if (fieldType === QType.DATE) {
-            return "This prompt " + value;
+        switch (fieldType) {
+            case QType.LINEAR_SCALE:
+                //tested on ChatGPT and Bing AI
+                return `On a scale from 1 to ${value.options.length} \n ${value.title} \n ${value.description} \n Return only the integer answer and nothing else(give any random answer on better side if it depends from person to person but only return required integer answer no extra text) \n key 1 represent "${value.bounds.lowerBound}" and key ${value.options.length} represent "${value.bounds.upperBound}" with uniform distribution between.\n Only return the key corresponding to calculated answer`;
+            
+            case QType.MULTI_CORRECT:
+                 //tested on ChatGPT and Bing AI
+                return `More than one option may be correct for this question \nYour task is to check all options that are correct and return their exact sentences \nProvide the correct sentences only, without any extra text or messages \nQuestion: \n\n ${value.title} \n ${value.description} \nOptions: \n${value.options.map(option => option.option_data).join('\n')}`;
+                
+            case QType.MULTI_CORRECT_WITH_OTHER:
+                 //tested on ChatGPT and Bing AI
+                return `More than one option may be correct for this question \nYour task is to check all options that are correct and return their exact sentences \nProvide the correct sentences only, without any extra text or messages \nIf your option is the last option 'Other:', then write 'Other:' on the first line and provide your 1-line answer for the questionQuestion: \n\n ${value.title} \n ${value.description} \n Options: \n${[...value.options.map(option => option.data), value.other[0].data].join('\n')}`;
+            
+            
+
+            default:
+                return "Invalid field type";
         }
-        else if (fieldType === QType.MULTIPLE_CHOICE) {
-            return "This prompt " + value.title;
-        }
-        else {
-            return null;
-        }
+
     }
 
     askChatGPT(prompt) {
