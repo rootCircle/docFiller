@@ -12,7 +12,7 @@ export class ParserEngine {
         // This will parse and check validity of the prompt output upon arrival from prompt's response
         // from prompt-engine
         // Output Type : string containing the response if true or null if any expected inputs
-        
+
         value = this.validateResponse(value);
 
         if (fieldType != null && value != null) {
@@ -20,7 +20,7 @@ export class ParserEngine {
                 return this.parseText(response);
             }
             else if (fieldType === QType.TEXT_EMAIL) {
-                return this.parseEmail(response);
+                return this.validateEmail(response);
             }
             else if (fieldType === QType.MULTIPLE_CHOICE) {
                 return this.parseMultipleChoice(value, response);
@@ -49,41 +49,38 @@ export class ParserEngine {
         return response;
     }
 
-    parseEmail(response) {
-        // TODO
+    validateEmail(response) {
+        // Input Type : String
         // Check if it's a valid email or not
-        var mailValid = /^\w+([\.-]?\w+)*@\w+(\.\w{2,3})+$/;
-        if(response.match(mailValid))
-        return true;
-        return false;
+        // Checking valid email in accord to RFC 5322
+        // https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-address-using-a-regular-expression/201378#201378
+        // Return Type : Boolean
+
+        let mailRegex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
+        return Boolean(response.match(mailRegex));
     }
 
-    parseDate(response) {
+    validateDate(response) {
         //Checks If date is in correct format
         var dateValid = /^([0][1-9]|[1-2][0-9]|[3][0-1])-([0][1-9]|[1][0-2])-(\d{4})$/
         const dateArr = response.match(dateValid)
-        if(dateArr)
-        {
-            const valid31 = ['01','03','05','07','08','10','12']
+        if (dateArr) {
+            const valid31 = ['01', '03', '05', '07', '08', '10', '12']
             const date = dateArr[1]
             const month = dateArr[2]
             const year = Number(dateArr[3])
-            if(date=='31')
-            {
-                if(!valid31.includes(month))
-                return false;
-            }
-            else if(date=='30')
-            {
-                if(month=='02')
-                return false;
-            }
-            else if(date=='29')
-            {
-                if(month=='02')
-                {
-                    if(year%4!=0||(year%100==0&&year%400!=0))
+            if (date == '31') {
+                if (!valid31.includes(month))
                     return false;
+            }
+            else if (date == '30') {
+                if (month == '02')
+                    return false;
+            }
+            else if (date == '29') {
+                if (month == '02') {
+                    if (year % 4 != 0 || (year % 100 == 0 && year % 400 != 0))
+                        return false;
                 }
             }
             return true
@@ -96,28 +93,23 @@ export class ParserEngine {
         //Checks If date time is in correct format
         var dateTimeValid = /^([0][1-9]|[1-2][0-9]|[3][0-1])-([0][1-9]|[1][0-2])-(\d{4})-([01][0-9]|[2][0-3])-([0-5][0-9])$/
         const dateArr = response.match(dateTimeValid)
-        if(dateArr)
-        {
-            const valid31 = ['01','03','05','07','08','10','12']
+        if (dateArr) {
+            const valid31 = ['01', '03', '05', '07', '08', '10', '12']
             const date = dateArr[1]
             const month = dateArr[2]
             const year = Number(dateArr[3])
-            if(date=='31')
-            {
-                if(!valid31.includes(month))
-                return false;
-            }
-            else if(date=='30')
-            {
-                if(month=='02')
-                return false;
-            }
-            else if(date=='29')
-            {
-                if(month=='02')
-                {
-                    if(year%4!=0||(year%100==0&&year%400!=0))
+            if (date == '31') {
+                if (!valid31.includes(month))
                     return false;
+            }
+            else if (date == '30') {
+                if (month == '02')
+                    return false;
+            }
+            else if (date == '29') {
+                if (month == '02') {
+                    if (year % 4 != 0 || (year % 100 == 0 && year % 400 != 0))
+                        return false;
                 }
             }
             return true
@@ -128,10 +120,10 @@ export class ParserEngine {
 
     parseTime(response) {
         var timeValid = /^([01][0-9]|[2][0-3])-([0-5][0-9])$/
-        if(response.match(timeValid))
-        return true;
+        if (response.match(timeValid))
+            return true;
         else
-        return false;
+            return false;
     }
 
     parseMultipleChoice(value, response) {
