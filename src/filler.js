@@ -59,7 +59,7 @@ async function main() {
 			console.log("Parsed Response : " + parsed_response)
 
 			// Using Dummy Value for brevity
-			filler.fill(question, fieldType, "Dummy Value");
+			filler.fill(question, fieldType, fieldValue, "Dummy Value");
 		}
 		console.log();
 	});
