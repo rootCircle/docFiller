@@ -10,21 +10,21 @@ export class FillerEngine {
 
   constructor () {}
 
-  fill (element, fieldType, value) {
+  fill(element, fieldType, fieldValue, value) {
     if (fieldType != null) {
       console.log(fieldType)
       if (fieldType === QType.TEXT) {
-        return this.fillText(element,"this is text")
+        return this.fillText(element, fieldValue,"this is text")
       } else if (fieldType === QType.TEXT_EMAIL) {
-        return this.fillEmail(element,'harshit123@gmail.com')
+        return this.fillEmail(element, fieldValue,'harshit123@gmail.com')
       } else if (fieldType === QType.PARAGRAPH) {
-        return this.fillParagraph(element,"this is a paragraph")
+        return this.fillParagraph(element, fieldValue,"this is a paragraph ")
       } else if (fieldType === QType.DATE) {
-        return this.fillDate(element,"15-11-2030")
+        return this.fillDate(element, fieldValue,"11-11-2111")
       } else if (fieldType === QType.DATE_AND_TIME) {
-        return this.fillDate_And_Time(element, '22-01-2033-17-11')
+        return this.fillDate_And_Time(element, fieldValue, '01-01-2003-01-01')
       } else if (fieldType === QType.TIME) {
-        return this.fillTime(element, '23-22')
+        return this.fillTime(element,fieldValue, '02-02')
       } else if (
         fieldType === QType.MULTI_CORRECT_WITH_OTHER ||
         fieldType === QType.MULTI_CORRECT
@@ -35,11 +35,11 @@ export class FillerEngine {
           { optionTitle: 'Other:', optionText: 'My name is Monark Jain' }
         ])
       } else if (fieldType === QType.DURATION) {
-        return this.fillDuration(element, '10-11-11')
+        return this.fillDuration(element, fieldValue, '11-11-11')
       } else if (fieldType === QType.DATE_WITHOUT_YEAR) {
-        return this.fillDate_Without_Year(element, '11-11')
+        return this.fillDate_Without_Year(element, fieldValue, '11-11')
       } else if (fieldType === QType.DATE_TIME_WITHOUT_YEAR) {
-        return this.fillDate_Time_Without_Year(element, '23-10-23-21')
+        return this.fillDate_Time_Without_Year(element, fieldValue, '22-01-01-01')
       } else {
         return false
       }
@@ -48,13 +48,13 @@ export class FillerEngine {
     }
   }
 
-  fillText (element, value) {
+  fillText (element, fieldValue, value) {
     // Function to fill question with type text input with a specified value.
     // Input Type : DOM object(element) & string(value)
     // Tweak : 
     // Return Type : Boolean
-    var inputField = element.querySelectorAll('input[type=text]')
-    inputField = inputField[0]
+    // console.log(fieldValue.dom[0]);
+   let inputField = fieldValue.dom[0]
     inputField.value = value
     var inputEvent = new Event('input', { bubbles: true })
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
@@ -62,15 +62,12 @@ export class FillerEngine {
     return true
   }
 
-  fillEmail (element, value) {
+  fillEmail (element, fieldValue, value) {
     // Function to fill email
     // Input Type : DOM object(element) & string(value)
     // Tweak : 
     // Return Type : Boolean
-    var inputField = element.querySelectorAll(
-      'input[type=text], input[type=email]'
-    )
-    inputField = inputField[0]
+    let inputField = fieldValue.dom[0]
     inputField.value =value
     var inputEvent = new Event('input', { bubbles: true })
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
@@ -78,13 +75,12 @@ export class FillerEngine {
     return true
   }
 
-  fillParagraph (element, value) {
+  fillParagraph (element, fieldValue, value) {
     // Function to fill paragraph type questions
     // Input Type : DOM object(element) & string(value)
     // Tweak : 
     // Return Type : Boolean
-    var inputField = element.querySelectorAll('textarea')
-    inputField = inputField[0]
+    let inputField = fieldValue.dom[0]
     inputField.value = value
     var inputEvent = new Event('input', { bubbles: true })
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
@@ -95,7 +91,7 @@ export class FillerEngine {
   
   //*********** it may raise a problem if format is different need to look into this  ************/
   
-  fillDate (element, value) {
+  fillDate (element, fieldValue, value) {
     // Function to fill date
     // Input Type : DOM object(element) & string(value)
     // Tweak : 
@@ -124,35 +120,30 @@ export class FillerEngine {
     }
 
     // 1. Fill the day input field
-    var inputField = element.querySelectorAll(
-      'input[type=text], input[type=date]'
-    )
-    inputField = inputField[0]
-    inputField.value = day
+   let dd = fieldValue.dom[0]
+    dd.value = day
     var inputEvent = new Event('input', { bubbles: true })
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    inputField.dispatchEvent(inputEvent)
+    dd.dispatchEvent(inputEvent)
 
     // 2. Fill the month input field
-    inputField = element.querySelectorAll('input[type=text], input[type=date]')
-    inputField = inputField[1]
-    inputField.value = month
+   let mm = fieldValue.dom[1]
+    mm.value = month
     inputEvent = new Event('input', { bubbles: true })
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    inputField.dispatchEvent(inputEvent)
+    mm.dispatchEvent(inputEvent)
 
     // 3. Fill the year input field
-    inputField = element.querySelectorAll('input[type=text], input[type=date]')
-    inputField = inputField[2]
-    inputField.value = year
+   let yyyy = fieldValue.dom[2]
+    yyyy.value = year
     inputEvent = new Event('input', { bubbles: true })
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    inputField.dispatchEvent(inputEvent)
+    yyyy.dispatchEvent(inputEvent)
 
     return true
   }
 
-  async fillDate_And_Time (element, datevariable) {
+  async fillDate_And_Time (element, fieldValue, datevariable) {
     // Function to fill date and time
     // Input Type : DOM object(element) & datevariable(value)
     // Tweak : 
@@ -181,53 +172,50 @@ export class FillerEngine {
     }
 
     // 1. Fill the day input field
-    var inputField = element.querySelectorAll(
-      'input[type=text], input[type=date]'
-    )
-    inputField = inputField[0]
-    inputField.value = day
+   let dd = fieldValue.dom[0]
+     dd.value = day
     var inputEvent = new Event('input', { bubbles: true })
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    inputField.dispatchEvent(inputEvent)
+    dd.dispatchEvent(inputEvent)
 
     // 2. Fill the month input field
-    inputField = element.querySelectorAll('input[type=text], input[type=date]')
-    inputField = inputField[1]
-    inputField.value = month
+    // inputField = element.querySelectorAll('input[type=text], input[type=date]')
+   let mm = fieldValue.dom[1]
+    mm.value = month
     inputEvent = new Event('input', { bubbles: true })
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    inputField.dispatchEvent(inputEvent)
+    mm.dispatchEvent(inputEvent)
 
     // 3. Fill the year input field
-    inputField = element.querySelectorAll('input[type=text], input[type=date]')
-    inputField = inputField[2]
-    inputField.value = year
+    // inputField = element.querySelectorAll('input[type=text], input[type=date]')
+   let yyyy = fieldValue.dom[2]
+    yyyy.value = year
     inputEvent = new Event('input', { bubbles: true })
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    inputField.dispatchEvent(inputEvent)
+    yyyy.dispatchEvent(inputEvent)
 
     // TIME
 
     //hours
-    var inputField = element.querySelectorAll('input[type=text]')
-    inputField = inputField[3]
-    inputField.value = hours
+    // var inputField = element.querySelectorAll('input[type=text]')
+    let hh = fieldValue.dom[3]
+    hh.value = hours
     var inputEvent = new Event('input', { bubbles: true })
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    inputField.dispatchEvent(inputEvent)
+    hh.dispatchEvent(inputEvent)
 
     //minutes
-    var inputField = element.querySelectorAll('input[type=text]')
-    inputField = inputField[4]
-    inputField.value = minutes
+    // var inputField = element.querySelectorAll('input[type=text]')
+    let min = fieldValue.dom[4]
+    min.value = minutes
     var inputEvent = new Event('input', { bubbles: true })
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    inputField.dispatchEvent(inputEvent)
+    min.dispatchEvent(inputEvent)
 
     return true
   }
 
-  fillTime (element, value) {
+  fillTime (element, fieldValue, value) {
     // Function to fill time
     // Input Type : DOM object(element) & string(value)
     // Tweak : 
@@ -239,25 +227,24 @@ export class FillerEngine {
     // TIME
 
     //hours
-    var inputField = element.querySelectorAll('input[type=text]')
-    inputField = inputField[0]
-    inputField.value = hours
+   let hh = fieldValue.dom[0]
+    hh.value = hours
     var inputEvent = new Event('input', { bubbles: true })
-    // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    inputField.dispatchEvent(inputEvent)
+    // Dispatch the 'input' event on the input field to trigger any event listeners boundmin hh.dispatchEvent(inputEvent)
+    hh.dispatchEvent(inputEvent)
 
     //minutes
-    var inputField = element.querySelectorAll('input[type=text]')
-    inputField = inputField[1]
-    inputField.value = minutes
+    // var inputField = element.querySelectorAll('input[type=text]')
+  let  min =fieldValue.dom[1]
+    min.value = minutes
     var inputEvent = new Event('input', { bubbles: true })
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    inputField.dispatchEvent(inputEvent)
+    min.dispatchEvent(inputEvent)
 
     return true
   }
 
-  fillDuration (element, value) {
+  fillDuration (element, fieldValue, value) {
     // Function to fill time
     // Input Type : DOM object(element) & string(value)
     // Tweak : 
@@ -269,33 +256,31 @@ export class FillerEngine {
     // TIME
 
     //seconds
-    var inputField = element.querySelectorAll('input[type=text]')
-    inputField = inputField[0]
-    inputField.value = hours
+    let hh = fieldValue.dom[0]
+    hh.value = hours
     var inputEvent = new Event('input', { bubbles: true })
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    inputField.dispatchEvent(inputEvent)
+    hh.dispatchEvent(inputEvent)
 
     //minutes
-    var inputField = element.querySelectorAll('input[type=text]')
-    inputField = inputField[1]
-    inputField.value = minutes
+    let mm =fieldValue.dom[1]
+    mm.value = minutes
     var inputEvent = new Event('input', { bubbles: true })
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    inputField.dispatchEvent(inputEvent)
+    mm.dispatchEvent(inputEvent)
 
     //seconds
-    var inputField = element.querySelectorAll('input[type=text]')
-    inputField = inputField[2]
-    inputField.value = seconds
+    // var inputField = element.querySelectorAll('input[type=text]')
+    let ss = fieldValue.dom[2]
+    ss.value = seconds
     var inputEvent = new Event('input', { bubbles: true })
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    inputField.dispatchEvent(inputEvent)
+    ss.dispatchEvent(inputEvent)
 
     return true
   }
 
-  fillDate_Without_Year (element, value) {
+  fillDate_Without_Year (element, fieldValue, value) {
     // Function to fill date without year
     // value format :- "dd-mm"
     // Input Type : DOM object(element) & string(value)
@@ -304,27 +289,23 @@ export class FillerEngine {
     const [day, month] = value.split('-')
 
     // 1. Fill the day input field
-    var inputField = element.querySelectorAll(
-      'input[type=text], input[type=date]'
-    )
-    inputField = inputField[0]
-    inputField.value = day
+    let dd = fieldValue.dom[0]
+    dd.value = day
     var inputEvent = new Event('input', { bubbles: true })
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    inputField.dispatchEvent(inputEvent)
+    dd.dispatchEvent(inputEvent)
 
     // 2. Fill the month input field
-    inputField = element.querySelectorAll('input[type=text], input[type=date]')
-    inputField = inputField[1]
-    inputField.value = month
+   let mm =fieldValue.dom[1]
+    mm.value = month
     inputEvent = new Event('input', { bubbles: true })
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    inputField.dispatchEvent(inputEvent)
+    mm.dispatchEvent(inputEvent)
 
     return true
   }
 
-  async fillDate_Time_Without_Year (element, value) {
+  async fillDate_Time_Without_Year (element, fieldValue, value) {
     // Function to fill time
     // Input Type : DOM object(element) & string(value)
     // Tweak : 
@@ -338,68 +319,36 @@ export class FillerEngine {
     const [day, month, hours, minutes] = value.split('-')
 
     // 1. Fill the day input field
-    var inputField = element.querySelectorAll(
-      'input[type=text], input[type=date]'
-    )
-    inputField = inputField[0]
-    inputField.value = day
+   let dd =fieldValue.dom[0]
+    dd.value = day
     var inputEvent = new Event('input', { bubbles: true })
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    inputField.dispatchEvent(inputEvent)
+    dd.dispatchEvent(inputEvent)
 
     // 2. Fill the month input field
-    inputField = element.querySelectorAll('input[type=text], input[type=date]')
-    inputField = inputField[1]
-    inputField.value = month
+   let mm = fieldValue.dom[1]
+    mm.value = month
     inputEvent = new Event('input', { bubbles: true })
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    inputField.dispatchEvent(inputEvent)
+    mm.dispatchEvent(inputEvent)
 
     // TIME
 
     //hours
-    var inputField = element.querySelectorAll('input[type=text]')
-    inputField = inputField[2]
-    inputField.value = hours
+   let hh = fieldValue.dom[2]
+    hh.value = hours
     var inputEvent = new Event('input', { bubbles: true })
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    inputField.dispatchEvent(inputEvent)
+    hh.dispatchEvent(inputEvent)
 
     //minutes
-    var inputField = element.querySelectorAll('input[type=text]')
-    inputField = inputField[3]
-    inputField.value = minutes
+   let min = fieldValue.dom[3]
+    min.value = minutes
     var inputEvent = new Event('input', { bubbles: true })
-    inputField.dispatchEvent(inputEvent)
+    min.dispatchEvent(inputEvent)
 
     return true
   }
-
-
-  // to be completed 
-
-  // fillMultiple_Choice_Grid(element, value) {
-  //   let  flag=-1;
-  //   let inputFields = element.querySelectorAll(
-  //     'div[role=radiogroup]'
-  //   )
-  //   inputFields.forEach(element => {
-  //     let option = element.querySelectorAll('div[role=radio]')
-
-  //     option.forEach(element => {
-  //     if(element===)
-  //     {
-  //       option.click();
-  //     }
-  //     else{
-  //       flag=1;
-  //     }
-        
-  //       })
-
-  //     })
-  //   return true;
-  // }
 
   async fillCheckBox (element, value) {
     //! To avoid any unwanted and incomplete answer this sleep function is necessary

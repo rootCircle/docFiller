@@ -4,6 +4,7 @@ import { DocExtractorEngine } from "./filler/engines/doc-extractor-engine";
 import { FieldsExtractorEngine } from "./filler/engines/fields-extractor-engine";
 import { DetectBoxType } from "./filler/detectors/detect-box-type";
 import { PromptEngine } from "./filler/engines/prompt-engine";
+import { ParserEngine } from "./filler/engines/parser-engine";
 import GPTEngine from "./utils/gpt-engines";
 
 let debugging = true;
@@ -38,6 +39,7 @@ async function main() {
 	let fields = new FieldsExtractorEngine();
 	let filler = new FillerEngine();
 	let prompt = new PromptEngine(GPTEngine.CHATGPT);
+	let parser = new ParserEngine();
 
 	questions.forEach(question => {
 		console.log(question)
@@ -46,12 +48,18 @@ async function main() {
 		console.log("Fields ↴")
 		if (fieldType !== null) {
 			let fieldValue = fields.getFields(question, fieldType);
+			console.log("Field Value ↴")
 			console.log(fieldValue);
+			
+			let response = prompt.getResponse(fieldType, fieldValue);
 
-			console.log(prompt.getResponse(fieldType, fieldValue));
+			console.log("Response : " + response);
+
+			let parsed_response = parser.parse(fieldType, fieldValue, response);
+			console.log("Parsed Response : " + parsed_response)
 
 			// Using Dummy Value for brevity
-			filler.fill(question, fieldType,"1");
+			filler.fill(question, fieldType, fieldValue, "Dummy Value");
 		}
 		console.log();
 	});
