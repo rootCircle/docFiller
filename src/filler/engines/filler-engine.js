@@ -10,7 +10,7 @@ export class FillerEngine {
 
   constructor() { }
 
-  fill(element, fieldType, value) {
+  fill(element, fieldType, fieldValue, value) {
     if (fieldType != null) {
       if (fieldType === QType.TEXT) {
         return this.fillText(element, value);
