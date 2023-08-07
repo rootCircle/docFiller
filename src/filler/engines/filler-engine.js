@@ -20,7 +20,7 @@ export class FillerEngine {
       }
       else if (fieldType === QType.MULTI_CORRECT_WITH_OTHER) {
         setTimeout(() => {
-          return this.fillCheckBox(element, ["Day 1", "Day 2", { optionTitle: "Other:", optionText: "My name is Monark Jain" }]);
+          return this.fillCheckBox(element,fieldValue, ["Day 1", "Day 2", { optionTitle: "Other:", optionText: "My name is Monark Jain" }]);
         }, 1000);
       }
       else if (fieldType === QType.LINEAR_SCALE) {
@@ -35,7 +35,7 @@ export class FillerEngine {
       }
       else if (fieldType === QType.CHECKBOX_GRID) {
         setTimeout(() => {
-          return this.fillCheckboxGrid(element, [{ row: "Row 1", Optionvalues: ["Column 1", "Column 3"] }, { row: "Row 2", Optionvalues: ["Column 2"] }]);
+          return this.fillCheckboxGrid(element,fieldValue, [{ row: "Row 1", Optionvalues: ["Column 1", "Column 3"] }, { row: "Row 2", Optionvalues: ["Column 2"] }]);
         }, 1000);
       }
       else if (fieldType === QType.MULTIPLE_CHOICE_GRID) {
@@ -63,7 +63,7 @@ export class FillerEngine {
   }
 
 
-  async fillCheckBox(element, value) {
+  async fillCheckBox(element,fieldValue, value) {
 
     //! To avoid any unwanted and incomplete answer this sleep function is necessary 
     //! to avoid the race around between our answer and default NULL value
@@ -77,30 +77,19 @@ export class FillerEngine {
     // Uses 'input' event to trigger UI changes.
     // Returns true if checkbox is ticked, else false.
 
-
-    let inputFields = element.querySelectorAll(("div[role=list] div[role=listitem]"));
-    inputFields.forEach(element => {
-
-      let option = element.querySelectorAll("div[role=checkbox]");
-      let optionValue = option[0].getAttribute("aria-label");
-
-      let otherOption = element.querySelectorAll("div[data-other-checkbox=true]");
-      if (otherOption.length != 0) {
-        var otherOptionName = otherOption[0].getAttribute("aria-label");
-      }
+    fieldValue.options.forEach(element => {
 
       value.forEach(val => {
 
         if (typeof (val) === "string") {
-          if (optionValue === val) {
-            option[0].click();
+          if (element.data === val) {
+            element.dom.click();
             return true;
           }
         }
-        else if (typeof (val) === "object" && val.optionTitle === otherOptionName) {
-          let otherOptionTextBox = element.querySelectorAll("input");
-          otherOptionTextBox[0].setAttribute("value", val.optionText);
-          option[0].click();
+        else if (typeof (val) === "object" && val.optionTitle === fieldValue.other[0].data) {
+          fieldValue.other[0].dom.click();
+          fieldValue.other[0].inputBoxDom.setAttribute("value", val.optionText);
           return true;
         }
       });
@@ -142,7 +131,7 @@ export class FillerEngine {
     // Return Type : Boolean
 
     let optionElements = element.querySelectorAll("div[role=option]");
-
+    console.log(optionElements)
     optionElements.forEach(option => {
       if (option.getAttribute("data-value") === value) {
         option.setAttribute("aria-selected", "true");
@@ -161,23 +150,26 @@ export class FillerEngine {
 
 
 
-  fillCheckboxGrid(element,value){
+  fillCheckboxGrid(element,fieldValue, value){
     // Input Type : DOM object { Multicorrect Checkbox Grid }
     // Checks if given gpt response matches any option or not
     // Tweak : A grid has many div(s) which have role = group in it
     //         if for each such div, the value matches the option is selected
-
-    let rows = element.querySelectorAll("div[role=group]");
-    rows.forEach(row => {
-      let rowName = row.querySelector("div").innerHTML;
+    console.log(fieldValue)
+    fieldValue.options.forEach(rowItr => {
+      
       value.forEach(object => {
-        if(object.row===rowName){
-          let columnOptions = row.querySelectorAll("div[role=checkbox]");
-          columnOptions.forEach(columnCheckbox => {
-            let columnValue = columnCheckbox.getAttribute("data-answer-value");
+
+        if(object.row===rowItr.row){
+          rowItr.cols.forEach(colItr => {
+            var inputEvent = new Event('input', { bubbles: true })
+            // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+            
             object.Optionvalues.forEach(val => {
-              if(columnValue===val){
-                columnCheckbox.click();
+              if(colItr.option===val){
+                colItr.dom.parentElement.dispatchEvent(inputEvent)
+                console.log(colItr.dom.parentNode)
+                // colItr.dom.parentNode.click();
               }
             });
           });
