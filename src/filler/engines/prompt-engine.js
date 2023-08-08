@@ -58,8 +58,7 @@ export class PromptEngine {
                 
             case QType.MULTI_CORRECT_WITH_OTHER:
                  //tested on ChatGPT and Bing AI
-                return `More than one option may be correct for this question \nYour task is to check all options that are correct and return their exact sentences \nProvide the correct sentences only, without any extra text or messages \nIf your option is the last option 'Other:', then write 'Other:' on the first line and provide your 1-line answer for the questionQuestion: \n\n ${value.title} \n ${value.description} \n Options: \n${[...value.options.map(option => option.data), value.other[0].data].join('\n')}`;
-            
+                return `More than one option may be correct for this question \nYour task is to check all options that are correct and return their exact sentences \nProvide the correct sentences only, without any extra text or messages \nIf your option is the last option 'Other:', then write 'Other:' on the first line and provide your 1-line answer for the question \nQuestion: \n\n ${value.title} \n ${value.description} \n Options: \n${[...value.options.map(option => option.data), value.other[0].data].join('\n')}`;
             
 
             default:
