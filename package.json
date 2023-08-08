@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "concurrently": "^8.2.0",
+    "libphonenumber-js": "^1.10.39",
     "web-ext": "^7.6.2"
   }
 }
