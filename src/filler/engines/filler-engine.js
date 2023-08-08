@@ -12,7 +12,6 @@ export class FillerEngine {
 
   fill(element, fieldType, fieldValue, value) {
     if (fieldType != null) {
-      console.log(fieldType)
       if (fieldType === QType.TEXT) {
         return this.fillText(fieldValue, "this is text")
       } else if (fieldType === QType.TEXT_EMAIL) {
@@ -126,19 +125,19 @@ export class FillerEngine {
     }
 
     // 1. Fill the day input field
-    let dd = fieldValue.dom[0]
+    let dd = fieldValue.date
     dd.value = day
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
     dd.dispatchEvent(inputEvent)
 
     // 2. Fill the month input field
-    let mm = fieldValue.dom[1]
+    let mm = fieldValue.month
     mm.value = month
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
     mm.dispatchEvent(inputEvent)
 
     // 3. Fill the year input field
-    let yyyy = fieldValue.dom[2]
+    let yyyy = fieldValue.year
     yyyy.value = year
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
     yyyy.dispatchEvent(inputEvent)
@@ -185,19 +184,19 @@ export class FillerEngine {
     }
 
     // 1. Fill the day input field
-    let dd = fieldValue.dom[0]
+    let dd = fieldValue.date
     dd.value = day
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
     dd.dispatchEvent(inputEvent)
 
     // 2. Fill the month input field
-    let mm = fieldValue.dom[1]
+    let mm = fieldValue.month
     mm.value = month
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
     mm.dispatchEvent(inputEvent)
 
     // 3. Fill the year input field
-    let yyyy = fieldValue.dom[2]
+    let yyyy = fieldValue.year
     yyyy.value = year
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
     yyyy.dispatchEvent(inputEvent)
@@ -205,13 +204,13 @@ export class FillerEngine {
     // TIME
 
     // hours
-    let hh = fieldValue.dom[3]
+    let hh = fieldValue.hour
     hh.value = hours
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
     hh.dispatchEvent(inputEvent)
 
     // minutes
-    let min = fieldValue.dom[4]
+    let min = fieldValue.minute
     min.value = minutes
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
     min.dispatchEvent(inputEvent)
@@ -232,13 +231,13 @@ export class FillerEngine {
     // TIME
 
     // hours
-    let hh = fieldValue.dom[0]
+    let hh = fieldValue.hour
     hh.value = hours
     // Dispatch the 'input' event on the input field to trigger any event listeners boundmin hh.dispatchEvent(inputEvent)
     hh.dispatchEvent(inputEvent)
 
     // minutes
-    let min = fieldValue.dom[1]
+    let min = fieldValue.minute
     min.value = minutes
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
     min.dispatchEvent(inputEvent)
@@ -259,19 +258,19 @@ export class FillerEngine {
     // TIME
 
     // hours
-    let hh = fieldValue.dom[0]
+    let hh = fieldValue.hour
     hh.value = hours
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
     hh.dispatchEvent(inputEvent)
 
     // minutes
-    let mm = fieldValue.dom[1]
+    let mm = fieldValue.minute
     mm.value = minutes
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
     mm.dispatchEvent(inputEvent)
 
     // seconds
-    let ss = fieldValue.dom[2]
+    let ss = fieldValue.second
     ss.value = seconds
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
     ss.dispatchEvent(inputEvent)
@@ -289,13 +288,13 @@ export class FillerEngine {
     let inputEvent = new Event('input', { bubbles: true })
 
     // 1. Fill the day input field
-    let dd = fieldValue.dom[0]
+    let dd = fieldValue.date
     dd.value = day
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
     dd.dispatchEvent(inputEvent)
 
     // 2. Fill the month input field
-    let mm = fieldValue.dom[1]
+    let mm = fieldValue.month
     mm.value = month
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
     mm.dispatchEvent(inputEvent)
@@ -317,13 +316,13 @@ export class FillerEngine {
     const [day, month, hours, minutes] = value.split('-')
 
     // 1. Fill the day input field
-    let dd = fieldValue.dom[0]
+    let dd = fieldValue.date
     dd.value = day
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
     dd.dispatchEvent(inputEvent)
 
     // 2. Fill the month input field
-    let mm = fieldValue.dom[1]
+    let mm = fieldValue.month
     mm.value = month
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
     mm.dispatchEvent(inputEvent)
@@ -331,13 +330,13 @@ export class FillerEngine {
     // TIME
 
     // hours
-    let hh = fieldValue.dom[2]
+    let hh = fieldValue.hour
     hh.value = hours
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
     hh.dispatchEvent(inputEvent)
 
     // minutes
-    let min = fieldValue.dom[3]
+    let min = fieldValue.minute
     min.value = minutes
     min.dispatchEvent(inputEvent)
 
