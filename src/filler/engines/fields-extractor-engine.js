@@ -641,16 +641,16 @@ export class FieldsExtractorEngine {
   getDomDate(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="DATE"
-    // Return Type :Returns an object { day: day_dom, month: month_dom, year: year_dom }
+    // Return Type :Returns an object { date: date_dom, month: month_dom, year: year_dom }
     let inputField = element.querySelectorAll('input[type=text], input[type=date]')
-    let day_dom = null;
+    let date_dom = null;
     let month_dom = null;
     let year_dom = null;
     //Input field is a nodelist seperating out day , month , and year from it.
     inputField.forEach(input => {
       switch (input.getAttribute('aria-label')) {
         case 'Day of the month':
-          day_dom = input;
+          date_dom = input;
           break;
         case 'Month':
           month_dom = input;
@@ -663,14 +663,14 @@ export class FieldsExtractorEngine {
       }
     });
 
-    return { day: day_dom, month: month_dom, year: year_dom };
+    return { date: date_dom, month: month_dom, year: year_dom };
   }
   getDomDateAndTime(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="DATE_AND_TIME"
-    // Return Type :Returns an object { day: day_dom, month: month_dom, year: year_dom, hour: hour_dom, minute: minute_dom }
+    // Return Type :Returns an object { date: date_dom, month: month_dom, year: year_dom, hour: hour_dom, minute: minute_dom }
     let inputField = element.querySelectorAll('input[type=text], input[type=date]')
-    let day_dom = null;
+    let date_dom = null;
     let month_dom = null;
     let year_dom = null;
     let hour_dom = null;
@@ -679,7 +679,7 @@ export class FieldsExtractorEngine {
     inputField.forEach(input => {
       switch (input.getAttribute('aria-label')) {
         case 'Day of the month':
-          day_dom = input;
+          date_dom = input;
           break;
         case 'Month':
           month_dom = input;
@@ -698,7 +698,7 @@ export class FieldsExtractorEngine {
       }
     });
 
-    return { day: day_dom, month: month_dom, year: year_dom, hour: hour_dom, minute: minute_dom };
+    return { date: date_dom, month: month_dom, year: year_dom, hour: hour_dom, minute: minute_dom };
   }
 
   getDomDuration(element) {
@@ -732,16 +732,16 @@ export class FieldsExtractorEngine {
   getDomDateWithoutYear(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="DATE_WITHOUT_YEAR"
-    // Return Type :Returns an object { day: day_dom, month: month_dom }
-    // object will contain day_dom and month_dom
+    // Return Type :Returns an object { date: date_dom, month: month_dom }
+    // object will contain date_dom and month_dom
     let inputField = element.querySelectorAll('input[type=text], input[type=date]')
-    let day_dom = null;
+    let date_dom = null;
     let month_dom = null;
     //Input field is a nodelist seperating out day and month
     inputField.forEach(input => {
       switch (input.getAttribute('aria-label')) {
         case 'Day of the month':
-          day_dom = input;
+          date_dom = input;
           break;
         case 'Month':
           month_dom = input;
@@ -751,14 +751,14 @@ export class FieldsExtractorEngine {
       }
     });
 
-    return { day: day_dom, month: month_dom };
+    return { date: date_dom, month: month_dom };
   }
   getDomDateTimeWithoutYear(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="DATE_WITHOUT_YEAR"
-    // Return Type :Returns an object { day: day_dom, month: month_dom, hour: hour_dom, minute: minute_dom }
+    // Return Type :Returns an object { date: date_dom, month: month_dom, hour: hour_dom, minute: minute_dom }
     let inputField = element.querySelectorAll('input[type=text], input[type=date]')
-    let day_dom = null;
+    let date_dom = null;
     let month_dom = null;
     let hour_dom = null;
     let minute_dom = null;
@@ -766,7 +766,7 @@ export class FieldsExtractorEngine {
     inputField.forEach(input => {
       switch (input.getAttribute('aria-label')) {
         case 'Day of the month':
-          day_dom = input;
+          date_dom = input;
           break;
         case 'Month':
           month_dom = input;
@@ -782,7 +782,7 @@ export class FieldsExtractorEngine {
       }
     });
 
-    return { day: day_dom, month: month_dom, hour: hour_dom, minute: minute_dom };
+    return { date: date_dom, month: month_dom, hour: hour_dom, minute: minute_dom };
   }
   getDomTextNumeric(element) {
     // Input Type: DOM Object
@@ -808,11 +808,11 @@ export class FieldsExtractorEngine {
   getDomDateTimeWithMeridiem(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="DATE_TIME_WITH_MERIDIEM"
-    // Return Type :Returns an object { day: day_dom, month: month_dom, year: year_dom, hour: hour_dom, minute: minute_dom, meridiem: meridiem }
+    // Return Type :Returns an object { date: date_dom, month: month_dom, year: year_dom, hour: hour_dom, minute: minute_dom, meridiem: meridiem }
     //- meridiem nodelist - 0th index will contain dom of `AM` and 1st index will contain dom of `PM` option
     let meridiem = element.querySelectorAll('div[role=option]')
     let inputField = element.querySelectorAll('input[type=text], input[type=date]')
-    let day_dom = null;
+    let date_dom = null;
     let month_dom = null;
     let year_dom = null;
     let hour_dom = null;
@@ -821,7 +821,7 @@ export class FieldsExtractorEngine {
     inputField.forEach(input => {
       switch (input.getAttribute('aria-label')) {
         case 'Day of the month':
-          day_dom = input;
+          date_dom = input;
           break;
         case 'Month':
           month_dom = input;
@@ -840,7 +840,7 @@ export class FieldsExtractorEngine {
       }
     });
 
-    return { day: day_dom, month: month_dom, year: year_dom, hour: hour_dom, minute: minute_dom, meridiem: meridiem };
+    return { date: date_dom, month: month_dom, year: year_dom, hour: hour_dom, minute: minute_dom, meridiem: meridiem };
   }
   getDomTimeWithMeridiem(element) {
     // Input Type: DOM Object
@@ -871,10 +871,10 @@ export class FieldsExtractorEngine {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="DATE_TIME_WITH_MERIDIEM_WITHOUT_YEAR"
     //- meridiem nodelist - 0th index will contain dom of `AM` and 1st index will contain dom of `PM` option
-    // Return Type: Returns an object { day: day_dom, month: month_dom, hour: hour_dom, minute: minute_dom, meridiem: meridiem }
+    // Return Type: Returns an object { date: date_dom, month: month_dom, hour: hour_dom, minute: minute_dom, meridiem: meridiem }
     let meridiem = element.querySelectorAll('div[role=option]')
     let inputField = element.querySelectorAll('input[type=text], input[type=date]')
-    let day_dom = null;
+    let date_dom = null;
     let month_dom = null;
     let year_dom = null;
     let hour_dom = null;
@@ -883,7 +883,7 @@ export class FieldsExtractorEngine {
     inputField.forEach(input => {
       switch (input.getAttribute('aria-label')) {
         case 'Day of the month':
-          day_dom = input;
+          date_dom = input;
           break;
         case 'Month':
           month_dom = input;
@@ -899,7 +899,7 @@ export class FieldsExtractorEngine {
       }
     });
 
-    return { day: day_dom, month: month_dom, hour: hour_dom, minute: minute_dom, meridiem: meridiem };
+    return { date: date_dom, month: month_dom, hour: hour_dom, minute: minute_dom, meridiem: meridiem };
   }
   getDomTime(element) {
     // Input Type: DOM Object
