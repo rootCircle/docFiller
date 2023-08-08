@@ -51,6 +51,10 @@ async function main() {
 			console.log("Field Value ↴")
 			console.log(fieldValue);
 			
+			
+			let promptText = prompt.prompt(fieldType, fieldValue);
+            console.log("Prompt for Model : " + promptText);
+			
 			let response = prompt.getResponse(fieldType, fieldValue);
 
 			console.log("Response : " + response);
