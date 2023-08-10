@@ -56,19 +56,19 @@ export class PromptEngine {
       );
     } else if (fieldType === QType.DATE_WITHOUT_YEAR) {
       return (
-        "Please provide the date (month and day)-(in format MM/DD) -(only return MM/DD date , nothing else) that best corresponds to your response for the following question: " +
+        "Please provide the date (month and day)-(in format DD/MM) -(only return DD/MM date , nothing else) that best corresponds to your response for the following question: " +
         +value.description +
         value.title
       );
     } else if (fieldType === QType.DATE_TIME_WITHOUT_YEAR){
         return (
-            "Please strictly provide the date without year and time(in format MM/DD  Hr:Min ) -(only return MM/DD  Hr:Min date without year and time , nothing else and please don't give any prompt,just give the exact answer,include no string in answer)  that best corresponds to your response for the following question: "
+            "Please strictly provide the date without year and time(in format DD/MM  Hr:Min ) -(only return DD/MM  Hr:Min date without year and time , nothing else and please don't give any prompt,just give the exact answer,include no string in answer)  that best corresponds to your response for the following question: "
             +value.description +
             value.title
         )
     }else if(fieldType === QType.DATE_TIME_WITH_MERIDIEM_WITHOUT_YEAR){
         return (
-            "Please strictly provide the date without year and time(in format MM/DD  Hr:Min (am or pm) ) -(only return MM/DD  Hr:Min date without year and time , nothing else and please don't give any prompt,just give the exact answer,include no string in answer)  that best corresponds to your response for the following question: "
+            "Please strictly provide the date without year and time(in format DD/MM  Hr:Min (am or pm) ) -(only return DD/MM  Hr:Min date without year and time , nothing else and please don't give any prompt,just give the exact answer,include no string in answer)  that best corresponds to your response for the following question: "
             +value.description +
             value.title
         )
