@@ -641,43 +641,148 @@ export class FieldsExtractorEngine {
   getDomDate(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="DATE"
-    // Return Type :Returns the input field.Its returns input field as a Nodelist
-    //Its 0th index give Month_field , 1st index give Day_field , 2nd index has Year_field
+    // Return Type :Returns an object { date: date_dom, month: month_dom, year: year_dom }
     let inputField = element.querySelectorAll('input[type=text], input[type=date]')
-    return { dom: inputField };
+    let date_dom = null;
+    let month_dom = null;
+    let year_dom = null;
+    //Input field is a nodelist seperating out day , month , and year from it.
+    inputField.forEach(input => {
+      switch (input.getAttribute('aria-label')) {
+        case 'Day of the month':
+          date_dom = input;
+          break;
+        case 'Month':
+          month_dom = input;
+          break;
+        case 'Year':
+          year_dom = input;
+          break;
+        default:
+          break;
+      }
+    });
+
+    return { date: date_dom, month: month_dom, year: year_dom };
   }
   getDomDateAndTime(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="DATE_AND_TIME"
-    // Return Type :Returns the input field.Its return in form of a Nodelist
-    //Its 0th index give Month_field , 1st index give Day_field , 2nd index has Year_field , 3rd index give Hour_field , 4th index give Minute_field
-
+    // Return Type :Returns an object { date: date_dom, month: month_dom, year: year_dom, hour: hour_dom, minute: minute_dom }
     let inputField = element.querySelectorAll('input[type=text], input[type=date]')
-    return { dom: inputField };
+    let date_dom = null;
+    let month_dom = null;
+    let year_dom = null;
+    let hour_dom = null;
+    let minute_dom = null;
+    //Input field is a nodelist seperating out day , month , year , hour , and minute
+    inputField.forEach(input => {
+      switch (input.getAttribute('aria-label')) {
+        case 'Day of the month':
+          date_dom = input;
+          break;
+        case 'Month':
+          month_dom = input;
+          break;
+        case 'Year':
+          year_dom = input;
+          break;
+        case 'Hour':
+          hour_dom = input;
+          break;
+        case 'Minute':
+          minute_dom = input;
+          break;
+        default:
+          break;
+      }
+    });
+
+    return { date: date_dom, month: month_dom, year: year_dom, hour: hour_dom, minute: minute_dom };
   }
+
   getDomDuration(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="DURATION"
-    // Return Type :Returns the input field.Its return in form of Nodelist 
+    // Return Type :Returns an object { hour: hour_dom, minute: minute_dom , second:second_dom}
     //Its 0th index give Hour_field , 1st index give Minute_field , 2nd index has Seconds field
     let inputField = element.querySelectorAll('input[type=text]')
-    return { dom: inputField };
+    let hour_dom = null;
+    let minute_dom = null;
+    let second_dom = null
+    //Input field is a nodelist seperating out hour and minute dom
+    inputField.forEach(input => {
+      switch (input.getAttribute('aria-label')) {
+        case 'Hours':
+          hour_dom = input;
+          break;
+        case 'Minutes':
+          minute_dom = input;
+          break;
+        case 'Seconds':
+          second_dom = input;
+          break;
+        default:
+          break;
+      }
+    });
+
+    return { hour: hour_dom, minute: minute_dom, second: second_dom };
   }
   getDomDateWithoutYear(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="DATE_WITHOUT_YEAR"
-    // Return Type :Returns the input field.Its return in form of Nodelist 
-    //Its 0th index give month_field , 1st index give Day_field
+    // Return Type :Returns an object { date: date_dom, month: month_dom }
+    // object will contain date_dom and month_dom
     let inputField = element.querySelectorAll('input[type=text], input[type=date]')
-    return { dom: inputField };
+    let date_dom = null;
+    let month_dom = null;
+    //Input field is a nodelist seperating out day and month
+    inputField.forEach(input => {
+      switch (input.getAttribute('aria-label')) {
+        case 'Day of the month':
+          date_dom = input;
+          break;
+        case 'Month':
+          month_dom = input;
+          break;
+        default:
+          break;
+      }
+    });
+
+    return { date: date_dom, month: month_dom };
   }
   getDomDateTimeWithoutYear(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="DATE_WITHOUT_YEAR"
-    // Return Type :Returns the input field.Its return in form of Nodelist 
-    //Its 0th index give Month_field , 1st index give Day_field , 2nd index give Hour_field , 3rd index give Minute_field
+    // Return Type :Returns an object { date: date_dom, month: month_dom, hour: hour_dom, minute: minute_dom }
     let inputField = element.querySelectorAll('input[type=text], input[type=date]')
-    return { dom: inputField };
+    let date_dom = null;
+    let month_dom = null;
+    let hour_dom = null;
+    let minute_dom = null;
+    //Input field is a nodelist seperating out day , month , and year from it.
+    inputField.forEach(input => {
+      switch (input.getAttribute('aria-label')) {
+        case 'Day of the month':
+          date_dom = input;
+          break;
+        case 'Month':
+          month_dom = input;
+          break;
+        case 'Hour':
+          hour_dom = input;
+          break;
+        case 'Minute':
+          minute_dom = input;
+          break;
+        default:
+          break;
+      }
+    });
+
+    return { date: date_dom, month: month_dom, hour: hour_dom, minute: minute_dom };
   }
   getDomTextNumeric(element) {
     // Input Type: DOM Object
@@ -703,40 +808,120 @@ export class FieldsExtractorEngine {
   getDomDateTimeWithMeridiem(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="DATE_TIME_WITH_MERIDIEM"
-    // Return Type :Returns the input field as an array which contain two nodelists
-    //- First nodelist- 0th index will has dom of Month , 1st index will contain Day, 2nd index-dom of year , 3rd index-dom of hour , 4th index-dom of minutes
-    //- Second nodelist - 0th index will contain dom of `AM` and 1st index will contain dom of `PM` option
-    let inputFieldDateTime = element.querySelectorAll('input[type=text]')
+    // Return Type :Returns an object { date: date_dom, month: month_dom, year: year_dom, hour: hour_dom, minute: minute_dom, meridiem: meridiem }
+    //- meridiem nodelist - 0th index will contain dom of `AM` and 1st index will contain dom of `PM` option
     let meridiem = element.querySelectorAll('div[role=option]')
-    let inputField = [inputFieldDateTime, meridiem]
-    return { dom: inputField };
+    let inputField = element.querySelectorAll('input[type=text], input[type=date]')
+    let date_dom = null;
+    let month_dom = null;
+    let year_dom = null;
+    let hour_dom = null;
+    let minute_dom = null;
+    //Input field is a nodelist seperating out day , month , and year from it.
+    inputField.forEach(input => {
+      switch (input.getAttribute('aria-label')) {
+        case 'Day of the month':
+          date_dom = input;
+          break;
+        case 'Month':
+          month_dom = input;
+          break;
+        case 'Year':
+          year_dom = input;
+          break;
+        case 'Hour':
+          hour_dom = input;
+          break;
+        case 'Minute':
+          minute_dom = input;
+          break;
+        default:
+          break;
+      }
+    });
+
+    return { date: date_dom, month: month_dom, year: year_dom, hour: hour_dom, minute: minute_dom, meridiem: meridiem };
   }
   getDomTimeWithMeridiem(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="TIME_WITH_MERIDIEM"
-    // Return Type :Returns the input field as an array of 2 NodeLists 
-    //- First nodelist- 0th index will has dom of hour , 1st index will contain minutes , 3rd index-dom of seconds
-    //- Second nodelist - 0th index will contain dom of `AM` and 1st index will contain dom of `PM` option
-    let inputFieldTime = element.querySelectorAll('input[type=text]')
+    // Return Type :Returns an object { hour: hour_dom, minute: minute_dom, meridiem: meridiem }
+    //- meridiem nodelist - 0th index will contain dom of `AM` and 1st index will contain dom of `PM` option
     let meridiem = element.querySelectorAll('div[role=option]')
-    let inputField = [inputFieldTime, meridiem]
-    return { dom: inputField };
+    let inputField = element.querySelectorAll('input[type=text], input[type=date]')
+    let hour_dom = null;
+    let minute_dom = null;
+    //Input field is a nodelist seperating out day , month , and year from it.
+    inputField.forEach(input => {
+      switch (input.getAttribute('aria-label')) {
+        case 'Hour':
+          hour_dom = input;
+          break;
+        case 'Minute':
+          minute_dom = input;
+          break;
+        default:
+          break;
+      }
+    });
+
+    return { hour: hour_dom, minute: minute_dom, meridiem: meridiem };
   }
   getDomDateTimeWithMeridiemWithoutYear(element) {
     // Input Type: DOM Object
     // Extracts the Dom object from Question type ="DATE_TIME_WITH_MERIDIEM_WITHOUT_YEAR"
-    //- First nodelist- 0th index will has dom of Month , 1st index will contain Day, 3rd index-dom of hour , 4th index-dom of minutes
-    //- Second nodelist - 0th index will contain dom of `AM` and 1st index will contain dom of `PM` option
-    let inputFieldDateTime = element.querySelectorAll('input[type=text]')
+    //- meridiem nodelist - 0th index will contain dom of `AM` and 1st index will contain dom of `PM` option
+    // Return Type: Returns an object { date: date_dom, month: month_dom, hour: hour_dom, minute: minute_dom, meridiem: meridiem }
     let meridiem = element.querySelectorAll('div[role=option]')
-    let inputField = [inputFieldDateTime, meridiem]
-    return { dom: inputField };
+    let inputField = element.querySelectorAll('input[type=text], input[type=date]')
+    let date_dom = null;
+    let month_dom = null;
+    let year_dom = null;
+    let hour_dom = null;
+    let minute_dom = null;
+    //Input field is a nodelist seperating out day , month , year , hour , minute.
+    inputField.forEach(input => {
+      switch (input.getAttribute('aria-label')) {
+        case 'Day of the month':
+          date_dom = input;
+          break;
+        case 'Month':
+          month_dom = input;
+          break;
+        case 'Hour':
+          hour_dom = input;
+          break;
+        case 'Minute':
+          minute_dom = input;
+          break;
+        default:
+          break;
+      }
+    });
+
+    return { date: date_dom, month: month_dom, hour: hour_dom, minute: minute_dom, meridiem: meridiem };
   }
   getDomTime(element) {
     // Input Type: DOM Object
-    // Extracts the Dom object from Question type ="DATE_TIME_WITH_MERIDIEM_WITHOUT_YEAR"
-    // Return Type :Returns the input field.
+    // Extracts the Dom object from Question type ="TIME"
+    // Return Type :Returns an object { hour: hour_dom, minute: minute_dom}
     let inputField = element.querySelectorAll('input[type=text]')
-    return { dom: inputField };
+    let hour_dom = null;
+    let minute_dom = null;
+    //Input field is a nodelist seperating out hour , minutes
+    inputField.forEach(input => {
+      switch (input.getAttribute('aria-label')) {
+        case 'Hour':
+          hour_dom = input;
+          break;
+        case 'Minute':
+          minute_dom = input;
+          break;
+        default:
+          break;
+      }
+    });
+
+    return { hour: hour_dom, minute: minute_dom };
   }
 }
