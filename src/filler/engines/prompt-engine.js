@@ -42,85 +42,83 @@ export class PromptEngine {
     // Return personalized prompt for respective fieldType
     // Output Type : string containing type, or null if invalid fieldType
 
-    if (fieldType === QType.MULTIPLE_CHOICE) {
-      return (
-        "Please provide the correct option(just option and don’t write anything else) corresponding to the right answer for the following multiple-choice question:" +
-        value.description +
-        value.title
-      );
-    } else if (fieldType === QType.PARAGRAPH) {
-      return (
-        "Please provide a detailed response in the paragraph form for the following question: " +
-        value.description +
-        value.title
-      );
-    } else if (fieldType === QType.DATE_WITHOUT_YEAR) {
-      return (
-        "Please provide the date (month and day)-(in format MM/DD) -(only return MM/DD date , nothing else) that best corresponds to your response for the following question: " +
-        +value.description +
-        value.title
-      );
-    } else if (fieldType === QType.DATE_TIME_WITHOUT_YEAR){
+    switch (fieldType) {
+      case QType.MULTIPLE_CHOICE:
         return (
-            "Please strictly provide the date without year and time(in format MM/DD  Hr:Min ) -(only return MM/DD  Hr:Min date without year and time , nothing else and please don't give any prompt,just give the exact answer,include no string in answer)  that best corresponds to your response for the following question: "
-            +value.description +
-            value.title
-        )
-    }else if(fieldType === QType.DATE_TIME_WITH_MERIDIEM_WITHOUT_YEAR){
-        return (
-            "Please strictly provide the date without year and time(in format MM/DD  Hr:Min (am or pm) ) -(only return MM/DD  Hr:Min date without year and time , nothing else and please don't give any prompt,just give the exact answer,include no string in answer)  that best corresponds to your response for the following question: "
-            +value.description +
-            value.title
-        )
-
-        switch (fieldType) {
-            case QType.LINEAR_SCALE:
-                //tested on ChatGPT and Bing AI
-                return `On a scale from 1 to ${value.options.length} \n ${value.title} \n ${value.description} \n Return only the integer answer and nothing else(give any random answer on better side if it depends from person to person but only return required integer answer no extra text) \n key 1 represent "${value.bounds.lowerBound}" and key ${value.options.length} represent "${value.bounds.upperBound}" with uniform distribution between.\n Only return the key corresponding to calculated answer`;
-            
-            case QType.MULTI_CORRECT:
-                 //tested on ChatGPT and Bing AI
-                return `More than one option may be correct for this question \nYour task is to check all options that are correct and return their exact sentences \nProvide the correct sentences only, without any extra text or messages \nQuestion: \n\n ${value.title} \n ${value.description} \nOptions: \n${value.options.map(option => option.option_data).join('\n')}`;
-                
-            case QType.MULTI_CORRECT_WITH_OTHER:
-                 //tested on ChatGPT and Bing AI
-                return `More than one option may be correct for this question \nYour task is to check all options that are correct and return their exact sentences \nProvide the correct sentences only, without any extra text or messages \nIf your option is the last option 'Other:', then write 'Other:' on the first line and provide your 1-line answer for the question \nQuestion: \n\n ${value.title} \n ${value.description} \n Options: \n${[...value.options.map(option => option.data), value.other[0].data].join('\n')}`;
-            
-
-            default:
-                return "Invalid field type";
-        }
-
-
-    }
-    else if (fieldType === QType.DATE) {
-      return (
-        "Please provide the date(in format DD/MM/YYYY) -(only return DD/MM/YYYY date , nothing else,don't give any other sentence) that best corresponds to your response for the following question:" +
-        value.description +
-        value.title
-      );
-    } else if (fieldType === QType.DATE_TIME_WITH_MERIDIEM) {
-      return (
-        "Please strictly provide the date and time(in format DD/MM/YYYY  Hr:Min (am or pm)) -(only return DD/MM/YYYY  Hr:Min date and time , nothing else and please don't give any prompt,just give the exact answer,include no string in answer)  that best corresponds to your response for the following question: " +
-        value.description +
-        value.title
-      );
-    } else if (fieldType === QType.DATE_AND_TIME) {
-        return (
-          "Please strictly provide the date and time(in format DD/MM/YYYY  Hr:Min ) -(only return DD/MM/YYYY  Hr:Min date and time , nothing else and please don't give any prompt,just give the exact answer,include no string in answer)  that best corresponds to your response for the following question: " +
-          value.description +
+          "Please provide the correct option(just option and don't write anything else) corresponding to the right answer for the following multiple-choice question:" +
+          value.description + " " +
           value.title
         );
-      } 
-    else if (fieldType === QType.DURATION) {
-      return (
-        "Please provide the duration that best corresponds to your response(give only answer and nothing else in this format -Hrs:Min:Sec(answer without using parenthesis and just give the answer nothing else)) for the following question: " +
-        value.description +
-        value.title
-      );
-    }else {
-      return null;
+    
+      case QType.PARAGRAPH:
+        return (
+          "Please provide a detailed response in the paragraph form for the following question: " +
+          value.description + " " +
+          value.title
+        );
+    
+      case QType.DATE_WITHOUT_YEAR:
+        return (
+          "Please provide the date (month and day)-(in format MM/DD) -(only return MM/DD date , nothing else) that best corresponds to your response for the following question: " +
+          value.description + " " +
+          value.title
+        );
+    
+      case QType.DATE_TIME_WITHOUT_YEAR:
+        return (
+          "Please strictly provide the date without year and time(in format MM/DD  Hr:Min ) -(only return MM/DD  Hr:Min date without year and time , nothing else and please don't give any prompt,just give the exact answer,include no string in answer)  that best corresponds to your response for the following question: " +
+          value.description + " " +
+          value.title
+        );
+    
+      case QType.DATE_TIME_WITH_MERIDIEM_WITHOUT_YEAR:
+        return (
+          "Please strictly provide the date without year and time(in format MM/DD  Hr:Min (am or pm) ) -(only return MM/DD  Hr:Min date without year and time , nothing else and please don't give any prompt,just give the exact answer,include no string in answer)  that best corresponds to your response for the following question: " +
+          value.description + " " +
+          value.title
+        );
+    
+      case QType.LINEAR_SCALE:
+        return `On a scale from 1 to ${value.options.length} \n ${value.title} \n ${value.description} \n Return only the integer answer and nothing else(give any random answer on better side if it depends from person to person but only return required integer answer no extra text) \n key 1 represent "${value.bounds.lowerBound}" and key ${value.options.length} represent "${value.bounds.upperBound}" with uniform distribution between.\n Only return the key corresponding to calculated answer`;
+    
+      case QType.MULTI_CORRECT:
+        return `More than one option may be correct for this question \nYour task is to check all options that are correct and return their exact sentences \nQuestion: \n\n ${value.title} \n ${value.description} \nOptions: \n${value.options.map(option => option.option_data).join('\n')}`;
+    
+      case QType.MULTI_CORRECT_WITH_OTHER:
+        return `More than one option may be correct for this question \nYour task is to check all options that are correct and return their exact sentences \nIf your option is the last option 'Other:', then write 'Other:' on the first line and provide your 1-line answer for the question \nQuestion: \n\n ${value.title} \n ${value.description} \n Options: \n${[...value.options.map(option => option.data), value.other[0].data].join('\n')}`;
+    
+      case QType.DATE:
+        return (
+          "Please provide the date(in format DD/MM/YYYY) -(only return DD/MM/YYYY date , nothing else,don't give any other sentence) that best corresponds to your response for the following question:" +
+          value.description + " " +
+          value.title
+        );
+    
+      case QType.DATE_TIME_WITH_MERIDIEM:
+        return (
+          "Please strictly provide the date and time(in format DD/MM/YYYY  Hr:Min (am or pm)) -(only return DD/MM/YYYY  Hr:Min date and time , nothing else and please don't give any prompt,just give the exact answer,include no string in answer)  that best corresponds to your response for the following question: " +
+          value.description + " " +
+          value.title
+        );
+    
+      case QType.DATE_AND_TIME:
+        return (
+          "Please strictly provide the date and time(in format DD/MM/YYYY  Hr:Min ) -(only return DD/MM/YYYY  Hr:Min date and time , nothing else and please don't give any prompt,just give the exact answer,include no string in answer)  that best corresponds to your response for the following question: " +
+          value.description + " " +
+          value.title
+        );
+    
+      case QType.DURATION:
+        return (
+          "Please provide the duration that best corresponds to your response(give only answer and nothing else in this format -Hrs:Min:Sec(answer without using parenthesis and just give the answer nothing else)) for the following question: " +
+          value.description + " " +
+          value.title
+        );
+    
+      default:
+        return "Invalid field type";
     }
+    
   }
 
   askChatGPT(prompt) {
