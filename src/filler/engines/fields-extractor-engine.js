@@ -555,18 +555,18 @@ export class FieldsExtractorEngine {
     const rowsArray = Array.from(rows).map((row) => row.textContent.trim());
 
     const optionArray = Array.from(
-      element.querySelectorAll('div:first-child > div:first-child > div:nth-child(2n) > label')
+      element.querySelectorAll('div[role=group] label')
     );
     
-    const rowshere =rowsArray.length
-    const columnshere =columnsArray.length
+    const rowsLength = rowsArray.length
+    const columnsLength = columnsArray.length
     
     const optionsArray = [];
     
-    for (let i = 0; i < rowshere; i++) {
+    for (let i = 0; i < rowsLength; i++) {
       const rowArray = [];
-      for (let j = 0; j < columnshere; j++) {
-        const index = i * columnshere + j;
+      for (let j = 0; j < columnsLength; j++) {
+        let index = i * columnsLength + j;
         rowArray.push(optionArray[index] || null);
       }
       optionsArray.push(rowArray);
