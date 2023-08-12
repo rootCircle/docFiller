@@ -31,12 +31,12 @@ export class FillerEngine {
 
                 case QType.CHECKBOX_GRID:
                     return await this.fillCheckboxGrid(element, fieldValue, [
-                        { row: "Row 1", Optionvalues: ["Column 1", "Column 3"] },
+                        { row: "Row 1", Optionvalues: ["Column 1", "Column 2"] },
                         { row: "Row 2", Optionvalues: ["Column 2"] }
                     ]).then((response) => {return response});
 
                 case QType.MULTIPLE_CHOICE_GRID:
-                    return this.fillMultipleChoiceGrid(element, [
+                    return this.fillMultipleChoiceGrid(element, fieldValue, [
                         { row: "Row 1", Optionvalue: "Column 1" },
                         { row: "Row 2", Optionvalue: "Column 2" },
                         { row: "Brooooo", Optionvalue: "Column 2" }
@@ -480,7 +480,6 @@ export class FillerEngine {
 
         await sleep(1000);
 
-        console.log(fieldValue)
         fieldValue.options.forEach(rowItr => {
 
             value.forEach(object => {
@@ -508,28 +507,28 @@ export class FillerEngine {
 
 
 
-  fillMultipleChoiceGrid(element,value){
-    // Input Type : DOM object { Multiple Choice List }
-    // Checks if given gpt response matches any option or not
-    // Tweak : A grid has many span(s) which have role = presentation in it
-    //         if for each such span, the value matches the option is selected
+    async fillMultipleChoiceGrid(element, fieldValue, value) {
+        // Input Type : DOM object { Multiple Choice List }
+        // Checks if given gpt response matches any option or not
+        // Tweak : A grid has many span(s) which have role = presentation in it
+        //         if for each such span, the value matches the option is selected
 
-    let rows = element.querySelectorAll("div[role=radiogroup] span[role=presentation]");
-    rows.forEach(row => {
-      let rowName = row.querySelector("div").innerHTML;
-      value.forEach(object => {
-        if(object.row===rowName){
-          let columnOptions = row.querySelectorAll("div[role=radio]");
-          columnOptions.forEach(columnCheckbox => {
-            let columnValue = columnCheckbox.getAttribute("data-value");
-              if(columnValue===object.Optionvalue){
-                columnCheckbox.click();
-              }
-          });
+        await sleep(1000);
+        console.log(fieldValue)
+        // let rows = element.querySelectorAll("div[role=radiogroup] span[role=presentation]");
+        fieldValue.options.forEach(row => {
+            // let rowName = row.querySelector("div").innerHTML;
+            value.forEach(object => {
+                if (object.row === row.row) {
+                    row.cols.forEach(option => {
+                        if (option.data === object.Optionvalue) {
+                            option.dom.click();
+                        }
+                    });
 
-        }
-      });
-    });
-  }
+                }
+            });
+        });
+    }
 
 }
