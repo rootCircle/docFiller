@@ -176,12 +176,11 @@ export class FillerEngine {
   }
 
   async fillDateAndTime(fieldValue, value, sleepDuration) {
-    // Function to fill date and time
     // Input Type : Extracted Object(fieldValue) & string(value)
-    // Tweak :
-    // Return Type : Boolean
+    // Function to fill date and time
     // Valid Value format :- "dd-mm-yyyy-hh-mm"
     // hh in 24 hrs format
+    // Return Type : Boolean
 
     //sleep done because form was overriding values set by this function before
     await sleep(sleepDuration)
@@ -218,6 +217,7 @@ export class FillerEngine {
     dd.value = day
     // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
     dd.dispatchEvent(inputEvent)
+    
 
     // 2. Fill the month input field
     let mm = fieldValue.month
@@ -410,6 +410,31 @@ export class FillerEngine {
 
               value.forEach(val => {
 
+    async fillCheckBox(fieldValue, value, sleepDuration) {
+        // Input Type :- value -> Array of String(for matching options) or Object(for non-matching options)
+        //               fieldValue -> Object
+        //               sleepDuration -> Integer (amount of sleep before call)   
+        // Valid Value format :- value : ["STRING1", "string2"]
+        //                            or ["string1", {optionTitle: 'Other:', optionText: 'Text to be filled in!'}]
+        // Function for interacting with 'MULTI_CORRECT_WITH_OTHER' type question.
+        // Tick the checkbox with a matching 'value' string or object.
+        // Uses 'input' event to trigger UI changes.
+        // Return Type : Boolean
+        // Returns true if checkbox is ticked, else false.
+
+        //! To avoid any unwanted and incomplete answer this sleep function is necessary
+        //! To avoid the race around between our answer and default NULL value
+        await sleep(sleepDuration)
+
+
+        let otherOptionName = null;
+
+        fieldValue.options.forEach(element => {
+
+            value.forEach(val => {
+
+                // If ('value' is String ) => { Ticks the matching option if correct }
+                // If ('value' is Object ) => { Ticks the Other option and enters the text in input box }
                 if (typeof (val) === "string") {
                   if (element.data === val) {
                     element.dom.click();
@@ -439,12 +464,16 @@ export class FillerEngine {
     });
   }
 
+    async fillLinearScale(fieldValue, value, sleepDuration) {
+        // Input Type :- value -> string
+        //               fieldValue -> Object
+        //               sleepDuration -> Integer (amount of sleep before call) 
+        // Valid Input Format :- value - "option_name like 1, 2 or 4 etc"
+        // Function for interacting with 'LINEAR_SCALE' type question.
+        // Tick the radio button with a matching 'value' .
+        // Returns true if checkbox is ticked, else false.
+        // Return Type : Boolean
 
-  async fillLinearScale(fieldValue, value, sleepDuration) {
-
-    // Function for interacting with 'LINEAR_SCALE' type question.
-    // Tick the radio button with a matching 'value' .
-    // Searched the value using "role" and "aria-label" attributes
 
     // Uses 'input' event to trigger UI changes.
     // Returns true if checkbox is ticked, else false.
@@ -530,9 +559,95 @@ export class FillerEngine {
             }
           });
 
-        }
-      });
-    });
-  }
+    }
+
+
+    async fillDropDown(element, fieldValue, value, sleepDuration) {
+        // Input Type : element - DOM object { Drop-Down List }
+        //              fieldValue -> Object
+        //              value -> string (containing the option only)
+        //              sleepDuration -> Integer (amount of sleep before call)
+        // Valid Input Format :- value - "option_name as in list"
+        // Clicks & fills if given gpt response matches any Dropdown option or not
+        // Tweak : A dropdown has many div(s) which have role = option in it
+        //         if for each such div, the value matches the option is selected
+        // Return Type : Boolean
+
+        await sleep(sleepDuration);
+
+        fieldValue.options.forEach(option => {
+            if (option.data === value) {
+                // option.setAttribute("aria-selected", "true");
+                // option.setAttribute("tabindex", "0");
+                setTimeout(() => {
+                    option.dom.click();
+                }, 1);
+                setTimeout(() => {
+                    element.querySelector(`div[data-value="${value}"][role=option]`)?.click() // ?. for null checking
+                }, sleepDuration);
+                return true;
+            }
+        });
+
+        return false;
+    }
+
+
+
+
+    async fillCheckboxGrid(fieldValue, value, sleepDuration) {
+        // Input Type : DOM object { Multicorrect Checkbox Grid }
+        // Checks if given gpt response matches any option or not
+        // Tweak : A grid has many div(s) which have role = group in it
+        //         if for each such div, the value matches the option is selected
+
+
+        await sleep(sleepDuration);
+
+        fieldValue.options.forEach(rowItr => {
+
+            value.forEach(object => {
+
+                if (object.row === rowItr.row) {
+                    rowItr.cols.forEach(colItr => {
+                        // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+
+                        object.Optionvalues.forEach(val => {
+                            if (colItr.option === val) {
+                                colItr.dom.click()
+                            }
+                        });
+                    });
+
+                }
+            });
+        });
+    }
+
+
+
+
+    async fillMultipleChoiceGrid(fieldValue, value, sleepDuration) {
+        // Input Type : DOM object { Multiple Choice List }
+        // Checks if given gpt response matches any option or not
+        // Tweak : A grid has many span(s) which have role = presentation in it
+        //         if for each such span, the value matches the option is selected
+
+        await sleep(sleepDuration);
+        // let rows = element.querySelectorAll("div[role=radiogroup] span[role=presentation]");
+        fieldValue.options.forEach(row => {
+            // let rowName = row.querySelector("div").innerHTML;
+            value.forEach(object => {
+                if (object.row === row.row) {
+                    row.cols.forEach(option => {
+                        if (option.data === object.Optionvalue) {
+                            option.dom.click();
+                        }
+                    });
+
+                }
+            });
+        });
+    }
 
 }

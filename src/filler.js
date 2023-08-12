@@ -68,6 +68,7 @@ async function main() {
 				console.log();	
 			});
 		}
+		console.log();
 	});
 
 }
