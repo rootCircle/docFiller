@@ -23,7 +23,7 @@ export class FillerEngine {
                     return this.fillParagraph(fieldValue, "this is a paragraph ");
 
                 case QType.LINEAR_SCALE:
-                    return this.fillLinearScale(element, "1");
+                    return this.fillLinearScale(element, fieldValue, "1");
 
                 case QType.DROPDOWN:
                     return this.fillDropDown(element, "Option 2");
@@ -420,7 +420,7 @@ export class FillerEngine {
         return false
     }
 
-    async fillLinearScale(element, value) {
+    async fillLinearScale(element, fieldValue, value) {
 
         // Function for interacting with 'LINEAR_SCALE' type question.
         // Tick the radio button with a matching 'value' .
@@ -431,14 +431,9 @@ export class FillerEngine {
 
         await sleep(1000);
 
-        let inputFields = element.querySelectorAll(("div[role=radiogroup] span[role=presentation]"));
-        inputFields = inputFields[0];
-
-        let scales = inputFields.querySelectorAll("div[role=radio]");
-        scales.forEach(scale => {
-            if (scale.getAttribute("aria-label") === value) {
-                var inputEvent = new Event('input', { bubbles: true });
-                scale.click();
+        fieldValue.options.forEach(scale => {
+            if (scale.data === value) {
+                scale.dom.click();
                 return true;
             }
         });
@@ -487,21 +482,18 @@ export class FillerEngine {
 
         await sleep(1000);
 
-        // console.log(fieldValue)
+        console.log(fieldValue)
         fieldValue.options.forEach(rowItr => {
 
             value.forEach(object => {
 
                 if (object.row === rowItr.row) {
                     rowItr.cols.forEach(colItr => {
-                        var inputEvent = new Event('input', { bubbles: true })
                         // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
 
                         object.Optionvalues.forEach(val => {
                             if (colItr.option === val) {
-                                colItr.dom.parentElement.dispatchEvent(inputEvent)
-                                // console.log(colItr.dom.parentNode)
-                                // colItr.dom.parentNode.click();
+                                colItr.dom.click()
                             }
                         });
                     });
