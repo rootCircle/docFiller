@@ -26,7 +26,7 @@ export class FillerEngine {
                     return this.fillLinearScale(element, fieldValue, "1");
 
                 case QType.DROPDOWN:
-                    return this.fillDropDown(element, "Option 2");
+                    return this.fillDropDown(element, fieldValue, "Option 2");
                     break;
 
                 case QType.CHECKBOX_GRID:
@@ -441,7 +441,7 @@ export class FillerEngine {
     }
 
 
-    async fillDropDown(element, value) {
+    async fillDropDown(element, fieldValue, value) {
         // Input Type : DOM object { Drop-Down List }
         // Checks if given gpt response matches any Dropdown option or not
         // Tweak : A dropdown has many div(s) which have role = option in it
@@ -450,21 +450,19 @@ export class FillerEngine {
 
         await sleep(1000);
 
-        let optionElements = element.querySelectorAll("div[role=option]");
-        
-        optionElements.forEach(option => {
-            if (option.getAttribute("data-value") === value) {
-                option.setAttribute("aria-selected", "true");
-                option.setAttribute("tabindex", "0");
-                option.click();
+        console.log(fieldValue)
+        fieldValue.options.forEach(option => {
+            if (option.data === value) {
+                console.log(value)
+                
+                setTimeout(() => {
+                    option.dom.click();
+                }, 1);
                 setTimeout(() => {
                     element.querySelector(`div[data-value="${value}"][role=option]`)?.click() // ?. for null checking
                 }, 1000);
                 return true;
-            } else {
-                option.setAttribute("aria-selected", "false");
-                option.setAttribute("tabindex", "-1");
-            }
+            } 
         });
         
         return false;
@@ -512,7 +510,6 @@ export class FillerEngine {
         //         if for each such span, the value matches the option is selected
 
         await sleep(1000);
-        console.log(fieldValue)
         // let rows = element.querySelectorAll("div[role=radiogroup] span[role=presentation]");
         fieldValue.options.forEach(row => {
             // let rowName = row.querySelector("div").innerHTML;
