@@ -23,20 +23,20 @@ export class FillerEngine {
                     return this.fillParagraph(fieldValue, "this is a paragraph ");
 
                 case QType.LINEAR_SCALE:
-                    return this.fillLinearScale(element, fieldValue, "1");
+                    return this.fillLinearScale(fieldValue, "1");
 
                 case QType.DROPDOWN:
                     return this.fillDropDown(element, fieldValue, "Option 2");
                     break;
 
                 case QType.CHECKBOX_GRID:
-                    return await this.fillCheckboxGrid(element, fieldValue, [
+                    return await this.fillCheckboxGrid(fieldValue, [
                         { row: "Row 1", Optionvalues: ["Column 1", "Column 2"] },
                         { row: "Row 2", Optionvalues: ["Column 2"] }
                     ]).then((response) => {return response});
 
                 case QType.MULTIPLE_CHOICE_GRID:
-                    return this.fillMultipleChoiceGrid(element, fieldValue, [
+                    return this.fillMultipleChoiceGrid(fieldValue, [
                         { row: "Row 1", Optionvalue: "Column 1" },
                         { row: "Row 2", Optionvalue: "Column 2" },
                         { row: "Brooooo", Optionvalue: "Column 2" }
@@ -417,7 +417,7 @@ export class FillerEngine {
   }
 
 
-  fillLinearScale(element, value) {
+  async fillLinearScale(fieldValue, value) {
     
     // Function for interacting with 'LINEAR_SCALE' type question.
     // Tick the radio button with a matching 'value' .
@@ -452,7 +452,8 @@ export class FillerEngine {
         fieldValue.options.forEach(option => {
             if (option.data === value) {
                 console.log(value)
-                
+                // option.setAttribute("aria-selected", "true");
+                // option.setAttribute("tabindex", "0");
                 setTimeout(() => {
                     option.dom.click();
                 }, 1);
@@ -469,15 +470,12 @@ export class FillerEngine {
 
 
 
-  fillCheckboxGrid(element,fieldValue, value){
-    // Input Type : DOM object { Multicorrect Checkbox Grid }
-    // Checks if given gpt response matches any option or not
-    // Tweak : A grid has many div(s) which have role = group in it
-    //         if for each such div, the value matches the option is selected
-    console.log(fieldValue)
-    fieldValue.options.forEach(rowItr => {
-      
-      value.forEach(object => {
+    async fillCheckboxGrid(fieldValue, value) {
+        // Input Type : DOM object { Multicorrect Checkbox Grid }
+        // Checks if given gpt response matches any option or not
+        // Tweak : A grid has many div(s) which have role = group in it
+        //         if for each such div, the value matches the option is selected
+
 
         await sleep(1000);
 
@@ -507,8 +505,7 @@ export class FillerEngine {
 
 
 
-
-    async fillMultipleChoiceGrid(element, fieldValue, value) {
+    async fillMultipleChoiceGrid(fieldValue, value) {
         // Input Type : DOM object { Multiple Choice List }
         // Checks if given gpt response matches any option or not
         // Tweak : A grid has many span(s) which have role = presentation in it
