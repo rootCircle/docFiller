@@ -491,7 +491,6 @@ export class FieldsExtractorEngine {
     //      -2nd array will denote contents of column1,column2,column3
     let optionsArray = []
     rows.forEach((row) => {
-      console.log(row)
       const columns = row.querySelectorAll('div[role="radio"]');
       const rowColumns = [];
 

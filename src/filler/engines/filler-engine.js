@@ -1,5 +1,5 @@
 import QType from '../../utils/question-types'
-
+import { SLEEP_DURATION } from '../../utils/environment';
 function sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
@@ -23,30 +23,30 @@ export class FillerEngine {
                     return this.fillParagraph(fieldValue, "this is a paragraph ");
 
                 case QType.LINEAR_SCALE:
-                    return this.fillLinearScale(fieldValue, "1");
+                    return this.fillLinearScale(fieldValue, "1", SLEEP_DURATION);
 
                 case QType.DROPDOWN:
-                    return this.fillDropDown(element, fieldValue, "Option 2");
+                    return this.fillDropDown(element, fieldValue, "Option 2", SLEEP_DURATION);
                     break;
 
                 case QType.CHECKBOX_GRID:
                     return await this.fillCheckboxGrid(fieldValue, [
                         { row: "Row 1", Optionvalues: ["Column 1", "Column 2"] },
                         { row: "Row 2", Optionvalues: ["Column 2"] }
-                    ]).then((response) => {return response});
+                    ], SLEEP_DURATION).then((response) => {return response});
 
                 case QType.MULTIPLE_CHOICE_GRID:
                     return this.fillMultipleChoiceGrid(fieldValue, [
                         { row: "Row 1", Optionvalue: "Column 1" },
                         { row: "Row 2", Optionvalue: "Column 2" },
                         { row: "Brooooo", Optionvalue: "Column 2" }
-                    ]);
+                    ], SLEEP_DURATION);
 
                 case QType.DATE:
                     return this.fillDate(fieldValue, "11-11-2111");
 
                 case QType.DATE_AND_TIME:
-                    return this.fillDateAndTime(fieldValue, '01-01-2003-01-01');
+                    return this.fillDateAndTime(fieldValue, '01-01-2003-01-01', SLEEP_DURATION);
 
                 case QType.TIME:
                     return this.fillTime(fieldValue, '02-02');
@@ -57,7 +57,7 @@ export class FillerEngine {
                         'Sightseeing',
                         'Day 2',
                         { optionTitle: 'Other:', optionText: 'My name is Monark Jain' }
-                    ]);
+                    ], SLEEP_DURATION);
 
                 case QType.DURATION:
                     return this.fillDuration(fieldValue, '11-11-11');
@@ -66,7 +66,7 @@ export class FillerEngine {
                     return this.fillDateWithoutYear(fieldValue, '11-11');
 
                 case QType.DATE_TIME_WITHOUT_YEAR:
-                    return this.fillDateTimeWithoutYear(fieldValue, '22-01-01-01');
+                    return this.fillDateTimeWithoutYear(fieldValue, '22-01-01-01',SLEEP_DURATION);
 
                 default:
                     return false;
@@ -175,7 +175,7 @@ export class FillerEngine {
         return true
     }
 
-    async fillDateAndTime(fieldValue, value) {
+    async fillDateAndTime(fieldValue, value, sleepDuration) {
         // Function to fill date and time
         // Input Type : Extracted Object(fieldValue) & string(value)
         // Tweak :
@@ -184,7 +184,7 @@ export class FillerEngine {
         // hh in 24 hrs format
 
         //sleep done because form was overriding values set by this function before
-        await sleep(2000)
+        await sleep(sleepDuration)
 
         let inputEvent = new Event('input', { bubbles: true })
         // Validate the date format
@@ -332,7 +332,7 @@ export class FillerEngine {
         return true
     }
 
-    async fillDateTimeWithoutYear(fieldValue, value) {
+    async fillDateTimeWithoutYear(fieldValue, value, sleepDuration) {
         // Input Type : Extracted Object(fieldValue) & string(value)
         // Valid Value format :- "dd-mm-hh-mm"
         // Function to fill date and time not having year
@@ -340,7 +340,7 @@ export class FillerEngine {
         // hh in 24 hrs format
 
         //! to avoid the race around between our answer and default NULL value
-        await sleep(2000)
+        await sleep(sleepDuration)
 
         let inputEvent = new Event('input', { bubbles: true })
         const [day, month, hours, minutes] = value.split('-')
@@ -373,7 +373,7 @@ export class FillerEngine {
         return true
     }
 
-    async fillCheckBox(fieldValue, value) {
+    async fillCheckBox(fieldValue, value, sleepDuration) {
         // Input Type :- value -> Array of String(for matching options) or Object(for non-matching options)
         //               fieldValue -> Object
         // Function for interacting with 'MULTI_CORRECT_WITH_OTHER' type question.
@@ -383,7 +383,7 @@ export class FillerEngine {
         
         //! To avoid any unwanted and incomplete answer this sleep function is necessary
         //! To avoid the race around between our answer and default NULL value
-        await sleep(2000)
+        await sleep(sleepDuration)
         
         
         let otherOptionName = null;
@@ -420,7 +420,7 @@ export class FillerEngine {
         return false
     }
 
-    async fillLinearScale(fieldValue, value) {
+    async fillLinearScale(fieldValue, value, sleepDuration) {
 
         // Function for interacting with 'LINEAR_SCALE' type question.
         // Tick the radio button with a matching 'value' .
@@ -429,7 +429,7 @@ export class FillerEngine {
         // Uses 'input' event to trigger UI changes.
         // Returns true if checkbox is ticked, else false.
 
-        await sleep(1000);
+        await sleep(sleepDuration);
 
         fieldValue.options.forEach(scale => {
             if (scale.data === value) {
@@ -441,19 +441,17 @@ export class FillerEngine {
     }
 
 
-    async fillDropDown(element, fieldValue, value) {
+    async fillDropDown(element, fieldValue, value, sleepDuration) {
         // Input Type : DOM object { Drop-Down List }
         // Checks if given gpt response matches any Dropdown option or not
         // Tweak : A dropdown has many div(s) which have role = option in it
         //         if for each such div, the value matches the option is selected
         // Return Type : Boolean
 
-        await sleep(1000);
+        await sleep(sleepDuration);
 
-        console.log(fieldValue)
         fieldValue.options.forEach(option => {
             if (option.data === value) {
-                console.log(value)
                 // option.setAttribute("aria-selected", "true");
                 // option.setAttribute("tabindex", "0");
                 setTimeout(() => {
@@ -461,7 +459,7 @@ export class FillerEngine {
                 }, 1);
                 setTimeout(() => {
                     element.querySelector(`div[data-value="${value}"][role=option]`)?.click() // ?. for null checking
-                }, 1000);
+                }, sleepDuration);
                 return true;
             } 
         });
@@ -472,14 +470,14 @@ export class FillerEngine {
 
 
 
-    async fillCheckboxGrid(fieldValue, value) {
+    async fillCheckboxGrid(fieldValue, value, sleepDuration) {
         // Input Type : DOM object { Multicorrect Checkbox Grid }
         // Checks if given gpt response matches any option or not
         // Tweak : A grid has many div(s) which have role = group in it
         //         if for each such div, the value matches the option is selected
 
 
-        await sleep(1000);
+        await sleep(sleepDuration);
 
         fieldValue.options.forEach(rowItr => {
 
@@ -504,13 +502,13 @@ export class FillerEngine {
 
 
 
-    async fillMultipleChoiceGrid(fieldValue, value) {
+    async fillMultipleChoiceGrid(fieldValue, value, sleepDuration) {
         // Input Type : DOM object { Multiple Choice List }
         // Checks if given gpt response matches any option or not
         // Tweak : A grid has many span(s) which have role = presentation in it
         //         if for each such span, the value matches the option is selected
 
-        await sleep(1000);
+        await sleep(sleepDuration);
         // let rows = element.querySelectorAll("div[role=radiogroup] span[role=presentation]");
         fieldValue.options.forEach(row => {
             // let rowName = row.querySelector("div").innerHTML;
