@@ -44,27 +44,31 @@ async function main() {
 	questions.forEach(question => {
 		let fieldType = checker.detectType(question);
 		if (fieldType !== null) {
+			console.log(question)
+
+			console.log("Field Type : " + fieldType);
+			console.log("Fields ↴")
 			
 			let fieldValue = fields.getFields(question, fieldType);
-			let promptText = prompt.prompt(fieldType, fieldValue);
-			let response = prompt.getResponse(fieldType, fieldValue);
-			let parsed_response = parser.parse(fieldType, fieldValue, response);
 			
+			console.log("Field Value ↴")
+			console.log(fieldValue);
+			
+			
+			let promptText = prompt.prompt(fieldType, fieldValue);
+            console.log("Prompt for Model : " + promptText);
+			
+			let response = prompt.getResponse(fieldType, fieldValue);
+
+			console.log("Response : " + response);
+
+			let parsed_response = parser.parse(fieldType, fieldValue, response);
+			console.log("Parsed Response : " + parsed_response)
+
 			// Using Dummy Value for brevity
-			filler.fill(question, fieldType, fieldValue, "Dummy Value").then((response) => {
-				console.log(question)
-				console.log("Field Type : " + fieldType);
-				console.log("Fields ↴")
-				console.log("Field Value ↴")
-				console.log(fieldValue);
-				console.log("Prompt for Model : " + promptText);
-				console.log("Response : " + response);
-				console.log("Parsed Response : " + parsed_response)
-				console.log("Filled Response ↴");
-				console.log(response)
-				console.log();
-			})
+			filler.fill(question, fieldType, fieldValue, "Dummy Value");
 		}
+		console.log();
 	});
 
 }

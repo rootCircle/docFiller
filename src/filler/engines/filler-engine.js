@@ -33,7 +33,7 @@ export class FillerEngine {
                     return await this.fillCheckboxGrid(fieldValue, [
                         { row: "Row 1", Optionvalues: ["Column 1", "Column 2"] },
                         { row: "Row 2", Optionvalues: ["Column 2"] }
-                    ], SLEEP_DURATION).then((response) => {return response});
+                    ], SLEEP_DURATION).then((response) => { return response });
 
                 case QType.MULTIPLE_CHOICE_GRID:
                     return this.fillMultipleChoiceGrid(fieldValue, [
@@ -51,14 +51,6 @@ export class FillerEngine {
                 case QType.TIME:
                     return this.fillTime(fieldValue, '02-02');
 
-                case QType.MULTI_CORRECT_WITH_OTHER:
-                case QType.MULTI_CORRECT:
-                    return this.fillCheckBox(fieldValue, [
-                        'Sightseeing',
-                        'Day 2',
-                        { optionTitle: 'Other:', optionText: 'My name is Monark Jain' }
-                    ], SLEEP_DURATION);
-
                 case QType.DURATION:
                     return this.fillDuration(fieldValue, '11-11-11');
 
@@ -66,7 +58,15 @@ export class FillerEngine {
                     return this.fillDateWithoutYear(fieldValue, '11-11');
 
                 case QType.DATE_TIME_WITHOUT_YEAR:
-                    return this.fillDateTimeWithoutYear(fieldValue, '22-01-01-01',SLEEP_DURATION);
+                    return this.fillDateTimeWithoutYear(fieldValue, '22-01-01-01', SLEEP_DURATION);
+
+                case QType.MULTI_CORRECT_WITH_OTHER:
+                case QType.MULTI_CORRECT:
+                    return this.fillCheckBox(fieldValue, [
+                        'Sightseeing',
+                        'Day 2',
+                        { optionTitle: 'Other:', optionText: 'My name is Monark Jain' }
+                    ], SLEEP_DURATION);
 
                 default:
                     return false;
@@ -176,12 +176,11 @@ export class FillerEngine {
     }
 
     async fillDateAndTime(fieldValue, value, sleepDuration) {
-        // Function to fill date and time
         // Input Type : Extracted Object(fieldValue) & string(value)
-        // Tweak :
-        // Return Type : Boolean
+        // Function to fill date and time
         // Valid Value format :- "dd-mm-yyyy-hh-mm"
         // hh in 24 hrs format
+        // Return Type : Boolean
 
         //sleep done because form was overriding values set by this function before
         await sleep(sleepDuration)
@@ -376,22 +375,26 @@ export class FillerEngine {
     async fillCheckBox(fieldValue, value, sleepDuration) {
         // Input Type :- value -> Array of String(for matching options) or Object(for non-matching options)
         //               fieldValue -> Object
+        //               sleepDuration -> Integer (amount of sleep before call)   
+        // Valid Value format :- value : ["STRING1", "string2"]
+        //                            or ["string1", {optionTitle: 'Other:', optionText: 'Text to be filled in!'}]
         // Function for interacting with 'MULTI_CORRECT_WITH_OTHER' type question.
         // Tick the checkbox with a matching 'value' string or object.
         // Uses 'input' event to trigger UI changes.
+        // Return Type : Boolean
         // Returns true if checkbox is ticked, else false.
-        
+
         //! To avoid any unwanted and incomplete answer this sleep function is necessary
         //! To avoid the race around between our answer and default NULL value
         await sleep(sleepDuration)
-        
-        
+
+
         let otherOptionName = null;
-        
+
         fieldValue.options.forEach(element => {
-            
+
             value.forEach(val => {
-                
+
                 // If ('value' is String ) => { Ticks the matching option if correct }
                 // If ('value' is Object ) => { Ticks the Other option and enters the text in input box }
                 if (typeof (val) === "string") {
@@ -421,13 +424,15 @@ export class FillerEngine {
     }
 
     async fillLinearScale(fieldValue, value, sleepDuration) {
-
+        // Input Type :- value -> string
+        //               fieldValue -> Object
+        //               sleepDuration -> Integer (amount of sleep before call) 
+        // Valid Input Format :- value - "option_name like 1, 2 or 4 etc"
         // Function for interacting with 'LINEAR_SCALE' type question.
         // Tick the radio button with a matching 'value' .
-        // Searched the value using "role" and "aria-label" attributes
-
-        // Uses 'input' event to trigger UI changes.
         // Returns true if checkbox is ticked, else false.
+        // Return Type : Boolean
+
 
         await sleep(sleepDuration);
 
@@ -442,8 +447,12 @@ export class FillerEngine {
 
 
     async fillDropDown(element, fieldValue, value, sleepDuration) {
-        // Input Type : DOM object { Drop-Down List }
-        // Checks if given gpt response matches any Dropdown option or not
+        // Input Type : element - DOM object { Drop-Down List }
+        //              fieldValue -> Object
+        //              value -> string (containing the option only)
+        //              sleepDuration -> Integer (amount of sleep before call)
+        // Valid Input Format :- value - "option_name as in list"
+        // Clicks & fills if given gpt response matches any Dropdown option or not
         // Tweak : A dropdown has many div(s) which have role = option in it
         //         if for each such div, the value matches the option is selected
         // Return Type : Boolean
@@ -461,9 +470,9 @@ export class FillerEngine {
                     element.querySelector(`div[data-value="${value}"][role=option]`)?.click() // ?. for null checking
                 }, sleepDuration);
                 return true;
-            } 
+            }
         });
-        
+
         return false;
     }
 
