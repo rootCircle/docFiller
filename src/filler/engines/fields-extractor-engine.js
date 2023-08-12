@@ -554,18 +554,23 @@ export class FieldsExtractorEngine {
     const columnsArray = Array.from(columns).slice(1).map((column) => column.textContent.trim());
     const rowsArray = Array.from(rows).map((row) => row.textContent.trim());
 
-    let optionsArray = []
-    rows.forEach((row) => {
-      const columns = row.querySelectorAll('div[role="checkbox"]');
-      const rowColumns = [];
-
-      columns.forEach((column) => {
-        const targetDom = column.children[2];
-        rowColumns.push(targetDom);
-      });
-
-      optionsArray.push(rowColumns);
-    });
+    const optionArray = Array.from(
+      element.querySelectorAll('div[role=group] label')
+    );
+    
+    const rowsLength = rowsArray.length
+    const columnsLength = columnsArray.length
+    
+    const optionsArray = [];
+    
+    for (let i = 0; i < rowsLength; i++) {
+      const rowArray = [];
+      for (let j = 0; j < columnsLength; j++) {
+        let index = i * columnsLength + j;
+        rowArray.push(optionArray[index] || null);
+      }
+      optionsArray.push(rowArray);
+    }
 
     let option_dom = []
     for (let i = 0; i < rowsArray.length; i++) {
