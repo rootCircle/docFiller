@@ -476,7 +476,7 @@ export class FieldsExtractorEngine {
     //its first child contains a div which contains all columns.
     // and rest divs were for rows
     //But between each row there was an empty div so we need to extract 2nd,4th,6th.. i.e even numbered divs**
-    const rows = element.querySelectorAll(`${path}:nth-child(2n)`);
+    const rows = element.querySelectorAll('div[role=radiogroup]');
     const columns = element.querySelectorAll(`${path}:first-child > div`);
 
     const gridArray = [];
@@ -491,6 +491,7 @@ export class FieldsExtractorEngine {
     //      -2nd array will denote contents of column1,column2,column3
     let optionsArray = []
     rows.forEach((row) => {
+      console.log(row)
       const columns = row.querySelectorAll('div[role="radio"]');
       const rowColumns = [];
 
