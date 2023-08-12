@@ -26,7 +26,7 @@ export class FillerEngine {
                     return this.fillLinearScale(element, fieldValue, "1");
 
                 case QType.DROPDOWN:
-                    return this.fillDropDown(element, "Option 2");
+                    return this.fillDropDown(element, fieldValue, "Option 2");
                     break;
 
                 case QType.CHECKBOX_GRID:
@@ -418,14 +418,14 @@ export class FillerEngine {
 
 
   fillLinearScale(element, value) {
-
+    
     // Function for interacting with 'LINEAR_SCALE' type question.
     // Tick the radio button with a matching 'value' .
     // Searched the value using "role" and "aria-label" attributes
-
+    
     // Uses 'input' event to trigger UI changes.
     // Returns true if checkbox is ticked, else false.
-
+    
     let inputFields = element.querySelectorAll(("div[role=radiogroup] span[role=presentation]"));
     inputFields = inputFields[0];
 
@@ -437,33 +437,34 @@ export class FillerEngine {
         return true;
       }
     });
-
+    
   }
 
-
-  fillDropDown(element, value) {
-    // Input Type : DOM object { Drop-Down List }
-    // Checks if given gpt response matches any Dropdown option or not
-    // Tweak : A dropdown has many div(s) which have role = option in it
-    //         if for each such div, the value matches the option is selected
-    // Return Type : Boolean
-
-    let optionElements = element.querySelectorAll("div[role=option]");
-    console.log(optionElements)
-    optionElements.forEach(option => {
-      if (option.getAttribute("data-value") === value) {
-        option.setAttribute("aria-selected", "true");
-        option.setAttribute("tabindex", "0");
-        option.click();
-        return true;
-      } else {
-        option.setAttribute("aria-selected", "false");
-        option.setAttribute("tabindex", "-1");
-      }
-    });
-
-    return false;
-  }
+  
+    async fillDropDown(element, fieldValue, value) {
+        // Input Type : DOM object { Drop-Down List }
+        // Checks if given gpt response matches any Dropdown option or not
+        // Tweak : A dropdown has many div(s) which have role = option in it
+        //         if for each such div, the value matches the option is selected
+        // Return Type : Boolean
+    
+        console.log(fieldValue)
+        fieldValue.options.forEach(option => {
+            if (option.data === value) {
+                console.log(value)
+                
+                setTimeout(() => {
+                    option.dom.click();
+                }, 1);
+                setTimeout(() => {
+                    element.querySelector(`div[data-value="${value}"][role=option]`)?.click() // ?. for null checking
+                }, 1000);
+                return true;
+            } 
+        });
+        
+        return false;
+    }
 
 
 
@@ -501,8 +502,8 @@ export class FillerEngine {
 
         }
       });
-    });
-  }
+    }
+
 
 
 
@@ -514,7 +515,6 @@ export class FillerEngine {
         //         if for each such span, the value matches the option is selected
 
         await sleep(1000);
-        console.log(fieldValue)
         // let rows = element.querySelectorAll("div[role=radiogroup] span[role=presentation]");
         fieldValue.options.forEach(row => {
             // let rowName = row.querySelector("div").innerHTML;
