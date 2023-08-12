@@ -524,6 +524,8 @@ export class FieldsExtractorEngine {
 
     return {
       options: row_col_dom,
+      rowArray: rowsArray , 
+      columnArray: columnsArray
     };
   }
 
@@ -583,7 +585,9 @@ export class FieldsExtractorEngine {
       row_col_dom.push({ row: rowsArray[row_index], cols: arr })
     }
     return {
-      options: row_col_dom
+      options: row_col_dom , 
+      rowArray: rowsArray , 
+      columnArray: columnsArray
     };
   }
 
