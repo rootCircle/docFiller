@@ -1,414 +1,376 @@
 import QType from '../../utils/question-types'
 import { SLEEP_DURATION } from '../../utils/environment';
 function sleep(milliseconds) {
-  return new Promise(resolve => setTimeout(resolve, milliseconds))
+    return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
 
 export class FillerEngine {
-  // Passes in the required field as form of input and fill in those values appropriately
-  // via DOM
+    // Passes in the required field as form of input and fill in those values appropriately
+    // via DOM
 
-  constructor() { }
+    constructor() { }
 
-  async fill(element, fieldType, fieldValue, value) {
-    if (fieldType != null) {
-      switch (fieldType) {
-        case QType.TEXT:
-          return this.fillText(fieldValue, "this is text");
+    async fill(element, fieldType, fieldValue, value) {
+        if (fieldType != null) {
+            switch (fieldType) {
+                case QType.TEXT:
+                    return this.fillText(fieldValue, "this is text");
 
-        case QType.TEXT_EMAIL:
-          return this.fillEmail(fieldValue, 'harshit123@gmail.com');
+                case QType.TEXT_EMAIL:
+                    return this.fillEmail(fieldValue, 'harshit123@gmail.com');
 
-        case QType.PARAGRAPH:
-          return this.fillParagraph(fieldValue, "this is a paragraph ");
+                case QType.PARAGRAPH:
+                    return this.fillParagraph(fieldValue, "this is a paragraph ");
 
-        case QType.LINEAR_SCALE:
-          return this.fillLinearScale(fieldValue, "1", SLEEP_DURATION);
+                case QType.LINEAR_SCALE:
+                    return this.fillLinearScale(fieldValue, "1", SLEEP_DURATION);
 
-        case QType.DROPDOWN:
-          return this.fillDropDown(element, fieldValue, "Option 2", SLEEP_DURATION);
-          break;
+                case QType.DROPDOWN:
+                    return await this.fillDropDown(element, fieldValue, "Option 2", SLEEP_DURATION).then(response =>  response);
 
-        case QType.CHECKBOX_GRID:
-          return await this.fillCheckboxGrid(fieldValue, [
-            { row: "Row 1", Optionvalues: ["Column 1", "Column 2"] },
-            { row: "Row 2", Optionvalues: ["Column 2"] }
-          ], SLEEP_DURATION).then((response) => { return response });
+                case QType.CHECKBOX_GRID:
+                    
+                    return await this.fillCheckboxGrid(fieldValue, [
+                        { row: "Row 1", Optionvalues: ["Column 1", "Column 2"] },
+                        { row: "Row 2", Optionvalues: ["Column 2"] }
+                    ], SLEEP_DURATION).then((response) => { return response });
 
-        case QType.MULTIPLE_CHOICE_GRID:
-          return this.fillMultipleChoiceGrid(fieldValue, [
-            { row: "Row 1", Optionvalue: "Column 1" },
-            { row: "Row 2", Optionvalue: "Column 2" },
-            { row: "Brooooo", Optionvalue: "Column 2" }
-          ], SLEEP_DURATION);
+                case QType.MULTIPLE_CHOICE_GRID:
+                    return this.fillMultipleChoiceGrid(fieldValue, [
+                        { row: "Row 1", Optionvalue: "Column 1" },
+                        { row: "Row 2", Optionvalue: "Column 2" },
+                        { row: "Brooooo", Optionvalue: "Column 2" }
+                    ], SLEEP_DURATION);
 
-        case QType.DATE:
-          return this.fillDate(fieldValue, "11-11-2111");
+                case QType.DATE:
+                    return this.fillDate(fieldValue, "11-11-2111");
 
-        case QType.DATE_AND_TIME:
-          return this.fillDateAndTime(fieldValue, '01-01-2003-01-01', SLEEP_DURATION);
+                case QType.DATE_AND_TIME:
+                    return this.fillDateAndTime(fieldValue, '01-01-2003-01-01', SLEEP_DURATION);
 
-        case QType.TIME:
-          return this.fillTime(fieldValue, '02-02');
+                case QType.TIME:
+                    return this.fillTime(fieldValue, '02-02');
 
-        case QType.MULTI_CORRECT_WITH_OTHER:
-        case QType.MULTI_CORRECT:
-          return this.fillCheckBox(fieldValue, [
-            'Sightseeing',
-            'Day 2',
-            { optionTitle: 'Other:', optionText: 'My name is Monark Jain' }
-          ], SLEEP_DURATION);
+                case QType.DURATION:
+                    return this.fillDuration(fieldValue, '11-11-11');
 
-        case QType.DURATION:
-          return this.fillDuration(fieldValue, '11-11-11');
+                case QType.DATE_WITHOUT_YEAR:
+                    return this.fillDateWithoutYear(fieldValue, '11-11');
 
-        case QType.DATE_WITHOUT_YEAR:
-          return this.fillDateWithoutYear(fieldValue, '11-11');
+                case QType.DATE_TIME_WITHOUT_YEAR:
+                    return this.fillDateTimeWithoutYear(fieldValue, '22-01-01-01', SLEEP_DURATION);
 
-        case QType.DATE_TIME_WITHOUT_YEAR:
-          return this.fillDateTimeWithoutYear(fieldValue, '22-01-01-01', SLEEP_DURATION);
+                case QType.MULTI_CORRECT_WITH_OTHER:
+                case QType.MULTI_CORRECT:
+                    return this.fillCheckBox(fieldValue, [
+                        'Sightseeing',
+                        'Day 2',
+                        { optionTitle: 'Other:', optionText: 'My name is Monark Jain' }
+                    ], SLEEP_DURATION);
 
-        default:
-          return false;
-      }
+                default:
+                    return false;
+            }
 
-    } else {
-      return false
-    }
-  }
-
-  fillText(fieldValue, value) {
-    // Input Type : Extracted Object(fieldValue) & string(value)
-    // Valid value format :- Single line string
-    // Function to fill question with type text input with a specified value.
-    // Return Type : Boolean
-
-    let inputField = fieldValue.dom[0]
-    inputField.value = value
-    let inputEvent = new Event('input', { bubbles: true })
-    // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    inputField.dispatchEvent(inputEvent)
-    return true
-  }
-
-  fillEmail(fieldValue, value) {
-    // Input Type : Extracted Object(fieldValue) & string(value)
-    // Valid value format :- An valid Email
-    // Function to fill email
-    // Return Type : Boolean
-
-    let inputField = fieldValue.dom[0]
-    inputField.value = value
-    let inputEvent = new Event('input', { bubbles: true })
-    // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    inputField.dispatchEvent(inputEvent)
-    return true
-  }
-
-  fillParagraph(fieldValue, value) {
-    // Input Type : Extracted Object(fieldValue) & string(value)
-    // Valid value format :- A paragraph (can be multiline too)
-    // Function to fill paragraph type questions
-    // Return Type : Boolean
-
-    let inputField = fieldValue.dom[0]
-    inputField.value = value
-    let inputEvent = new Event('input', { bubbles: true })
-    // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    inputField.dispatchEvent(inputEvent)
-    return true
-  }
-
-  fillDate(fieldValue, value) {
-    // Input Type : Extracted Object(fieldValue) & string(value)
-    // Valid Value format :- "dd-mm-yyyy"
-    // Function to fill date
-    // Return Type : Boolean
-
-    // Validate the date format
-    const datePattern = /^(\d{2})-(\d{2})-(\d{4})$/
-    let inputEvent = new Event('input', { bubbles: true })
-
-    if (!datePattern.test(value)) {
-      // Invalid format
-      return false
+        } else {
+            return false
+        }
     }
 
-    const [day, month, year] = value.split('-')
-    const date = new Date(`${year}-${month}-${day}`)
+    fillText(fieldValue, value) {
+        // Input Type : Extracted Object(fieldValue) & string(value)
+        // Valid value format :- Single line string
+        // Function to fill question with type text input with a specified value.
+        // Return Type : Boolean
 
-    // Invalid date format as raised by date constructor
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date#return_value
-    if (date.valueOf() === NaN) {
-      return false;
+        let inputField = fieldValue.dom[0]
+        inputField.value = value
+        let inputEvent = new Event('input', { bubbles: true })
+        // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+        inputField.dispatchEvent(inputEvent)
+        return true
     }
 
-    // To ensure any params to be filled isn't missed in Date constructor
-    if (
-      !(
-        date.getDate() === Number(day) &&
-        date.getMonth() + 1 === Number(month) && // Month numbering start from 0...11
-        date.getFullYear() === Number(year)
-      )
-    ) {
-      return false;
+    fillEmail(fieldValue, value) {
+        // Input Type : Extracted Object(fieldValue) & string(value)
+        // Valid value format :- An valid Email
+        // Function to fill email
+        // Return Type : Boolean
+
+        let inputField = fieldValue.dom[0]
+        inputField.value = value
+        let inputEvent = new Event('input', { bubbles: true })
+        // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+        inputField.dispatchEvent(inputEvent)
+        return true
     }
 
-    // 1. Fill the day input field
-    let dd = fieldValue.date
-    dd.value = day
-    // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    dd.dispatchEvent(inputEvent)
+    fillParagraph(fieldValue, value) {
+        // Input Type : Extracted Object(fieldValue) & string(value)
+        // Valid value format :- A paragraph (can be multiline too)
+        // Function to fill paragraph type questions
+        // Return Type : Boolean
 
-    // 2. Fill the month input field
-    let mm = fieldValue.month
-    mm.value = month
-    // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    mm.dispatchEvent(inputEvent)
-
-    // 3. Fill the year input field
-    let yyyy = fieldValue.year
-    yyyy.value = year
-    // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    yyyy.dispatchEvent(inputEvent)
-
-    return true
-  }
-
-  async fillDateAndTime(fieldValue, value, sleepDuration) {
-    // Input Type : Extracted Object(fieldValue) & string(value)
-    // Function to fill date and time
-    // Valid Value format :- "dd-mm-yyyy-hh-mm"
-    // hh in 24 hrs format
-    // Return Type : Boolean
-
-    //sleep done because form was overriding values set by this function before
-    await sleep(sleepDuration)
-
-    let inputEvent = new Event('input', { bubbles: true })
-    // Validate the date format
-    const datePattern = /^(\d{2})-(\d{2})-(\d{4})-(\d{2})-(\d{2})$/
-    if (!datePattern.test(value)) {
-      // Invalid format
-      return false
-    }
-    const [day, month, year, hours, minutes] = value.split('-')
-    const date = new Date(`${year}-${month}-${day}`)
-
-    // Invalid date format as raised by date constructor
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date#return_value
-    if (date.valueOf() === NaN) {
-      return false;
+        let inputField = fieldValue.dom[0]
+        inputField.value = value
+        let inputEvent = new Event('input', { bubbles: true })
+        // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+        inputField.dispatchEvent(inputEvent)
+        return true
     }
 
-    // To ensure any params to be filled isn't missed in Date constructor
-    if (
-      !(
-        date.getDate() === Number(day) &&
-        date.getMonth() + 1 === Number(month) && // Month numbering start from 0...11
-        date.getFullYear() === Number(year)
-      )
-    ) {
-      return false
+    fillDate(fieldValue, value) {
+        // Input Type : Extracted Object(fieldValue) & string(value)
+        // Valid Value format :- "dd-mm-yyyy"
+        // Function to fill date
+        // Return Type : Boolean
+
+        // Validate the date format
+        const datePattern = /^(\d{2})-(\d{2})-(\d{4})$/
+        let inputEvent = new Event('input', { bubbles: true })
+
+        if (!datePattern.test(value)) {
+            // Invalid format
+            return false
+        }
+
+        const [day, month, year] = value.split('-')
+        const date = new Date(`${year}-${month}-${day}`)
+
+        // Invalid date format as raised by date constructor
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date#return_value
+        if (date.valueOf() === NaN) {
+            return false;
+        }
+
+        // To ensure any params to be filled isn't missed in Date constructor
+        if (
+            !(
+                date.getDate() === Number(day) &&
+                date.getMonth() + 1 === Number(month) && // Month numbering start from 0...11
+                date.getFullYear() === Number(year)
+            )
+        ) {
+            return false;
+        }
+
+        // 1. Fill the day input field
+        let dd = fieldValue.date
+        dd.value = day
+        // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+        dd.dispatchEvent(inputEvent)
+
+        // 2. Fill the month input field
+        let mm = fieldValue.month
+        mm.value = month
+        // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+        mm.dispatchEvent(inputEvent)
+
+        // 3. Fill the year input field
+        let yyyy = fieldValue.year
+        yyyy.value = year
+        // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+        yyyy.dispatchEvent(inputEvent)
+
+        return true
     }
 
-    // 1. Fill the day input field
-    let dd = fieldValue.date
-    dd.value = day
-    // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    dd.dispatchEvent(inputEvent)
-    
+    async fillDateAndTime(fieldValue, value, sleepDuration) {
+        // Input Type : Extracted Object(fieldValue) & string(value)
+        // Function to fill date and time
+        // Valid Value format :- "dd-mm-yyyy-hh-mm"
+        // hh in 24 hrs format
+        // Return Type : Boolean
 
-    // 2. Fill the month input field
-    let mm = fieldValue.month
-    mm.value = month
-    // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    mm.dispatchEvent(inputEvent)
+        //sleep done because form was overriding values set by this function before
+        await sleep(sleepDuration)
 
-    // 3. Fill the year input field
-    let yyyy = fieldValue.year
-    yyyy.value = year
-    // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    yyyy.dispatchEvent(inputEvent)
+        let inputEvent = new Event('input', { bubbles: true })
+        // Validate the date format
+        const datePattern = /^(\d{2})-(\d{2})-(\d{4})-(\d{2})-(\d{2})$/
+        if (!datePattern.test(value)) {
+            // Invalid format
+            return false
+        }
+        const [day, month, year, hours, minutes] = value.split('-')
+        const date = new Date(`${year}-${month}-${day}`)
 
-    // TIME
+        // Invalid date format as raised by date constructor
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date#return_value
+        if (date.valueOf() === NaN) {
+            return false;
+        }
 
-    // hours
-    let hh = fieldValue.hour
-    hh.value = hours
-    // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    hh.dispatchEvent(inputEvent)
+        // To ensure any params to be filled isn't missed in Date constructor
+        if (
+            !(
+                date.getDate() === Number(day) &&
+                date.getMonth() + 1 === Number(month) && // Month numbering start from 0...11
+                date.getFullYear() === Number(year)
+            )
+        ) {
+            return false
+        }
 
-    // minutes
-    let min = fieldValue.minute
-    min.value = minutes
-    // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    min.dispatchEvent(inputEvent)
+        // 1. Fill the day input field
+        let dd = fieldValue.date
+        dd.value = day
+        // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+        dd.dispatchEvent(inputEvent)
 
-    return true
-  }
+        // 2. Fill the month input field
+        let mm = fieldValue.month
+        mm.value = month
+        // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+        mm.dispatchEvent(inputEvent)
 
-  fillTime(fieldValue, value) {
-    // Input Type : Extracted Object(fieldValue) & string(value)
-    // Valid Value format :- "hh-mm"
-    // Function to fill time
-    // Return Type : Boolean
-    // hh in 24 hrs format
+        // 3. Fill the year input field
+        let yyyy = fieldValue.year
+        yyyy.value = year
+        // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+        yyyy.dispatchEvent(inputEvent)
 
-    let inputEvent = new Event('input', { bubbles: true })
-    const [hours, minutes] = value.split('-')
+        // TIME
 
-    // TIME
+        // hours
+        let hh = fieldValue.hour
+        hh.value = hours
+        // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+        hh.dispatchEvent(inputEvent)
 
-    // hours
-    let hh = fieldValue.hour
-    hh.value = hours
-    // Dispatch the 'input' event on the input field to trigger any event listeners boundmin hh.dispatchEvent(inputEvent)
-    hh.dispatchEvent(inputEvent)
+        // minutes
+        let min = fieldValue.minute
+        min.value = minutes
+        // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+        min.dispatchEvent(inputEvent)
 
-    // minutes
-    let min = fieldValue.minute
-    min.value = minutes
-    // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    min.dispatchEvent(inputEvent)
+        return true
+    }
 
-    return true
-  }
+    fillTime(fieldValue, value) {
+        // Input Type : Extracted Object(fieldValue) & string(value)
+        // Valid Value format :- "hh-mm"
+        // Function to fill time
+        // Return Type : Boolean
+        // hh in 24 hrs format
 
-  fillDuration(fieldValue, value) {
-    // Input Type : Extracted Object(fieldValue) & string(value)
-    // Valid Value format :- "hh-mm-ss"
-    // Function to fill time
-    // Return Type : Boolean
-    // hh in 24 hrs format
+        let inputEvent = new Event('input', { bubbles: true })
+        const [hours, minutes] = value.split('-')
 
-    const [hours, minutes, seconds] = value.split('-')
-    let inputEvent = new Event('input', { bubbles: true })
+        // TIME
 
-    // TIME
+        // hours
+        let hh = fieldValue.hour
+        hh.value = hours
+        // Dispatch the 'input' event on the input field to trigger any event listeners boundmin hh.dispatchEvent(inputEvent)
+        hh.dispatchEvent(inputEvent)
 
-    // hours
-    let hh = fieldValue.hour
-    hh.value = hours
-    // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    hh.dispatchEvent(inputEvent)
+        // minutes
+        let min = fieldValue.minute
+        min.value = minutes
+        // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+        min.dispatchEvent(inputEvent)
 
-    // minutes
-    let mm = fieldValue.minute
-    mm.value = minutes
-    // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    mm.dispatchEvent(inputEvent)
+        return true
+    }
 
-    // seconds
-    let ss = fieldValue.second
-    ss.value = seconds
-    // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    ss.dispatchEvent(inputEvent)
+    fillDuration(fieldValue, value) {
+        // Input Type : Extracted Object(fieldValue) & string(value)
+        // Valid Value format :- "hh-mm-ss"
+        // Function to fill time
+        // Return Type : Boolean
+        // hh in 24 hrs format
 
-    return true
-  }
+        const [hours, minutes, seconds] = value.split('-')
+        let inputEvent = new Event('input', { bubbles: true })
 
-  fillDateWithoutYear(fieldValue, value) {
-    // Input Type : Extracted Object(fieldValue) & string(value)
-    // Valid Value format :- "dd-mm"
-    // Function to fill date without year
-    // Return Type : Boolean
+        // TIME
 
-    const [day, month] = value.split('-')
-    let inputEvent = new Event('input', { bubbles: true })
+        // hours
+        let hh = fieldValue.hour
+        hh.value = hours
+        // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+        hh.dispatchEvent(inputEvent)
 
-    // 1. Fill the day input field
-    let dd = fieldValue.date
-    dd.value = day
-    // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    dd.dispatchEvent(inputEvent)
+        // minutes
+        let mm = fieldValue.minute
+        mm.value = minutes
+        // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+        mm.dispatchEvent(inputEvent)
 
-    // 2. Fill the month input field
-    let mm = fieldValue.month
-    mm.value = month
-    // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    mm.dispatchEvent(inputEvent)
+        // seconds
+        let ss = fieldValue.second
+        ss.value = seconds
+        // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+        ss.dispatchEvent(inputEvent)
 
-    return true
-  }
+        return true
+    }
 
-  async fillDateTimeWithoutYear(fieldValue, value, sleepDuration) {
-    // Input Type : Extracted Object(fieldValue) & string(value)
-    // Valid Value format :- "dd-mm-hh-mm"
-    // Function to fill date and time not having year
-    // Return Type : Boolean
-    // hh in 24 hrs format
+    fillDateWithoutYear(fieldValue, value) {
+        // Input Type : Extracted Object(fieldValue) & string(value)
+        // Valid Value format :- "dd-mm"
+        // Function to fill date without year
+        // Return Type : Boolean
 
-    //! to avoid the race around between our answer and default NULL value
-    await sleep(sleepDuration)
+        const [day, month] = value.split('-')
+        let inputEvent = new Event('input', { bubbles: true })
 
-    let inputEvent = new Event('input', { bubbles: true })
-    const [day, month, hours, minutes] = value.split('-')
+        // 1. Fill the day input field
+        let dd = fieldValue.date
+        dd.value = day
+        // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+        dd.dispatchEvent(inputEvent)
 
-    // 1. Fill the day input field
-    let dd = fieldValue.date
-    dd.value = day
-    // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    dd.dispatchEvent(inputEvent)
+        // 2. Fill the month input field
+        let mm = fieldValue.month
+        mm.value = month
+        // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+        mm.dispatchEvent(inputEvent)
 
-    // 2. Fill the month input field
-    let mm = fieldValue.month
-    mm.value = month
-    // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    mm.dispatchEvent(inputEvent)
+        return true
+    }
 
-    // TIME
+    async fillDateTimeWithoutYear(fieldValue, value, sleepDuration) {
+        // Input Type : Extracted Object(fieldValue) & string(value)
+        // Valid Value format :- "dd-mm-hh-mm"
+        // Function to fill date and time not having year
+        // Return Type : Boolean
+        // hh in 24 hrs format
 
-    // hours
-    let hh = fieldValue.hour
-    hh.value = hours
-    // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-    hh.dispatchEvent(inputEvent)
+        //! to avoid the race around between our answer and default NULL value
+        await sleep(sleepDuration)
 
-    // minutes
-    let min = fieldValue.minute
-    min.value = minutes
-    min.dispatchEvent(inputEvent)
+        let inputEvent = new Event('input', { bubbles: true })
+        const [day, month, hours, minutes] = value.split('-')
 
-    return true
-  }
+        // 1. Fill the day input field
+        let dd = fieldValue.date
+        dd.value = day
+        // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+        dd.dispatchEvent(inputEvent)
 
+        // 2. Fill the month input field
+        let mm = fieldValue.month
+        mm.value = month
+        // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+        mm.dispatchEvent(inputEvent)
 
-  async fillCheckBox(fieldValue, value, sleepDuration) {
-    // Input Type :- value -> Array of String(for matching options) or Object(for non-matching options)
-    //               fieldValue -> Object
-    // Function for interacting with 'MULTI_CORRECT_WITH_OTHER' type question.
-    // Tick the checkbox with a matching 'value' string or object.
-    // Uses 'input' event to trigger UI changes.
-    // Returns true if checkbox is ticked, else false.
+        // TIME
 
-    //! To avoid any unwanted and incomplete answer this sleep function is necessary
-    //! To avoid the race around between our answer and default NULL value
-    await sleep(sleepDuration)
+        // hours
+        let hh = fieldValue.hour
+        hh.value = hours
+        // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
+        hh.dispatchEvent(inputEvent)
 
+        // minutes
+        let min = fieldValue.minute
+        min.value = minutes
+        min.dispatchEvent(inputEvent)
 
-    let otherOptionName = null;
-
-    fieldValue.options.forEach(element => {
-
-      value.forEach(val => {
-
-        // If ('value' is String ) => { Ticks the matching option if correct }
-        // If ('value' is Object ) => { Ticks the Other option and enters the text in input box }
-        if (typeof (val) === "string") {
-          if (element.data === val) {
-
-            // Function for interacting with 'MULTI_CORRECT_WITH_OTHER' type question.
-            // Tick the checkbox with a matching 'value' string or object.
-            // If ('value' is String ) => { Ticks the matching option if correct }
-            // If ('value' is Object ) => { Ticks the Other option and enters the text in input box }
-
-            // Uses 'input' event to trigger UI changes.
-            // Returns true if checkbox is ticked, else false.
-
-            fieldValue.options.forEach(element => {
-
-              value.forEach(val => {
+        return true
+    }
 
     async fillCheckBox(fieldValue, value, sleepDuration) {
         // Input Type :- value -> Array of String(for matching options) or Object(for non-matching options)
@@ -436,33 +398,30 @@ export class FillerEngine {
                 // If ('value' is String ) => { Ticks the matching option if correct }
                 // If ('value' is Object ) => { Ticks the Other option and enters the text in input box }
                 if (typeof (val) === "string") {
-                  if (element.data === val) {
-                    element.dom.click();
-                    return true;
-                  }
+                    if (element.data === val) {
+
+                        element.dom.click();
+                        return true;
+                    }
                 } else if (
-                  typeof val === 'object' &&
-                  val.optionTitle === otherOptionName
+                    typeof val === 'object' &&
+                    val.optionTitle === otherOptionName
                 ) {
-                  let otherOptionTextBox = element.querySelectorAll('input')
-                  otherOptionTextBox[0].setAttribute('value', val.optionText)
-                  option[0].click()
-                  return true
+                    let otherOptionTextBox = element.querySelectorAll('input')
+                    otherOptionTextBox[0].setAttribute('value', val.optionText)
+                    option[0].click()
+                    return true
                 }
                 else if (typeof (val) === "object" && val.optionTitle === fieldValue.other[0].data) {
-                  fieldValue.other[0].dom.click();
-                  fieldValue.other[0].inputBoxDom.setAttribute("value", val.optionText);
-                  return true;
+                    fieldValue.other[0].dom.click();
+                    fieldValue.other[0].inputBoxDom.setAttribute("value", val.optionText);
+                    return true;
                 }
-              });
             });
+        });
 
-            return false
-          }
-        }
-      }
-    });
-  }
+        return false
+    }
 
     async fillLinearScale(fieldValue, value, sleepDuration) {
         // Input Type :- value -> string
@@ -475,89 +434,14 @@ export class FillerEngine {
         // Return Type : Boolean
 
 
-    // Uses 'input' event to trigger UI changes.
-    // Returns true if checkbox is ticked, else false.
+        await sleep(sleepDuration);
 
-    let inputFields = element.querySelectorAll(("div[role=radiogroup] span[role=presentation]"));
-    inputFields = inputFields[0];
-
-    let scales = inputFields.querySelectorAll("div[role=radio]");
-    scales.forEach(scale => {
-      if (scale.getAttribute("aria-label") === value) {
-        var inputEvent = new Event('input', { bubbles: true });
-        scale.click();
-        return true;
-      }
-    });
-
-  }
-
-
-  async fillDropDown(fieldValue, value, sleepDuration) {
-    await sleep(sleepDuration);
-
-    fieldValue.options.forEach(scale => {
-      if (scale.data === value) {
-        scale.dom.click();
-        return true;
-      }
-    });
-
-  }
-
-
-
-
-  async fillCheckboxGrid(fieldValue, value, sleepDuration) {
-    // Input Type : DOM object { Multicorrect Checkbox Grid }
-    // Checks if given gpt response matches any option or not
-    // Tweak : A grid has many div(s) which have role = group in it
-    //         if for each such div, the value matches the option is selected
-
-
-    await sleep(sleepDuration);
-
-    fieldValue.options.forEach(rowItr => {
-
-      value.forEach(object => {
-
-        if (object.row === rowItr.row) {
-          rowItr.cols.forEach(colItr => {
-            // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
-
-            object.Optionvalues.forEach(val => {
-              if (colItr.option === val) {
-                colItr.dom.click()
-              }
-            });
-          });
-
-        }
-      });
-    });
-
-  }
-
-
-
-
-  async fillMultipleChoiceGrid(fieldValue, value, sleepDuration) {
-    // Input Type : DOM object { Multiple Choice List }
-    // Checks if given gpt response matches any option or not
-    // Tweak : A grid has many span(s) which have role = presentation in it
-    //         if for each such span, the value matches the option is selected
-
-    await sleep(sleepDuration);
-    // let rows = element.querySelectorAll("div[role=radiogroup] span[role=presentation]");
-    fieldValue.options.forEach(row => {
-      // let rowName = row.querySelector("div").innerHTML;
-      value.forEach(object => {
-        if (object.row === row.row) {
-          row.cols.forEach(option => {
-            if (option.data === object.Optionvalue) {
-              option.dom.click();
+        fieldValue.options.forEach(scale => {
+            if (scale.data === value) {
+                scale.dom.click();
+                return true;
             }
-          });
+        });
 
     }
 
@@ -575,8 +459,11 @@ export class FillerEngine {
 
         await sleep(sleepDuration);
 
+        let foundFlag = false;
+
         fieldValue.options.forEach(option => {
             if (option.data === value) {
+                foundFlag = true;
                 // option.setAttribute("aria-selected", "true");
                 // option.setAttribute("tabindex", "0");
                 setTimeout(() => {
@@ -589,18 +476,23 @@ export class FillerEngine {
             }
         });
 
-        return false;
+        if (!foundFlag) {
+            return false;
+        }
     }
 
 
 
 
     async fillCheckboxGrid(fieldValue, value, sleepDuration) {
-        // Input Type : DOM object { Multicorrect Checkbox Grid }
+        // Input Type : fieldValue -> Array of Object
+        //              value -> object
+        //              sleepDuration -> Integer (amount of sleep before call)
+        // Valid Input Format :- value - [{row: "Row1", OptionValues: ["col1", .....]}, {....}]
         // Checks if given gpt response matches any option or not
         // Tweak : A grid has many div(s) which have role = group in it
         //         if for each such div, the value matches the option is selected
-
+        // Return Type : Boolean
 
         await sleep(sleepDuration);
 
@@ -622,21 +514,25 @@ export class FillerEngine {
                 }
             });
         });
+
+        return true;
     }
 
 
 
 
     async fillMultipleChoiceGrid(fieldValue, value, sleepDuration) {
-        // Input Type : DOM object { Multiple Choice List }
+        // Input Type : fieldValue -> Array of Object
+        //              value -> object
+        //              sleepDuration -> Integer (amount of sleep before call)
+        // Valid Input Format :- value - [{row: "Row1", OptionValues: "col1"}, {....}]
         // Checks if given gpt response matches any option or not
         // Tweak : A grid has many span(s) which have role = presentation in it
         //         if for each such span, the value matches the option is selected
+        // Return Type : Boolean
 
         await sleep(sleepDuration);
-        // let rows = element.querySelectorAll("div[role=radiogroup] span[role=presentation]");
         fieldValue.options.forEach(row => {
-            // let rowName = row.querySelector("div").innerHTML;
             value.forEach(object => {
                 if (object.row === row.row) {
                     row.cols.forEach(option => {
@@ -648,6 +544,8 @@ export class FillerEngine {
                 }
             });
         });
+
+        return true;
     }
 
 }
