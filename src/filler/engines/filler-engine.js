@@ -26,10 +26,10 @@ export class FillerEngine {
                     return this.fillLinearScale(fieldValue, "1", SLEEP_DURATION);
 
                 case QType.DROPDOWN:
-                    return this.fillDropDown(element, fieldValue, "Option 2", SLEEP_DURATION);
-                    break;
+                    return await this.fillDropDown(element, fieldValue, "Option 2", SLEEP_DURATION).then(response =>  response);
 
                 case QType.CHECKBOX_GRID:
+                    
                     return await this.fillCheckboxGrid(fieldValue, [
                         { row: "Row 1", Optionvalues: ["Column 1", "Column 2"] },
                         { row: "Row 2", Optionvalues: ["Column 2"] }
@@ -459,8 +459,11 @@ export class FillerEngine {
 
         await sleep(sleepDuration);
 
+        let foundFlag = false;
+
         fieldValue.options.forEach(option => {
             if (option.data === value) {
+                foundFlag = true;
                 // option.setAttribute("aria-selected", "true");
                 // option.setAttribute("tabindex", "0");
                 setTimeout(() => {
@@ -473,18 +476,23 @@ export class FillerEngine {
             }
         });
 
-        return false;
+        if (!foundFlag) {
+            return false;
+        }
     }
 
 
 
 
     async fillCheckboxGrid(fieldValue, value, sleepDuration) {
-        // Input Type : DOM object { Multicorrect Checkbox Grid }
+        // Input Type : fieldValue -> Array of Object
+        //              value -> object
+        //              sleepDuration -> Integer (amount of sleep before call)
+        // Valid Input Format :- value - [{row: "Row1", OptionValues: ["col1", .....]}, {....}]
         // Checks if given gpt response matches any option or not
         // Tweak : A grid has many div(s) which have role = group in it
         //         if for each such div, the value matches the option is selected
-
+        // Return Type : Boolean
 
         await sleep(sleepDuration);
 
@@ -506,21 +514,25 @@ export class FillerEngine {
                 }
             });
         });
+
+        return true;
     }
 
 
 
 
     async fillMultipleChoiceGrid(fieldValue, value, sleepDuration) {
-        // Input Type : DOM object { Multiple Choice List }
+        // Input Type : fieldValue -> Array of Object
+        //              value -> object
+        //              sleepDuration -> Integer (amount of sleep before call)
+        // Valid Input Format :- value - [{row: "Row1", OptionValues: "col1"}, {....}]
         // Checks if given gpt response matches any option or not
         // Tweak : A grid has many span(s) which have role = presentation in it
         //         if for each such span, the value matches the option is selected
+        // Return Type : Boolean
 
         await sleep(sleepDuration);
-        // let rows = element.querySelectorAll("div[role=radiogroup] span[role=presentation]");
         fieldValue.options.forEach(row => {
-            // let rowName = row.querySelector("div").innerHTML;
             value.forEach(object => {
                 if (object.row === row.row) {
                     row.cols.forEach(option => {
@@ -532,6 +544,8 @@ export class FillerEngine {
                 }
             });
         });
+
+        return true;
     }
 
 }
