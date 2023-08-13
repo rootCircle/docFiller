@@ -412,7 +412,7 @@ export class FillerEngine {
                     option[0].click()
                     return true
                 }
-                else if (typeof (val) === "object" && val.optionTitle === fieldValue.other[0].data) {
+                else if (typeof (val) === "object" && fieldValue.other !== undefined && val.optionTitle === fieldValue?.other[0].data) {
                     fieldValue.other[0].dom.click();
                     fieldValue.other[0].inputBoxDom.setAttribute("value", val.optionText);
                     return true;
