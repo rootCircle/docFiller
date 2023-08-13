@@ -2,6 +2,7 @@
 # Bluemaps
 *.pdf
 *.rnote
+*.env
 
 # Some verbose files
 dist/
