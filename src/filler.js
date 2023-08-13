@@ -42,30 +42,32 @@ async function main() {
 	let parser = new ParserEngine();
 
 	questions.forEach(question => {
-		console.log(question)
 		let fieldType = checker.detectType(question);
-		console.log("Field Type : " + fieldType);
-		console.log("Fields ↴")
 		if (fieldType !== null) {
+
 			let fieldValue = fields.getFields(question, fieldType);
-			console.log("Field Value ↴")
-			console.log(fieldValue);
-			
-			
 			let promptText = prompt.prompt(fieldType, fieldValue);
-            console.log("Prompt for Model : " + promptText);
-			
 			let response = prompt.getResponse(fieldType, fieldValue);
-
-			console.log("Response : " + response);
-
 			let parsed_response = parser.parse(fieldType, fieldValue, response);
-			console.log("Parsed Response : " + parsed_response)
 
 			// Using Dummy Value for brevity
-			filler.fill(question, fieldType, fieldValue, "Dummy Value");
+			Promise.resolve(filler.fill(question, fieldType, fieldValue, "Dummy Value")).then((filled) => {
+				console.log(question)
+
+				console.log("Field Type : " + fieldType);
+				console.log("Fields ↴")
+
+				console.log("Field Value ↴")
+				console.log(fieldValue);
+
+
+				console.log("Prompt for Model : " + promptText);
+				console.log("Response : " + response);
+				console.log("Parsed Response : " + parsed_response)
+				console.log("Filled : " + filled);
+				console.log();	
+			});
 		}
-		console.log();
 	});
 
 }
