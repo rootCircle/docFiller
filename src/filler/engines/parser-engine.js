@@ -28,7 +28,10 @@ export class ParserEngine {
             MULTI_CORRECT_WITH_OTHER: "Day 1\nDay 2",
             DATE: "22-12-2022",
             TIME: "10-12",
-            DATE_AND_TIME: "22-12-2022-12-12"
+            DATE_AND_TIME: "22-12-2022-12-12",
+            DURATION: "21-34-58",
+            DATE_WITHOUT_YEAR: "31-12",
+            DATE_TIME_WITHOUT_YEAR: "31-12-17-12"
         }
 
 
@@ -58,6 +61,12 @@ export class ParserEngine {
                     return this.validateDateAndTime(testResponse.DATE_AND_TIME);
                 case QType.TIME:
                     return this.validateTime(testResponse.TIME);
+                case QType.DURATION:
+                    return this.validateDuration(testResponse.DURATION)
+                case QType.DATE_WITHOUT_YEAR:
+                    return this.validateDateWithoutYear(testResponse.DATE_WITHOUT_YEAR)
+                case QType.DATE_TIME_WITHOUT_YEAR:
+                    return this.validateDateTimeWithoutYear(testResponse.DATE_TIME_WITHOUT_YEAR)
                 default:
                     return null;
             }            
@@ -212,6 +221,70 @@ export class ParserEngine {
 
         var timeValid = /^([01][0-9]|[2][0-3])-([0-5][0-9])$/
         return response && Boolean(response.match(timeValid));
+    }
+
+    validateDuration(response) {
+        // Input Type :- String
+        // Valid Input Format :- HH-MM-SS
+        // HH is in 24 hrs format
+        // Checks if duration is in correct format
+        // Output Type :- Boolean
+        var durationValid = /^([01][0-9]|[2][0-3])(-[0-5][0-9]){2}$/
+        return response && Boolean(response.match(durationValid))
+    }
+    
+    validateDateWithoutYear(response) {
+        // Input Type : String
+        // Valid Input format :- "dd-mm"
+        // Output Type : Boolean
+        var dateWYearValid = /^([0][1-9]|[1-2][0-9]|[3][0-1])-([0][1-9]|[1][0-2])$/
+        const dateArr = response === null ? false : response.match(dateWYearValid)
+        if(dateArr)
+        {
+            const valid31 = ['01', '03', '05', '07', '08', '10', '12']
+            const date = dateArr[1]
+            const month = dateArr[2]
+            if (date == '31') {
+                if (!valid31.includes(month))
+                    return false;
+            }
+            else if (date == '30') {
+                if (month == '02') {
+                    return false; // February doesn't have 30 days
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    validateDateTimeWithoutYear(response) {
+        // Input Type : String
+        // Valid Input format :- "dd-mm-hh-mm"
+        // hh in 24 hrs format
+        // Output Type : Boolean
+        var dateTimeWYearValid = /^([0][1-9]|[1-2][0-9]|[3][0-1])-([0][1-9]|[1][0-2])-([01][0-9]|[2][0-3])-([0-5][0-9])$/
+        const dateArr = response === null ? false : response.match(dateTimeWYearValid)
+        if(dateArr)
+        {
+            const valid31 = ['01', '03', '05', '07', '08', '10', '12']
+            const date = dateArr[1]
+            const month = dateArr[2]
+            if (date == '31') {
+                if (!valid31.includes(month))
+                    return false;
+            }
+            else if (date == '30') {
+                if (month == '02') {
+                    return false; // February doesn't have 30 days
+                }
+            }
+            return true;
+        }
+        else
+        {
+            return false
+        }
     }
 
 
