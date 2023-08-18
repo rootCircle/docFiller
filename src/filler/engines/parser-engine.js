@@ -27,14 +27,20 @@ export class ParserEngine {
             PARAGRAPH: "Please enjoy these great stories, fairy-tales, fables, and nursery rhymes for children.They help kids learn to read and make excellent bedtime stories! We have hundreds of great children's stories for you to share.",
             TEXT_NUMERIC: "1234",
             TEXT_TEL: "9111421028",
-            MULTI_CORRECT: "Hiking\nExploring",
+            MULTI_CORRECT: "Swimming\n Hiking",
             MULTI_CORRECT_WITH_OTHER: "Day 1\nDay 2",
             DATE: "22-12-2022",
             TIME: "10-12",
             DATE_AND_TIME: "22-12-2022-12-12",
             DURATION: "21-34-58",
             DATE_WITHOUT_YEAR: "31-12",
-            DATE_TIME_WITHOUT_YEAR: "31-12-17-12"
+            DATE_TIME_WITHOUT_YEAR: "31-12-17-12",
+            MULTIPLE_CHOICE: 'Tanzania',
+            MULTIPLE_CHOICE_WITH_OTHER: 'Tanzania',
+            LINEAR_SCALE: "1",
+            MULTIPLE_CHOICE_GRID: "Strongly disagree\nAgree\nStrongly agree\nDisagree",
+            CHECKBOX_GRID: "Japan\nCanada",
+            DROPDOWN: 'Asia'
         }
 
 
@@ -70,9 +76,21 @@ export class ParserEngine {
                     return this.validateDateWithoutYear(testResponse.DATE_WITHOUT_YEAR)
                 case QType.DATE_TIME_WITHOUT_YEAR:
                     return this.validateDateTimeWithoutYear(testResponse.DATE_TIME_WITHOUT_YEAR)
+                case QType.MULTIPLE_CHOICE:
+                    return this.validateMultipleChoice(extractedValue, testResponse.MULTIPLE_CHOICE);
+                case QType.MULTIPLE_CHOICE_WITH_OTHER:
+                    return this.validateMultipleChoiceWithOther(extractedValue, testResponse.MULTIPLE_CHOICE_WITH_OTHER);
+                case QType.LINEAR_SCALE:
+                    return this.validateLinearScale(extractedValue, testResponse.LINEAR_SCALE);
+                case QType.MULTIPLE_CHOICE_GRID:
+                    return this.validateMultipleChoiceGrid(extractedValue, testResponse.MULTIPLE_CHOICE_GRID);
+                case QType.CHECKBOX_GRID:
+                    return this.validateCheckBoxGrid(extractedValue, testResponse.CHECKBOX_GRID);
+                case QType.DROPDOWN:
+                    return this.validateDropdown(extractedValue, testResponse.DROPDOWN);
                 default:
                     return null;
-            }            
+            }
         }
         else {
             return null;
@@ -254,15 +272,15 @@ export class ParserEngine {
         extractedValue.options.forEach((option) => { actualOptions.push(option.data) });
 
         for (let i = 0; i < responseOptions.length; i++) {
-            if (actualOptions.findIndex((option) => 
-                    responseOptions[i].toLowerCase() === option.toLowerCase()) === -1) {
-                        flag = false;
+            if (actualOptions.findIndex((option) =>
+                responseOptions[i].toLowerCase() === option.toLowerCase()) === -1) {
+                flag = false;
             }
         }
 
         return flag;
     }
-
+//             ii) We assume other option flag is invoked when all other option is incorrect
 
     validateMultipleCorrectWithOther(extractedValue, response) {
         // Input Type : String [given by chatgpt] & extractedValue [DOM object]
@@ -275,8 +293,108 @@ export class ParserEngine {
         //             iii) We assume other option flag is invoked when all other option is incorrect
         // Return Type : Boolean
 
-        return this.validateMultiCorrect(extractedValue, response) || ( response.startsWith("Other") && this.validateText(response));
+        return this.validateMultiCorrect(extractedValue, response) || (response.startsWith("Other") && this.validateText(response));
     }
+
+
+    validateMultipleChoice(extractedValue, response) {
+        // Input Type : String [given by chatgpt] & extractedValue [DOM object]
+        // Valid Input Format :- Multi Lined Options, with each new option separated by a newline, 
+        //                       in case of non-matching options.
+        // Check if it's Multiple-Choice's response are match with extractedValue(DOM) a/c to :
+        //             i) Check if the given response options match the options in the DOM
+        //             ii) We assume other option flag is invoked when all other option is incorrect
+        // Return Type : Boolean
+
+        let flag = false; // Assuming response for Prompt engine is correct by default
+        let responseOptions = response.trim();
+
+        let actualOptions = [];
+        extractedValue.options.forEach((option) => { actualOptions.push(option.data) });
+
+        for (let i = 0; i < responseOptions.length; i++) {
+            if (actualOptions[i] == responseOptions) {
+                flag = true;
+                break;
+            }
+        }
+        return flag;
+    }
+
+    validateMultipleChoiceWithOther(extractedValue, response) {
+        // Input Type : String [given by chatgpt] & extractedValue [DOM object]
+        // Valid Input Format :- Multi Lined Options, with each new option separated by a newline, 
+        //                       in case of non-matching options, response should be like `Other <Text>` format
+        // Check if it's Multiple-Choice withOther's response are match with extractedValue(DOM) a/c to :
+        //             i) Check if the given response options match the options in the DOM
+        //             ii) If the response options do not match,check if the "response-other"
+        //                 option matches any of the Text or not.
+        //             iii) We assume other option flag is invoked when all other option is incorrect
+        // Return Type : Boolean
+
+        return this.validateMultipleChoice(extractedValue, response) || (response.startsWith("Other") && this.validateText(response));
+    }
+
+
+    validateLinearScale(extractedValue, response) {
+
+        // Input Type : String [given by chatgpt] & extractedValue [DOM object]
+        // Valid Input Format :- Multi Lined Options, with each new option separated by a newline, 
+        //                       in case of non-matching options.
+        // Check if it's LinearScale's response are match with extractedValue(DOM) a/c to :
+        //             i) Check if the given response options match the options in the DOM
+        // Return Type : Boolean
+        return this.validateMultipleChoice(extractedValue, response);
+    }
+
+
+    validateMultipleChoiceGrid(extractedValue, response) {
+        // Input Type : String [given by chatgpt] & extractedValue [DOM object]
+        // Valid Input Format :- Multi Lined Options, with each new option separated by a newline, 
+        //                       in case of non-matching options.
+        // Check if it's Multiple-Choice-Grids response are match with extractedValue(DOM) a/c to :
+        //             i) Check if the given response options match the options in the DOM
+        // Return Type : Boolean
+
+
+        let flag = true; // Assuming response for Prompt engine is correct by default
+        let responseOptions = response.split(/\r?\n/);
+
+        let actualOptions = extractedValue.columnArray;
+
+        for (let i = 0; i < responseOptions.length; i++) {
+            if (actualOptions.findIndex((option) =>
+                responseOptions[i].toLowerCase() === option.toLowerCase()) === -1) {
+                flag = false;
+                break;
+            }
+        }
+        return flag;
+    }
+
+    validateCheckBoxGrid(extractedValue, response) {
+        // Input Type : String [given by chatgpt] & extractedValue [DOM object]
+        // Valid Input Format :- Multi Lined Options, with each new option separated by a newline, 
+        //                       in case of non-matching options.
+        // Check if it's CheckBoxGrid's response are match with extractedValue(DOM) a/c to :
+        //             i) Check if the given response options match the options in the DOM
+        // Return Type : Boolean
+
+        return this.validateMultipleChoiceGrid(extractedValue, response);
+    }
+
+
+    validateDropdown(extractedValue, response) {
+        // Input Type : String [given by chatgpt] & extractedValue [DOM object]
+        // Valid Input Format :- Multi Lined Options, with each new option separated by a newline, 
+        //                       in case of non-matching options.
+        // Check if it's Dropdown's response are match with extractedValue(DOM) a/c to :
+        //             i) Check if the given response options match the options in the DOM
+        // Return Type : Boolean
+
+        return this.validateMultipleChoice(extractedValue, response);
+    }
+
 
     validateResponse(response) {
         // TODO
