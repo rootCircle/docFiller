@@ -31,15 +31,15 @@ export class FillerEngine {
                 case QType.CHECKBOX_GRID:
                     
                     return await this.fillCheckboxGrid(fieldValue, [
-                        { row: "Row 1", Optionvalues: ["Column 1", "Column 2"] },
-                        { row: "Row 2", Optionvalues: ["Column 2"] }
+                        { row: "Row 1", optionValues: ["Column 1", "Column 2"] },
+                        { row: "Row 2", optionValues: ["Column 2"] }
                     ], SLEEP_DURATION).then((response) => { return response });
 
                 case QType.MULTIPLE_CHOICE_GRID:
                     return this.fillMultipleChoiceGrid(fieldValue, [
-                        { row: "Row 1", Optionvalue: "Column 1" },
-                        { row: "Row 2", Optionvalue: "Column 2" },
-                        { row: "Brooooo", Optionvalue: "Column 2" }
+                        { row: "Row 1", optionValue: "Column 1" },
+                        { row: "Row 2", optionValue: "Column 2" },
+                        { row: "Brooooo", optionValue: "Column 2" }
                     ], SLEEP_DURATION);
 
                 case QType.DATE:
@@ -488,7 +488,7 @@ export class FillerEngine {
         // Input Type : fieldValue -> Array of Object
         //              value -> object
         //              sleepDuration -> Integer (amount of sleep before call)
-        // Valid Input Format :- value - [{row: "Row1", OptionValues: ["col1", .....]}, {....}]
+        // Valid Input Format :- value - [{row: "Row1", optionValues: ["col1", .....]}, {....}]
         // Checks if given gpt response matches any option or not
         // Tweak : A grid has many div(s) which have role = group in it
         //         if for each such div, the value matches the option is selected
@@ -504,7 +504,7 @@ export class FillerEngine {
                     rowItr.cols.forEach(colItr => {
                         // Dispatch the 'input' event on the input field to trigger any event listeners bound to it.
 
-                        object.Optionvalues.forEach(val => {
+                        object.optionValues.forEach(val => {
                             if (colItr.option === val) {
                                 colItr.dom.click()
                             }
@@ -525,7 +525,7 @@ export class FillerEngine {
         // Input Type : fieldValue -> Array of Object
         //              value -> object
         //              sleepDuration -> Integer (amount of sleep before call)
-        // Valid Input Format :- value - [{row: "Row1", OptionValues: "col1"}, {....}]
+        // Valid Input Format :- value - [{row: "Row1", optionValues: "col1"}, {....}]
         // Checks if given gpt response matches any option or not
         // Tweak : A grid has many span(s) which have role = presentation in it
         //         if for each such span, the value matches the option is selected
@@ -536,7 +536,7 @@ export class FillerEngine {
             value.forEach(object => {
                 if (object.row === row.row) {
                     row.cols.forEach(option => {
-                        if (option.data === object.Optionvalue) {
+                        if (option.data === object.optionValue) {
                             option.dom.click();
                         }
                     });
