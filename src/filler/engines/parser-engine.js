@@ -55,7 +55,7 @@ export class ParserEngine {
                 case QType.TEXT_EMAIL:
                     return this.validateEmail(testResponse.EMAIL);
                 case QType.MULTI_CORRECT_WITH_OTHER:
-                    return this.validateMultipleCorrectWithOther(extractedValue, testResponse.MULTI_CORRECT_WITH_OTHER);
+                    return this.validateMultiCorrectWithOther(extractedValue, testResponse.MULTI_CORRECT_WITH_OTHER);
                 case QType.MULTI_CORRECT:
                     return this.validateMultiCorrect(extractedValue, testResponse.MULTI_CORRECT);
                 case QType.PARAGRAPH:
@@ -260,9 +260,9 @@ export class ParserEngine {
 
 
     validateMultiCorrect(extractedValue, response) {
-        // Input Type : String [given by chatgpt] & extractedValue [DOM object]
+        // Input Type : response String [given by chatgpt] & extractedValue [DOM object]
         // Valid Input Format :- Multi Lined Options, with each new option separated by a newline
-        // Check if it's Multi-correct's response are matches with actual options or not.
+        // Check if it's Multi-correct's response matches with actual options or not.
         // Return Type : Boolean
 
         let flag = true; // Assuming response for Prompt engine is correct by default
@@ -280,14 +280,13 @@ export class ParserEngine {
 
         return flag;
     }
-//             ii) We assume other option flag is invoked when all other option is incorrect
 
-    validateMultipleCorrectWithOther(extractedValue, response) {
-        // Input Type : String [given by chatgpt] & extractedValue [DOM object]
-        // Valid Input Format :- Multi Lined Options, with each new option separated by a newline, 
+    validateMultiCorrectWithOther(extractedValue, response) {
+        // Input Type : response String [given by chatgpt] & extractedValue [DOM object]
+        // Valid Input Format :- Single Lined Options, with each new option separated by a newline, 
         //                       in case of non-matching options, response should be like `Other <Text>` format
         // Check if it's Multi-correct withOther's response are match with extractedValue(DOM) a/c to :
-        //             i) Check if the given response options match the options in the DOM
+        //             i) Check if the given response in options, match the options in the DOM
         //             ii) If the response options do not match,check if the "response-other"
         //                 option matches any of the Text or not.
         //             iii) We assume other option flag is invoked when all other option is incorrect
@@ -299,21 +298,19 @@ export class ParserEngine {
 
     validateMultipleChoice(extractedValue, response) {
         // Input Type : String [given by chatgpt] & extractedValue [DOM object]
-        // Valid Input Format :- Multi Lined Options, with each new option separated by a newline, 
-        //                       in case of non-matching options.
+        // Valid Input Format :- Single Line Option, 
         // Check if it's Multiple-Choice's response are match with extractedValue(DOM) a/c to :
-        //             i) Check if the given response options match the options in the DOM
-        //             ii) We assume other option flag is invoked when all other option is incorrect
+        //             i) Check if the given response in options, match the options in the DOM
         // Return Type : Boolean
 
-        let flag = false; // Assuming response for Prompt engine is correct by default
-        let responseOptions = response.trim();
+        let flag = false; // Assuming response for Prompt engine is incorrect by default
+        response = response.trim();
 
         let actualOptions = [];
         extractedValue.options.forEach((option) => { actualOptions.push(option.data) });
 
-        for (let i = 0; i < responseOptions.length; i++) {
-            if (actualOptions[i] == responseOptions) {
+        for (let i = 0; i < actualOptions.length; i++) {
+            if (actualOptions[i].toLowerCase() === response.toLowerCase()) {
                 flag = true;
                 break;
             }
@@ -322,11 +319,11 @@ export class ParserEngine {
     }
 
     validateMultipleChoiceWithOther(extractedValue, response) {
-        // Input Type : String [given by chatgpt] & extractedValue [DOM object]
-        // Valid Input Format :- Multi Lined Options, with each new option separated by a newline, 
+        // Input Type : response String [given by chatgpt] & extractedValue [DOM object]
+        // Valid Input Format :- Single Line Option, 
         //                       in case of non-matching options, response should be like `Other <Text>` format
-        // Check if it's Multiple-Choice withOther's response are match with extractedValue(DOM) a/c to :
-        //             i) Check if the given response options match the options in the DOM
+        // Check if it's Multiple-Choice with Other's response matches with extractedValue(DOM) a/c to :
+        //             i) Check if the given response in options, match the options in the DOM
         //             ii) If the response options do not match,check if the "response-other"
         //                 option matches any of the Text or not.
         //             iii) We assume other option flag is invoked when all other option is incorrect
@@ -337,28 +334,36 @@ export class ParserEngine {
 
 
     validateLinearScale(extractedValue, response) {
-
-        // Input Type : String [given by chatgpt] & extractedValue [DOM object]
-        // Valid Input Format :- Multi Lined Options, with each new option separated by a newline, 
-        //                       in case of non-matching options.
-        // Check if it's LinearScale's response are match with extractedValue(DOM) a/c to :
-        //             i) Check if the given response options match the options in the DOM
+        // Input Type : response String [given by chatgpt] & extractedValue [DOM object]
+        // Valid Input Format :- Single Lined Option, corresponds to number/param at each radio in linear scale, 
+        // Check if it's LinearScale's response matches with extractedValue(DOM) a/c to :
+        //             i) Check if the given response in options, match the options in the DOM
         // Return Type : Boolean
+
+        // Validations works the same as for multipleChoice behind the hood,
+        // co-incidentally with same data structure as
+        // MultipleChoice (has options->data)
+
+        //@TODO: Fix dependent calls in Linear Scale & Dropdown to Multiple Choice, 
+        // to some common compatible method altogether
         return this.validateMultipleChoice(extractedValue, response);
     }
 
 
     validateMultipleChoiceGrid(extractedValue, response) {
-        // Input Type : String [given by chatgpt] & extractedValue [DOM object]
+        // Input Type : response String [given by chatgpt] & extractedValue [DOM object]
         // Valid Input Format :- Multi Lined Options, with each new option separated by a newline, 
-        //                       in case of non-matching options.
-        // Check if it's Multiple-Choice-Grids response are match with extractedValue(DOM) a/c to :
-        //             i) Check if the given response options match the options in the DOM
+        // Check if it's Multiple-Choice-Grids response matches with extractedValue(DOM) a/c to :
+        //             i) Check if the given response in options, match the options in the DOM
         // Return Type : Boolean
 
 
         let flag = true; // Assuming response for Prompt engine is correct by default
-        let responseOptions = response.split(/\r?\n/);
+        let responseOptions = response.trim().split(/\r?\n/);
+
+        if (responseOptions.length !== extractedValue.rowArray.length) {
+            return false; // Missing Answer for a Row Field
+        }
 
         let actualOptions = extractedValue.columnArray;
 
@@ -372,25 +377,33 @@ export class ParserEngine {
         return flag;
     }
 
+    //@TODO : Reimplement this
     validateCheckBoxGrid(extractedValue, response) {
-        // Input Type : String [given by chatgpt] & extractedValue [DOM object]
+        // Input Type : response String [given by chatgpt] & extractedValue [DOM object]
         // Valid Input Format :- Multi Lined Options, with each new option separated by a newline, 
         //                       in case of non-matching options.
         // Check if it's CheckBoxGrid's response are match with extractedValue(DOM) a/c to :
         //             i) Check if the given response options match the options in the DOM
         // Return Type : Boolean
 
-        return this.validateMultipleChoiceGrid(extractedValue, response);
+        return false;
+        // return this.validateMultipleChoiceGrid(extractedValue, response);
     }
 
 
     validateDropdown(extractedValue, response) {
-        // Input Type : String [given by chatgpt] & extractedValue [DOM object]
-        // Valid Input Format :- Multi Lined Options, with each new option separated by a newline, 
-        //                       in case of non-matching options.
-        // Check if it's Dropdown's response are match with extractedValue(DOM) a/c to :
-        //             i) Check if the given response options match the options in the DOM
+        // Input Type : response String [given by chatgpt] & extractedValue [DOM object]
+        // Valid Input Format :- Single Line Option 
+        // Check if it's Dropdown's response matches with extractedValue(DOM) a/c to :
+        //             i) Check if the given response in options, match the options in the DOM
         // Return Type : Boolean
+
+        // Validations works the same as for multipleChoice behind the hood,
+        // co-incidentally with same data structure as
+        // MultipleChoice (has options->data)
+
+        //@TODO: Fix dependent calls in Linear Scale & Dropdown to Multiple Choice, 
+        // to some common compatible method altogether
 
         return this.validateMultipleChoice(extractedValue, response);
     }
