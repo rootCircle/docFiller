@@ -84,8 +84,8 @@ export class ParserEngine {
                     return this.validateLinearScale(extractedValue, testResponse.LINEAR_SCALE);
                 case QType.MULTIPLE_CHOICE_GRID:
                     return this.validateMultipleChoiceGrid(extractedValue, testResponse.MULTIPLE_CHOICE_GRID);
-                case QType.CHECKBOX_GRID:
-                    return this.validateCheckBoxGrid(extractedValue, testResponse.CHECKBOX_GRID);
+                // case QType.CHECKBOX_GRID:
+                //     return this.validateCheckBoxGrid(extractedValue, testResponse.CHECKBOX_GRID);
                 case QType.DROPDOWN:
                     return this.validateDropdown(extractedValue, testResponse.DROPDOWN);
                 default:
@@ -386,7 +386,7 @@ export class ParserEngine {
         //             i) Check if the given response options match the options in the DOM
         // Return Type : Boolean
 
-        return false;
+        return null;
         // return this.validateMultipleChoiceGrid(extractedValue, response);
     }
 
