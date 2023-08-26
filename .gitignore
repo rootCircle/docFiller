@@ -3,6 +3,7 @@
 *.pdf
 *.rnote
 *.env
+!*.sample.env
 
 # Some verbose files
 dist/
