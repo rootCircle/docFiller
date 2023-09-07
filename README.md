@@ -82,3 +82,4 @@ For more details, please refer to the full license text at https://creativecommo
 - [Microsoft Edge Extension Documentation](https://docs.microsoft.com/en-us/microsoft-edge/extensions-chromium/)
 - [Mozilla Extension Documentation](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions)
 - [Microsoft Edge Getting Started](https://learn.microsoft.com/en-us/microsoft-edge/extensions-chromium/)
+- [Google Forms API](https://developers.google.com/forms/api/guides)
