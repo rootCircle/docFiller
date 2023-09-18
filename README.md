@@ -83,3 +83,10 @@ For more details, please refer to the full license text at https://creativecommo
 - [Mozilla Extension Documentation](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions)
 - [Microsoft Edge Getting Started](https://learn.microsoft.com/en-us/microsoft-edge/extensions-chromium/)
 - [Google Forms API](https://developers.google.com/forms/api/guides)
+
+## ✨ Contributors
+
+<a href="https://github.com/rootCircle/symmetrical-octo-spork/graphs/contributors">
+  <img alt="Grid of profile icons of the contributors" src="https://contrib.rocks/image?repo=rootCircle/symmetrical-octo-spork" />
+</a>
+<!--  https://contrib.rocks -->
