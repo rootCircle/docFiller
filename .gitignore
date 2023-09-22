@@ -38,3 +38,6 @@ _metadata
 
 # By web-ext tools
 web-ext-artifacts/
+
+# eslint
+.eslintcache
