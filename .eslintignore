@@ -1,0 +1,5 @@
+node_modules/
+dist/
+src/icons/
+src/popup/
+src/filler.js
