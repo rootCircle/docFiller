@@ -1,87 +1,94 @@
 import GPTEngine from '../../utils/gpt-engines';
 import { Configuration, OpenAIApi } from 'openai';
-// import process from "process";
+import dotenv from 'dotenv'; 
+// Import dotenv for handling environment variables
+
+dotenv.config({ path: './develop.sample.env' });
 
 export class GeneratorEngine {
 	constructor(engine) {
-		// Input Type : String based on GPTEngine enum
-		// Specifying the type of GPT engine to query response
-
-		this.modelLock = false; // Lock variable for call
+		this.modelLock = false;
 
 		if (engine) {
-			this.engine = engine;
+			this.selectedEngine = engine;
 		} else {
-			// Specifying the default GPT engine as CHATGPT engine in case of no inputs
-			this.engine = GPTEngine.CHATGPT;
+			this.selectedEngine = GPTEngine.CHATGPT; 
 		}
-		if (this.engine === GPTEngine.CHATGPT) {
-			const configuration = new Configuration({
-				apiKey: process.env.OPENAI_API_KEY,
+
+		if (this.selectedEngine === GPTEngine.CHATGPT) {
+			const openaiConfiguration = new Configuration({
+				apiKey: process.env.OPENAI_API_KEY, 
 			});
-			this.openai = new OpenAIApi(configuration);
+			this.chatGpt = new OpenAIApi(openaiConfiguration);
 		}
 	}
 
 	async getResponse(promptText) {
-		// Input Type : prompt:string containing the string
-		// Get the personalized prompt based on type of question and value
-		// Output Type : string containing the response or null if any error arose
-
 		if (promptText !== null) {
-			// Calling respective engine based on value
-			if (this.engine === GPTEngine.CHATGPT) {
-				let response = await Promise.resolve(this.askChatGPT(promptText));
-				return response;
-			} else if (this.engine === GPTEngine.BARD) {
-				return this.askBard(promptText);
+			if (this.selectedEngine === GPTEngine.CHATGPT) {
+				let chatGptResponse = await this.askChatGpt(promptText);
+				return chatGptResponse;
+			} else if (this.selectedEngine === GPTEngine.BARD) {
+				let bardResponse = await this.askBard(promptText);
+				return bardResponse;
 			}
 		}
 
 		return null;
 	}
 
-	async askChatGPT(prompt) {
-		// Input Type : prompt:string containing the string
-		// Output Type : string containing the output, null if any error
-		// TODO
-		// Call chatgpt using API, don't push API keys in code
+	async askChatGpt(prompt) {
 		if (this.modelLock === false) {
 			this.modelLock = true;
-			let responseContent = null;
+			let chatGptResponseContent = null;
 			try {
-				const response = await this.openai.createChatCompletion({
+				const chatGptResponse = await this.chatGpt.createChatCompletion({
 					model: 'gpt-3.5-turbo',
-					messages: [{ role: 'user', content: prompt }],
+					messages: [{ role: 'system', content: 'You are a helpful assistant.' }, { role: 'user', content: prompt }],
 				});
-				responseContent = response.data.choices[0].message.content;
-				console.log(responseContent);
+				chatGptResponseContent = chatGptResponse.data.choices[0].message.content;
+				console.log(chatGptResponseContent);
 			} catch (error) {
 				if (error.response && error.response.status === 429) {
-					const retryAfter =
-						parseInt(error.response.headers['retry-after']) || 1;
+					const retryAfter = parseInt(error.response.headers['retry-after']) || 1;
 					console.log(`Rate limited. Retrying after ${retryAfter} seconds...`);
 				} else if (error.response) {
-					console.error('API call error:', error.message);
-					const retryAfter =
-						parseInt(error.response.headers['retry-after']) || 1;
+					console.error('ChatGPT API call error:', error.message);
+					const retryAfter = parseInt(error.response.headers['retry-after']) || 1;
 					console.log(`Rate limited. Retrying after ${retryAfter} seconds...`);
 				} else {
 					console.warn(error);
 				}
 			}
 			this.modelLock = false;
-			return responseContent;
+			return chatGptResponseContent;
 		}
-		// Promise.resolve((resolve) => setTimeout(resolve, 1000))
 		return 'Already processing some other request! Try later';
 	}
 
-	askBard(prompt) {
-		// Input Type : prompt:string containing the string
-		// Output Type : string containing the output, null if any error
-		// TODO
-		// Call Bard using API calls, don't push API keys in code
-		return 'Response of Prompt from Bard based on prompt';
+	async askBard(prompt) {
+		if (this.modelLock === false) {
+			this.modelLock = true;
+			let bardResponseContent = null;
+			try { 
+				// BARD API Call, Replace 'BARD_API_KEY' with your actual Bard API key
+				const bardApiResponse = await fetch('https://api.bardengine.com/endpoint', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': 'BARD_API_KEY',
+					},
+					body: JSON.stringify({ prompt }),
+				});
+
+				bardResponseContent = await bardApiResponse.text();
+				console.log(bardResponseContent);
+			} catch (error) {
+				console.error('Bard API call error:', error);
+			}
+			this.modelLock = false;
+			return bardResponseContent;
+		}
+		return 'Already processing some other request! Try later';
 	}
 }
