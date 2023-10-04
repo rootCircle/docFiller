@@ -6,8 +6,6 @@ on:
     branches: [ "dev" ]
   pull_request:
     branches: [ "dev" ]
-  
-    
 
 jobs:
   build:
@@ -28,11 +26,11 @@ jobs:
     - name: Install dependencies
       run: |
         npm install
-        
+
     - name: Lint Check
       run: |
         npm run lint
-    
+
     - name: Prettier Format Check
-      run: | 
+      run: |
         npm run format:check
