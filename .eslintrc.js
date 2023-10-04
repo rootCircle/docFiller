@@ -30,7 +30,7 @@ module.exports = {
 		'no-loop-func': 'error',
 		'no-new-func': 'error',
 		'no-control-regex': 'off',
-    'no-case-declarations': 'off',
+		'no-case-declarations': 'off',
 		// Variables
 		'no-unused-vars': 'warn',
 		'no-shadow': 'error',

@@ -1,6 +1,6 @@
 ## 🚀 Web Extension README
 
-This web extension is a JavaScript-based tool that can be installed on your browser to enhance your browsing experience. The extension is built using manifest v2 and currently supports the following browsers: Mozilla Firefox, Google Chrome, and Microsoft Edge.
+ Automated Google Docs Filling Web Extension written in JS. The extension is built using manifest v2 and currently supports the following browsers: Mozilla Firefox, Google Chrome, and Microsoft Edge.
 
 ## Installation Instructions
 
