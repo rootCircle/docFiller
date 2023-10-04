@@ -1,6 +1,6 @@
 ## 🚀 Web Extension README
 
- Automated Google Docs Filling Web Extension written in JS. The extension is built using manifest v2 and currently supports the following browsers: Mozilla Firefox, Google Chrome, and Microsoft Edge.
+Automated Google Docs Filling Web Extension written in JS. The extension is built using manifest v2 and currently supports the following browsers: Mozilla Firefox, Google Chrome, and Microsoft Edge.
 
 ## Installation Instructions
 
@@ -33,8 +33,7 @@
 
 ## Usage Instructions 📖
 
-Once the extension is installed, you can start using it immediately. Simply click on the extension icon in your browser toolbar to access its features. The specific
-functionality of the extension will depend on its purpose, so please refer to its documentation for more information.
+Once the extension is installed, you can start using it immediately. Simply click on the extension icon in your browser toolbar to access its features. The specific functionality of the extension will depend on its purpose, so please refer to its documentation for more information.
 
 ## Contributing 🤝
 
@@ -68,8 +67,7 @@ Under this license, you are free to:
 
 Under the following terms:
 
-- Attribution: You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way
-  that suggests the licensor endorses you or your use.
+- Attribution: You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
 - NonCommercial: You may not use the material for commercial purposes.
 - ShareAlike: If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
 
