@@ -35,6 +35,7 @@ module.exports = {
 		new webpack.DefinePlugin({
 			'process.env': {
 				OPENAI_API_KEY: JSON.stringify(process.env.OPENAI_API_KEY),
+				GEMINI_API_KEY: JSON.stringify(process.env.GEMINI_API_KEY),
 			},
 		}),
 	],
