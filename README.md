@@ -1,5 +1,7 @@
 ## 🚀 Web Extension README
 
+[![Discord](https://img.shields.io/discord/1129752670287184022?logo=discord)](https://discord.gg/aExAhPd64X)
+
 Automated Google Docs Filling Web Extension written in JS. The extension is built using manifest v2 and currently supports the following browsers: Mozilla Firefox, Google Chrome, and Microsoft Edge.
 
 ## Installation Instructions
