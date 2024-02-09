@@ -1,79 +1,56 @@
-## 🚀 Web Extension README
+# 🚀 docFiller
 
 [![Discord](https://img.shields.io/discord/1129752670287184022?logo=discord)](https://discord.gg/aExAhPd64X)
 
-Automated Google Docs Filling Web Extension written in JS. The extension is built using manifest v2 and currently supports the following browsers: Mozilla Firefox, Google Chrome, and Microsoft Edge.
+> The extension is built using manifest v2 and currently supports the following browsers: Mozilla Firefox only.
 
-## Installation Instructions
+Automated Google Docs Filling Web Extension written in JS. Filling boring google form done easy! 
 
-### Mozilla Firefox 🔥
+## Project Overview
 
-1. Download the extension package.
-2. Open Mozilla Firefox and navigate to about:debugging.
-3. Click on the "This Firefox" button in the upper right corner of the screen.
-4. Select "Load Temporary Add-on..." from the dropdown menu.
-5. Navigate to the folder where you downloaded the extension package and select the manifest.json file.
-6. You should now see the extension added to the list of installed extensions.
+### Features
+- **Automated Google Docs Filling**: Fill Google Docs forms automatically with predefined data using AI.
+- **Cross-Browser Compatibility**: Supports major browsers including Mozilla Firefox, Google Chrome, and Microsoft Edge.
+- **Customizable**: Easily configurable to adapt to different use cases and requirements.
 
-### Google Chrome 🌐
+### How It Works
+The Web Extension simplifies the process of filling Google Docs forms by automating repetitive tasks. Users can configure the extension with predefined data and settings, allowing them to quickly populate Google Docs without manual input.
 
-1. Download the extension package.
-2. Open Google Chrome and navigate to chrome://extensions.
-3. Enable Developer Mode by toggling the switch in the upper right corner of the screen.
-4. Click on the "Load unpacked" button in the upper left corner of the screen.
-5. Navigate to the folder where you downloaded the extension package and select it.
-6. You should now see the extension added to the list of installed extensions.
+### Use Cases
+- **Form Filling**: Ideal for individuals or organizations that frequently fill out standardized forms or templates in Google Docs.
+- **Data Entry Automation**: Streamline data entry processes by automating the input of common information into Google Docs.
 
-### Microsoft Edge 🌊
+## Installation
 
-1. Download the extension package.
-2. Open Microsoft Edge and navigate to edge://extensions/.
-3. Enable Developer Mode by toggling the switch in the lower left corner of the screen.
-4. Click on the "Load unpacked" button in the lower left corner of the screen.
-5. Navigate to the folder where you downloaded the extension package and select it.
-6. You should now see the extension added to the list of installed extensions.
+For detailed installation instructions, please refer to the [INSTALL.md](docs/INSTALL.md) file.
 
-## Usage Instructions 📖
+## Usage
 
-Once the extension is installed, you can start using it immediately. Simply click on the extension icon in your browser toolbar to access its features. The specific functionality of the extension will depend on its purpose, so please refer to its documentation for more information.
+Once the extension is installed, you can start using it immediately. Simply click on the extension icon in your browser toolbar to access its features. For usage instructions and additional details, please refer to the [documentation](docs).
 
-## Contributing 🤝
+## Contributing
 
-Contributions are always welcome! If you would like to contribute to the development of this web extension, please follow these steps:
+We welcome contributions! If you would like to contribute to the development of this web extension, please follow the guidelines outlined in the [CONTRIBUTING.md](docs/CONTRIBUTING.md) file.
 
-1. Fork the repository to your own GitHub account.
-2. Clone the forked repository to your local machine.
-3. Make the changes you want in your local copy of the repository.
-4. Test your changes to make sure they work as expected.
-5. Submit a pull request to the original repository and explain the changes you made.
+## Security
 
-I would recommend `web-ext` for development in Firefox, it significantly decrease development times. Devs can install it using `npm install --global web-ext`.
+For information about our security policy, please refer to the [SECURITY.md](docs/SECURITY.md) file.
 
-## Development
+## Support
 
-1. Make sure you use `yarn` and not `npm` while installing the packages
-2. Webpack is configured for the project
-3. Do not edit the manifest.json, webpack.config.js files
-4. Clone the repo
-5. Run `yarn` in the terminal to install the required dependencies
-6. Run `yarn dev` to test the extension. A new firefox window will open with the extension loaded.
+For support, bug reports, and feature requests, please refer to the [SUPPORT.md](docs/SUPPORT.md) file.
 
-## License:
+## Governance
 
-This project is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0).
+To understand the governance model and decision-making processes for our project, please refer to the [GOVERNANCE.md](docs/GOVERNANCE.md) file.
 
-Under this license, you are free to:
+## Roadmap
 
-- Share: copy and redistribute the material in any medium or format
-- Adapt: remix, transform, and build upon the material
+For our project roadmap, please refer to the [roadmap.pdf](docs/roadmap.pdf) file.
 
-Under the following terms:
+## License
 
-- Attribution: You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
-- NonCommercial: You may not use the material for commercial purposes.
-- ShareAlike: If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
-
-For more details, please refer to the full license text at https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.
+This project is licensed under the [GNU GPL 3.0](LICENSE).
 
 ## Resources 🔍
 
@@ -86,7 +63,7 @@ For more details, please refer to the full license text at https://creativecommo
 
 ## ✨ Contributors
 
-<a href="https://github.com/rootCircle/symmetrical-octo-spork/graphs/contributors">
-  <img alt="Grid of profile icons of the contributors" src="https://contrib.rocks/image?repo=rootCircle/symmetrical-octo-spork" />
+<a href="https://github.com/rootCircle/docFiller/graphs/contributors">
+  <img alt="Grid of profile icons of the contributors" src="https://contrib.rocks/image?repo=rootCircle/docFiller" />
 </a>
 <!--  https://contrib.rocks -->
