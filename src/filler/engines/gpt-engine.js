@@ -1,5 +1,5 @@
 import GPTEngine from '../../utils/gpt-engines';
-import { Configuration, OpenAIApi } from 'openai';
+import OpenAI from 'openai';
 // import process from "process";
 
 export class GeneratorEngine {
@@ -16,10 +16,10 @@ export class GeneratorEngine {
 			this.engine = GPTEngine.CHATGPT;
 		}
 		if (this.engine === GPTEngine.CHATGPT) {
-			const configuration = new Configuration({
+			const configuration = new OpenAI({
 				apiKey: process.env.OPENAI_API_KEY,
 			});
-			this.openai = new OpenAIApi(configuration);
+			this.openai = configuration;
 		}
 	}
 

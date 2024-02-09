@@ -42,3 +42,5 @@ web-ext-artifacts/
 # pnpm as default package manager
 package-lock.json
 yarn.lock
+# pnpm-lock.yaml
+bun.lockb

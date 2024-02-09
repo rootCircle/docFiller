@@ -139,7 +139,7 @@ Then, open a Pull Request (PR) on the main repository. Be sure to provide a clea
 
 If you're planning to contribute to the development of this web extension, here are some guidelines:
 
-- Use `pnpm` instead of `npm` or `yarn` while installing the packages, it's a lot faster and is the project default package manager. You can install pnpm by using `npm i -g pnpm@latest`.
+- Use `pnpm` instead of `npm`, `bun` or `yarn` while installing the packages, the project default package manager. You can install pnpm by using `npm i -g pnpm@latest`.
 - To get started, follow these steps:
   1. Clone the repository:
       ```bash
