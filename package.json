@@ -61,7 +61,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@types/chrome": "^0.0.299",
+    "@types/chrome": "^0.0.306",
     "@types/firefox-webext-browser": "^120.0.4",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.12.0",
