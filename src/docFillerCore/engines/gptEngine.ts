@@ -95,14 +95,16 @@ export class LLMEngine {
     switch (engine) {
       case LLMEngineType.ChatGPT:
         this.instances[engine] = new ChatOpenAI({
-          model: 'gpt-4o',
+          model: 'o3-mini',
+          temperature: 0,
+          maxRetries: 2,
           // biome-ignore lint/complexity/useLiteralKeys: <explanation>
           apiKey: this.apiKeys['chatGptApiKey'] as string,
         });
         break;
       case LLMEngineType.Gemini:
         this.instances[engine] = new ChatGoogleGenerativeAI({
-          model: 'gemini-pro',
+          model: 'gemini-2.0-flash-lite',
           temperature: 0,
           maxRetries: 2,
           // biome-ignore lint/complexity/useLiteralKeys: <explanation>
@@ -127,7 +129,7 @@ export class LLMEngine {
         break;
       case LLMEngineType.Anthropic:
         this.instances[engine] = new ChatAnthropic({
-          model: 'claude-3-5-sonnet-latest',
+          model: 'claude-3-7-sonnet-latest',
           temperature: 0,
           maxRetries: 2,
           // biome-ignore lint/complexity/useLiteralKeys: <explanation>

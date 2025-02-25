@@ -1,7 +1,10 @@
 # Changelog
 
-## v1.4.5 [Unreleased] (as of 2025-01-23)
+## v1.4.6 [Unreleased] (as of 2025-02-26)
 
+## v1.4.5 (2025-02-26)
+
+- update models from `gpt-4o` to `o3-mini`, `gemini-pro` to `gemini-2.0-flash-lite` and `claude-3-5-sonnet-latest` to `claude-3-7-sonnet-latest`.
 - bump deps
 
 ## v1.4.4 (2025-01-23)
