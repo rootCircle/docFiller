@@ -1,6 +1,6 @@
 {
   "name": "docfiller",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "description": "Automated Google Forms filling web extension using GenAI. Making boring form filling easy!",
   "homepage": "https://github.com/rootCircle/docFiller",
   "keywords": [
