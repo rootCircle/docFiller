@@ -46,7 +46,7 @@
   "dependencies": {
     "@langchain/anthropic": "^0.3.14",
     "@langchain/community": "^0.3.32",
-    "@langchain/google-genai": "^0.1.9",
+    "@langchain/google-genai": "^0.2.1",
     "@langchain/mistralai": "^0.2.0",
     "@langchain/ollama": "^0.2.0",
     "@langchain/openai": "^0.4.4",
