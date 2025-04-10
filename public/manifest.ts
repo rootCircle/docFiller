@@ -42,15 +42,12 @@ export async function getManifest() {
     name: 'docFiller',
     version: pkg.version,
     description: pkg.description,
-    homepage_url: 'https://addons.mozilla.org/en-US/firefox/addon/docfiller/',
+    homepage_url: 'https://github.com/rootCircle/docFiller',
     icons: {
       '64': 'assets/icons/icon-form-64.png',
       '96': 'assets/icons/icon-form-96.png',
     },
-    developer: {
-      name: 'rootCircle',
-      url: 'https://github.com/rootCircle',
-    },
+    author: 'rootCircle',
     permissions: ['activeTab', 'storage'],
     host_permissions: [
       'http://docs.google.com/forms/d/e/*/viewform',
@@ -77,6 +74,13 @@ export async function getManifest() {
 
   const manifest: Manifest.WebExtensionManifest = {
     ...baseManifest,
+    ...(isFirefoxBased && {
+      developer: {
+        name: 'rootCircle',
+        url: 'https://github.com/rootCircle',
+      }
+    }
+    ),
     background: (() => {
       if (isFirefoxBased) {
         return { scripts: ['src/background/index.js'] };

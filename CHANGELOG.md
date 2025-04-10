@@ -1,6 +1,8 @@
 # Changelog
 
-## v1.4.6 [Unreleased] (as of 2025-02-26)
+## v1.4.6 [Unreleased] (as of 2025-04-10)
+
+- fix `developer` key in manifest file in non-firefox browser
 
 ## v1.4.5 (2025-02-26)
 
