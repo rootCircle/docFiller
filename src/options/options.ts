@@ -1,3 +1,4 @@
+import { DEFAULT_PROPERTIES } from '@utils/defaultProperties';
 import { LLMEngineType, getModelName } from '@utils/llmEngineTypes';
 import { safeGetElementById, ifElementExists } from '@utils/domUtils';
 import { ConsensusEngine } from '@docFillerCore/engines/consensusEngine';
@@ -26,7 +27,7 @@ import {
   setAnthropicApiKey,
 } from '@utils/storage/setProperties';
 import { showToast } from '@utils/toastUtils';
-
+import { clearResponseCache } from '@utils/storage/responseCache';
 import { MetricsUI } from './metrics';
 import {
   updateApiKeyInputField,
@@ -39,6 +40,47 @@ import {
   handleProfileFormSubmit,
 } from './optionProfileHandler';
 
+// Add cache control setup function
+function setupCacheControls() {
+  const cachingToggle = document.getElementById(
+    'enable-response-caching',
+  ) as HTMLInputElement;
+  const clearCacheButton = document.getElementById(
+    'clear-response-cache',
+  ) as HTMLButtonElement;
+
+  // if (!cachingToggle || !clearCacheButton) {
+  //   //biome-ignore lint/suspicious/noConsole: Ignoring console statement for debugging purposes
+  //   console.warn('Cache control elements not found in the DOM');
+  //   return;
+  // }
+
+  chrome.storage.sync.get('enableResponseCaching', (result) => {
+    cachingToggle.checked =
+      result['enableResponseCaching'] ??
+      DEFAULT_PROPERTIES.enableResponseCaching;
+  });
+
+  cachingToggle.addEventListener('change', () => {
+    chrome.storage.sync.set({ enableResponseCaching: cachingToggle.checked });
+  });
+
+  // Handle clear cache button
+  clearCacheButton.addEventListener('click', async (event) => {
+    // Prevent default form submission behavior
+    event.preventDefault();
+
+    try {
+      await clearResponseCache();
+      // Don't need this toast as it's shown inside clearResponseCache
+      // showToast('Response cache cleared successfully', 'success');
+  } catch {
+      // Don't need this toast as it's shown inside clearResponseCache
+      // showToast(`Failed to clear cache: ${error}`, 'error');
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   const metricsUI = new MetricsUI();
   await metricsUI.initialize();
@@ -47,6 +89,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     metricsUI.cleanup();
     ConsensusEngine.dispose();
   });
+
+  // Initialize cache controls
+  setupCacheControls();
 
   const skipMarkedToggleButton = document.getElementById(
     'skipMarkedToggleButton',
@@ -311,7 +356,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         break;
       case getModelName(LLMEngineType.Ollama):
       case getModelName(LLMEngineType.ChromeAI):
-        apiKeyValue = '';
         break;
       case getModelName(LLMEngineType.Mistral):
         apiKeyValue = mistralApiKeyInput.value;
@@ -320,7 +364,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         apiKeyValue = anthropicApiKeyInput.value;
         break;
       default:
-        // biome-ignore lint/suspicious/noConsole: debugging options functionality
+  // biome-ignore lint/suspicious/noConsole: debugging options functionality
         console.warn('Unknown model selected:', selectedModel);
         break;
     }

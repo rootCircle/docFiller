@@ -70,7 +70,19 @@ async function getIsEnabled(): Promise<boolean> {
     DEFAULT_PROPERTIES.automaticFillingEnabled
   );
 }
+async function getEnableResponseCaching(): Promise<boolean> {
+  return (
+    (await getStorageItem<boolean>('enableResponseCaching')) ??
+    DEFAULT_PROPERTIES.enableResponseCaching
+  );
+}
 
+async function getResponseCacheMaxAge(): Promise<number> {
+  return (
+    (await getStorageItem<number>('responseCacheMaxAge')) ??
+    DEFAULT_PROPERTIES.responseCacheMaxAge
+  );
+}
 export {
   getSleepDuration,
   getLLMModel,
@@ -83,4 +95,6 @@ export {
   getAnthropicApiKey,
   getIsEnabled,
   getSkipMarkedSetting,
+  getEnableResponseCaching,
+  getResponseCacheMaxAge,
 };
