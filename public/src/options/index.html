@@ -407,6 +407,25 @@
         </div>
 
         <button type="button" id="saveButton">Save Changes</button>
+        <div class="settings-section">
+          <h3>Response Caching</h3>
+          <div class="setting-item">
+            <label for="enable-response-caching">Enable Response Caching</label>
+            <div class="toggle-switch">
+              <input type="checkbox" id="enable-response-caching" />
+              <span class="slider round"></span>
+            </div>
+          </div>
+          <p class="setting-description">
+            When enabled, DocFiller will remember responses to questions and
+            reuse them when it encounters the same questions in future forms.
+          </p>
+          <div class="setting-item">
+            <button id="clear-response-cache" class="btn btn-secondary">
+              Clear Response Cache
+            </button>
+          </div>
+        </div>
 
         <hr style="margin-top: 20px; margin-bottom: 20px" />
 

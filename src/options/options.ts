@@ -1,10 +1,18 @@
+// biome-ignore lint/suspicious/noConsole: <explanation>
+// biome-ignore lint/suspicious/noConsole: <explanation>
+// biome-ignore lint/suspicious/noConsole: <explanation>
+
 import { DEFAULT_PROPERTIES } from '@utils/defaultProperties';
 import { LLMEngineType, getModelName } from '@utils/llmEngineTypes';
 import { EMPTY_STRING } from '@utils/settings';
 import { getSkipMarkedStatus } from '@utils/storage/getProperties';
 import { setSkipMarkedStatus } from '@utils/storage/setProperties';
 import { showToast } from '@utils/toastUtils';
-
+import {
+  clearResponseCache,
+  clearOldResponses,
+} from '@utils/storage/responseCache';
+import { getResponseCacheMaxAge } from '@utils/storage/getProperties';
 import { MetricsUI } from './metrics';
 import {
   updateApiKeyInputField,
@@ -17,6 +25,47 @@ import {
   handleProfileFormSubmit,
 } from './optionProfileHandler';
 
+// Add cache control setup function
+function setupCacheControls() {
+  const cachingToggle = document.getElementById(
+    'enable-response-caching',
+  ) as HTMLInputElement;
+  const clearCacheButton = document.getElementById(
+    'clear-response-cache',
+  ) as HTMLButtonElement;
+
+  // if (!cachingToggle || !clearCacheButton) {
+  //   //biome-ignore lint/suspicious/noConsole: Ignoring console statement for debugging purposes
+  //   console.warn('Cache control elements not found in the DOM');
+  //   return;
+  // }
+
+  chrome.storage.sync.get('enableResponseCaching', (result) => {
+    cachingToggle.checked =
+      result['enableResponseCaching'] ??
+      DEFAULT_PROPERTIES.enableResponseCaching;
+  });
+
+  cachingToggle.addEventListener('change', () => {
+    chrome.storage.sync.set({ enableResponseCaching: cachingToggle.checked });
+  });
+
+  // Handle clear cache button
+  clearCacheButton.addEventListener('click', async (event) => {
+    // Prevent default form submission behavior
+    event.preventDefault();
+
+    try {
+      await clearResponseCache();
+      // Don't need this toast as it's shown inside clearResponseCache
+      // showToast('Response cache cleared successfully', 'success');
+    } catch (error) {
+      // Don't need this toast as it's shown inside clearResponseCache
+      // showToast(`Failed to clear cache: ${error}`, 'error');
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   const metricsUI = new MetricsUI();
   await metricsUI.initialize();
@@ -24,6 +73,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   window.addEventListener('unload', () => {
     metricsUI.cleanup();
   });
+
+  // Initialize cache controls
+  setupCacheControls();
 
   const skipMarkedToggleButton = document.getElementById(
     'skipMarkedToggleButton',
@@ -36,7 +88,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   skipMarkedToggleButton.addEventListener('click', async () => {
     await setSkipMarkedStatus().catch((error) => {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      //biome-ignore lint/suspicious/noConsole: Ignoring console statement for error logging
       console.error('Error toggling state:', error);
     });
     const currentState = await getSkipMarkedStatus();
@@ -208,30 +260,31 @@ document.addEventListener('DOMContentLoaded', () => {
       'geminiApiKey',
       'mistralApiKey',
       'anthropicApiKey',
+      'enableResponseCaching',
     ],
     (items) => {
       sleepDurationInput.value = String(
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['sleepDuration'] as number) ?? DEFAULT_PROPERTIES.sleep_duration,
       );
       llmModelSelect.value =
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['llmModel'] as string) ?? getModelName(DEFAULT_PROPERTIES.model);
 
       updateApiKeyInputField(singleApiKeyInput, llmModelSelect);
       enableConsensusCheckbox.checked = Boolean(
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['enableConsensus'] as boolean) ??
           DEFAULT_PROPERTIES.enableConsensus,
       );
       enableDarkThemeCheckbox.checked = Boolean(
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['enableDarkTheme'] as boolean) ??
           DEFAULT_PROPERTIES.enableDarkTheme,
       );
 
       const weights =
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['llmWeights'] as Record<LLMEngineType, number>) ??
         DEFAULT_PROPERTIES.llmWeights;
       weightChatGPTInput.value = String(weights[LLMEngineType.ChatGPT]);
@@ -242,16 +295,16 @@ document.addEventListener('DOMContentLoaded', () => {
       weightAnthropicInput.value = String(weights[LLMEngineType.Anthropic]);
 
       chatGptApiKeyInput.value =
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['chatGptApiKey'] as string) ?? EMPTY_STRING;
       geminiApiKeyInput.value =
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['geminiApiKey'] as string) ?? EMPTY_STRING;
       mistralApiKeyInput.value =
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['mistralApiKey'] as string) ?? EMPTY_STRING;
       anthropicApiKeyInput.value =
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['anthropicApiKey'] as string) ?? EMPTY_STRING;
 
       toggleConsensusOptions(enableConsensusCheckbox.checked);
@@ -316,7 +369,6 @@ document.addEventListener('DOMContentLoaded', () => {
         break;
       case getModelName(LLMEngineType.Ollama):
       case getModelName(LLMEngineType.ChromeAI):
-        apiKeyValue = '';
         break;
       case getModelName(LLMEngineType.Mistral):
         apiKeyValue = mistralApiKeyInput.value;
@@ -325,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
         apiKeyValue = anthropicApiKeyInput.value;
         break;
       default:
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        //biome-ignore lint/suspicious/noConsole: Ignoring console statement for debugging purposes
         console.warn('Unknown model selected:', selectedModel);
         break;
     }
@@ -379,6 +431,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const geminiApiKey = geminiApiKeyInput.value;
       const mistralApiKey = mistralApiKeyInput.value;
       const anthropicApiKey = anthropicApiKeyInput.value;
+      // Add this line to get the cache toggle state
+      const enableResponseCaching =
+        (document.getElementById('enable-response-caching') as HTMLInputElement)
+          ?.checked ?? DEFAULT_PROPERTIES.enableResponseCaching;
 
       const llmWeights = {
         [LLMEngineType.ChatGPT]: Number.parseFloat(weightChatGPTInput.value),
@@ -386,7 +442,9 @@ document.addEventListener('DOMContentLoaded', () => {
         [LLMEngineType.Ollama]: Number.parseFloat(weightOllamaInput.value),
         [LLMEngineType.ChromeAI]: Number.parseFloat(weightChromeAIInput.value),
         [LLMEngineType.Mistral]: Number.parseFloat(weightMistralInput.value),
-        [LLMEngineType.Anthropic]: Number.parseFloat(weightAnthropicInput.value),
+        [LLMEngineType.Anthropic]: Number.parseFloat(
+          weightAnthropicInput.value,
+        ),
       };
 
       try {
@@ -402,6 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
               geminiApiKey,
               mistralApiKey,
               anthropicApiKey,
+              enableResponseCaching, // Add this line to save the cache setting
             },
             () => {
               if (chrome.runtime.lastError) {

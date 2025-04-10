@@ -18,7 +18,14 @@ import {
   getSelectedProfileKey,
   loadProfiles,
 } from '@utils/storage/profiles/profileManager';
-
+import {
+  createResponseFromCache,
+  getCachedResponse,
+  prepareResponseForCache,
+  storeResponse,
+} from '@utils/storage/responseCache';
+import { getEnableResponseCaching } from '@utils/storage/getProperties';
+import { QType } from '@utils/questionTypes';
 async function runDocFillerEngine() {
   const questions = new QuestionExtractorEngine().getValidQuestions();
 
@@ -97,6 +104,8 @@ async function runDocFillerEngine() {
     });
   }
 
+  const enableOpacity = await getEnableOpacityOnSkippedQuestions();
+
   for (const question of questions) {
     try {
       const fieldType = checker.detectType(question);
@@ -117,8 +126,7 @@ async function runDocFillerEngine() {
 
         // biome-ignore lint/suspicious/noConsole: <explanation>
         console.log(fieldValue);
-
-        const isFilled = isMarked.markedCheck(fieldType, fieldValue);
+ const isFilled = isMarked.markedCheck(fieldType, fieldValue);
         // biome-ignore lint/suspicious/noConsole: <explanation>
         console.log('Is Already Filled ↴');
         // biome-ignore lint/suspicious/noConsole: <explanation>
@@ -134,6 +142,120 @@ async function runDocFillerEngine() {
           continue;
         }
 
+        metricsManager.incrementToBeFilledQuestions();
+        const enableResponseCaching = await getEnableResponseCaching();
+        // if (enableResponseCaching && fieldValue.title) {
+        //   const questionText = fieldValue.title;
+        //   const questionType = fieldType;
+
+        //   const cachedResponseText = await getCachedResponse(
+        //     questionText,
+        //     questionType,
+        //   );
+
+        //   if (cachedResponseText) {
+        //     console.log(
+        //       `[CACHE] Using cached response for ${questionType} question:`,
+        //       questionText,
+        //     );
+
+        //     // Create a proper LLMResponse object based on the question type
+        //     let cachedResponse;
+
+        //     // Handle different response formats based on question type
+        //     if (
+        //       questionType === QType.MULTIPLE_CHOICE ||
+        //       questionType === QType.MULTIPLE_CHOICE_WITH_OTHER
+        //     ) {
+        //       try {
+        //         // Try to parse JSON for multiple choice responses
+        //         const parsedChoice = JSON.parse(cachedResponseText);
+        //         cachedResponse = {
+        //           multipleChoice: parsedChoice,
+        //         };
+        //       } catch (e) {
+        //         // Fallback to text if parsing fails
+        //         console.log(
+        //           '[CACHE] Failed to parse MCQ response, using as text',
+        //         );
+        //         cachedResponse = { text: cachedResponseText };
+        //       }
+        //     } else if (
+        //       questionType === QType.MULTI_CORRECT ||
+        //       questionType === QType.MULTI_CORRECT_WITH_OTHER
+        //     ) {
+        //       try {
+        //         // Try to parse as JSON array for multi-correct responses
+        //         const parsedChoices = JSON.parse(cachedResponseText);
+        //         cachedResponse = {
+        //           multiCorrect: parsedChoices,
+        //         };
+        //       } catch (e) {
+        //         console.log(
+        //           '[CACHE] Failed to parse multi-correct response, using as text',
+        //         );
+        //         cachedResponse = { text: cachedResponseText };
+        //       }
+        //     } else {
+        //       // For text types, just use the text response
+        //       cachedResponse = {
+        //         text: cachedResponseText,
+        //       };
+        //     }
+
+        //     const fillerStatus = await filler.fill(
+        //       fieldType,
+        //       fieldValue,
+        //       cachedResponse,
+        //     );
+
+        //     // Apply opacity if enabled
+        //     if (enableOpacity) {
+        //       question.style.opacity = '0.6';
+        //     }
+
+        //     // Update metrics
+        //     metricsManager.incrementSuccessfulQuestions();
+        //     continue;
+        //   }
+        // }
+        if (enableResponseCaching && fieldValue.title) {
+          const questionText = fieldValue.title;
+          const questionType = fieldType;
+
+          const cachedResponseText = await getCachedResponse(
+            questionText,
+            questionType,
+          );
+
+          if (cachedResponseText) {
+            console.log(
+              `[CACHE] Using cached response for ${questionType} question:`,
+              questionText,
+            );
+
+            // Use the helper function to create the appropriate response object
+            const cachedResponse = createResponseFromCache(
+              cachedResponseText,
+              questionType,
+            );
+
+            const fillerStatus = await filler.fill(
+              fieldType,
+              fieldValue,
+              cachedResponse,
+            );
+
+            // Apply opacity if enabled
+            if (enableOpacity) {
+              question.style.opacity = '0.6';
+            }
+
+            // Update metrics
+            metricsManager.incrementSuccessfulQuestions();
+            continue;
+          }
+        }
         metricsManager.incrementToBeFilledQuestions();
 
         const promptString = prompts.getPrompt(fieldType, fieldValue);
@@ -164,6 +286,89 @@ async function runDocFillerEngine() {
           console.log('No response from LLM');
           continue;
         }
+        console.log('kjhkhjk');
+
+        // if (enableResponseCaching && fieldValue.title) {
+        //   const questionText = fieldValue.title;
+        //   const questionType = fieldType;
+
+        //   // Store the response based on question type
+        //   if (
+        //     questionType === QType.MULTIPLE_CHOICE ||
+        //     questionType === QType.MULTIPLE_CHOICE_WITH_OTHER
+        //   ) {
+        //     if (response.multipleChoice) {
+        //       // Store as JSON string
+        //       const mcqJson = JSON.stringify(response.multipleChoice);
+        //       await storeResponse(questionText, mcqJson, questionType);
+        //       console.log(
+        //         `[CACHE] Stored ${questionType} response as JSON in cache for:`,
+        //         questionText,
+        //       );
+        //     } else if (response.text) {
+        //       // Fallback to text
+        //       await storeResponse(questionText, response.text, questionType);
+        //       console.log(
+        //         `[CACHE] Stored ${questionType} text response in cache for:`,
+        //         questionText,
+        //       );
+        //     }
+        //   } else if (
+        //     questionType === QType.MULTI_CORRECT ||
+        //     questionType === QType.MULTI_CORRECT_WITH_OTHER
+        //   ) {
+        //     if (response.multiCorrect) {
+        //       // Store as JSON string
+        //       const mcJson = JSON.stringify(response.multiCorrect);
+        //       await storeResponse(questionText, mcJson, questionType);
+        //       console.log(
+        //         `[CACHE] Stored ${questionType} response as JSON in cache for:`,
+        //         questionText,
+        //       );
+        //     } else if (response.text) {
+        //       await storeResponse(questionText, response.text, questionType);
+        //       console.log(
+        //         `[CACHE] Stored ${questionType} text response in cache for:`,
+        //         questionText,
+        //       );
+        //     }
+        //   } else if (response.text) {
+
+        //     await storeResponse(questionText, response.text, questionType);
+        //     console.log(
+        //       `[CACHE] Stored ${questionType} response in cache for:`,
+        //       questionText,
+        //     );
+        //   } else {
+        //     console.error(
+        //       `[CACHE ERROR] Unable to extract response for ${questionType}:`,
+        //       questionText,
+        //     );
+        //   }
+        // }
+        if (enableResponseCaching && fieldValue.title) {
+          const questionText = fieldValue.title;
+          const questionType = fieldType;
+
+          // Use the helper function to prepare the response for caching
+          const responseToCache = prepareResponseForCache(
+            response,
+            questionType,
+          );
+
+          if (responseToCache) {
+            await storeResponse(questionText, responseToCache, questionType);
+            console.log(
+              `[CACHE] Stored ${questionType} response in cache for:`,
+              questionText,
+            );
+          } else {
+            console.error(
+              `[CACHE ERROR] Unable to extract response for ${questionType}:`,
+              questionText,
+            );
+          }
+        }
         const parsed_response = validator.validate(
           fieldType,
           fieldValue,
@@ -180,7 +385,9 @@ async function runDocFillerEngine() {
           );
           // biome-ignore lint/suspicious/noConsole: <explanation>
           console.log(`Filler Status ${fillerStatus}`);
-
+          //   if (enableResponseCaching && fieldType === QType.TEXT && fillerStatus && response.text && fieldValue.title) {
+          //   await storeResponse(fieldValue.title, response.text, 'TEXT');
+          // }
           if (fillerStatus) {
             metricsManager.incrementSuccessfulQuestions();
           }

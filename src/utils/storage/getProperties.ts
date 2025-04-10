@@ -86,7 +86,19 @@ async function getIsEnabled(): Promise<boolean> {
     DEFAULT_PROPERTIES.automaticFillingEnabled
   );
 }
+ async function getEnableResponseCaching(): Promise<boolean> {
+  return (
+    (await getSetting<boolean>('enableResponseCaching')) ??
+    DEFAULT_PROPERTIES.enableResponseCaching
+  );
+}
 
+ async function getResponseCacheMaxAge(): Promise<number> {
+  return (
+    (await getSetting<number>('responseCacheMaxAge')) ??
+    DEFAULT_PROPERTIES.responseCacheMaxAge
+  );
+}
 export {
   getSleepDuration,
   getLLMModel,
@@ -100,4 +112,6 @@ export {
   getIsEnabled,
   getSkipMarkedSetting,
   getSkipMarkedStatus,
+  getEnableResponseCaching,
+  getResponseCacheMaxAge
 };

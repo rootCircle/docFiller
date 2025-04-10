@@ -7,6 +7,8 @@ interface typeDefaultProperties {
   enableDarkTheme: boolean;
   llmWeights: Record<LLMEngineType, number>;
   automaticFillingEnabled: boolean;
+  enableResponseCaching: boolean;
+  responseCacheMaxAge: number;
   defaultProfileKey: string;
   defaultProfile: Profile;
   skipMarkedQuestions: boolean;
@@ -28,6 +30,8 @@ const DEFAULT_PROPERTIES: typeDefaultProperties = {
   enableDarkTheme: true,
   llmWeights: LLMWeightsMap,
   automaticFillingEnabled: true,
+  enableResponseCaching: true,
+  responseCacheMaxAge: 30 * 24 * 60 * 60 * 1000,
   defaultProfileKey: 'default',
   defaultProfile: {
     name: 'All Rounder',
