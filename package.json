@@ -44,37 +44,37 @@
   },
   "type": "module",
   "dependencies": {
-    "@langchain/anthropic": "^0.3.14",
-    "@langchain/community": "^0.3.32",
-    "@langchain/google-genai": "^0.1.9",
+    "@langchain/anthropic": "^0.3.17",
+    "@langchain/community": "^0.3.40",
+    "@langchain/google-genai": "^0.2.3",
     "@langchain/mistralai": "^0.2.0",
     "@langchain/ollama": "^0.2.0",
-    "@langchain/openai": "^0.4.4",
-    "langchain": "^0.3.19",
+    "@langchain/openai": "^0.5.5",
+    "langchain": "^0.3.21",
     "uuid": "^11.1.0"
   },
   "peerDependencies": {
     "typescript": "^5.7.2"
   },
   "optionalDependencies": {
-    "@esbuild/linux-x64": "^0.25.0"
+    "@esbuild/linux-x64": "^0.25.2"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@types/chrome": "^0.0.306",
+    "@types/chrome": "^0.0.313",
     "@types/firefox-webext-browser": "^120.0.4",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^22.13.5",
-    "@types/webextension-polyfill": "^0.12.2",
+    "@types/node": "^22.14.0",
+    "@types/webextension-polyfill": "^0.12.3",
     "chokidar": "^4.0.3",
     "concurrently": "^9.1.2",
     "cross-env": "^7.0.3",
-    "cspell": "^8.17.5",
-    "esbuild": "^0.25.0",
+    "cspell": "^8.18.1",
+    "esbuild": "^0.25.2",
     "globals": "^16.0.0",
     "husky": "^9.1.7",
-    "prettier": "^3.5.2",
-    "web-ext": "^8.4.0",
+    "prettier": "^3.5.3",
+    "web-ext": "^8.5.0",
     "webextension-polyfill": "^0.12.0"
   }
 }
