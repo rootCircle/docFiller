@@ -27,13 +27,16 @@
   --text-secondary: #96a4b8;
   --border-color: #224;
   --input-bg: #001;
-  --metric-bg: #112;
+  --metric-bg: #0a1118;
   --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --warning-bg: #1f0000;
   --warning-border: #1d0202;
   --warning-text: #ff8b8b;
   --eye-icon-enabled: #ffffffc9;
   --eye-icon-disabled: #939ca86f;
+  --card-bg: #1a222e;
+  --border-color: #2d3748;
+  --shadow-dark: 0 4px 6px rgba(0, 0, 0, 0.25);
 }
 
 body {
@@ -48,10 +51,10 @@ body {
   box-sizing: border-box;
   width: 100%;
   max-width: 800px;
-  margin: 0 auto;
+  margin: 2rem auto;
   background: var(--card-bg);
   border-radius: 1rem;
-  padding: 1rem;
+  padding: 2rem;
   box-shadow: var(--shadow);
 }
 
@@ -66,8 +69,12 @@ h1 {
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   transition: all 0.3s ease;
+}
+
+.form-group:last-child {
+  margin-bottom: 0.5rem;
 }
 
 label {
@@ -143,8 +150,8 @@ input[type="checkbox"] {
 .toggleConsensusMenu {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin: 1rem 0.2rem;
+  gap: 0.75rem;
+  margin: 1.5rem 0.2rem;
 }
 
 .toggleConsensusMenu input[type="checkbox"] {
@@ -164,8 +171,9 @@ input[type="checkbox"] {
 #consensusWeights {
   background-color: var(--input-bg);
   border-radius: 0.75rem;
-  padding: 1.5rem;
-  margin-top: 1rem;
+  padding: 1.75rem;
+  margin-top: 1.25rem;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
 
@@ -187,7 +195,7 @@ button {
   cursor: pointer;
   transition: background-color 0.2s ease;
   width: 100%;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
 }
 
 button:hover {
@@ -226,7 +234,7 @@ input[disabled] {
   margin-left: 8px;
   margin-top: 2px;
   color: #007bff;
-  font-size: 15px;
+  font-size: 13px;
   text-decoration: none;
 }
 
@@ -235,14 +243,15 @@ input[disabled] {
 }
 
 .profiles-container {
-  margin-bottom: 40px;
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
 }
 
 .profile-cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  padding: 20px;
+  gap: 24px;
+  padding: 10px 0;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -369,7 +378,7 @@ input[disabled] {
   color: var(--text-secondary);
 }
 
-.close-button:hover {
+close-button:hover {
   color: var(--text-primary);
 }
 
@@ -658,20 +667,21 @@ input[disabled] {
 }
 
 .setting-group {
-  margin: 20px 0;
+  margin: 12px 0;
 }
 
 .toggle-setting {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
+  padding: 6px 0;
 }
 
 .setting-label {
   display: block;
   font-weight: 500;
   margin-bottom: 0.5rem;
+  font-size: 14px;
   color: var(--text-primary);
 }
 
@@ -689,6 +699,10 @@ input[disabled] {
   background: var(--toggle-off-color);
   cursor: pointer;
   transition: all 0.3s ease;
+  scale: 0.8;
+  transform: scale(0.85);
+  transform-origin: center;
+  margin: 0 5px;
 }
 
 .creative-toggle.active {
@@ -742,51 +756,33 @@ input[disabled] {
 .metrics-container {
   padding: 2rem;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 2rem auto 0;
   background: var(--metric-bg);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-color);
+  overflow: auto;
+  max-height: 600px; /* You can adjust this value based on your needs */
 }
 
-/* Loading State */
-.metrics-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
+/* Fix the overflow issue in the metrics section */
+.section:last-child {
+  margin-bottom: 2rem; /* Change from 0 to add bottom margin */
+  padding-bottom: 2rem; /* Change from 0 to add bottom padding */
+  border-bottom: 1px solid var(--border-color); /* Add border to last section */
 }
 
-.metrics-loading.hidden {
-  display: none;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Summary Section */
+/* Improve spacing in metrics summary */
 .metrics-summary {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 0rem;
+  padding-bottom: 1rem;
 }
 
+/* Add better spacing to metric cards */
 .metric-card {
-  background: var(--white);
+  background: var(--card-bg);
   padding: 1.5rem;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
@@ -816,7 +812,7 @@ input[disabled] {
 
 .metric-trend {
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: var (--text-secondary);
 }
 
 .metric-trend.positive {
@@ -833,6 +829,37 @@ input[disabled] {
   gap: 1rem;
   justify-content: flex-end;
   padding-top: 1rem;
+  align-items: center; /* This ensures vertical alignment */
+}
+
+.metrics-controls .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 40px;
+  padding: 0.75rem 1.5rem;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1; /* Ensures consistent line height */
+}
+
+.metrics-controls .icon {
+  font-size: 16px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px; /* Fixed width for icons */
+  height: 16px; /* Fixed height for icons */
+}
+
+/* Ensure consistent button sizing and alignment */
+.btn-primary,
+.btn-secondary {
+  height: 40px; /* Set explicit height */
+  box-sizing: border-box;
+  margin: 0; /* Reset any margins that might affect alignment */
 }
 
 .btn {
@@ -843,6 +870,7 @@ input[disabled] {
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   transition: all 0.2s ease;
 }
@@ -856,13 +884,8 @@ input[disabled] {
   background: #2980b9;
 }
 
-.btn-secondary {
-  background: #e9ecef;
-  color: #2d3436;
-}
-
 .btn-secondary:hover {
-  background: #dee2e6;
+  background-color: #dee2e6;
 }
 
 .icon {
@@ -892,6 +915,7 @@ input[disabled] {
 .btn {
   width: 100%;
   justify-content: center;
+  align-items: center;
 }
 
 .password-container {
@@ -1134,4 +1158,402 @@ input[disabled] {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Advanced Options Toggle */
+.toggle-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 12px 4px;
+  font-weight: 500;
+  font-size: 1.1em;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+.toggle-arrow {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+  transition: transform 0.3s ease;
+}
+
+.toggle-heading.expanded .toggle-arrow {
+  transform: rotate(180deg);
+}
+
+.advanced-panel {
+  transition:
+    max-height 0.3s ease,
+    opacity 0.3s ease;
+  max-height: 500px;
+  opacity: 1;
+  overflow: hidden;
+  padding: 0.5rem 1rem 1rem;
+  margin-bottom: 0rem;
+}
+
+.advanced-panel.hidden {
+  max-height: 0;
+  opacity: 0;
+}
+
+.secondary-button {
+  background-color: var(--primary-color);
+  color: var(--white);
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.secondary-button:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Dark theme adjustments */
+.dark-theme .toggle-heading {
+  border-bottom-color: #555;
+}
+
+.dark-theme .secondary-button {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+.dark-theme .secondary-button:hover {
+  background-color: var(--primary-hover);
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.theme-toggle {
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  background-color: transparent;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  transition: background-color 0.3s;
+}
+
+.theme-toggle:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.dark-theme .theme-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.theme-toggle svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+  transition:
+    opacity 0.3s,
+    transform 0.5s;
+}
+
+.sun-icon {
+  opacity: 1;
+  transform: rotate(0);
+  position: absolute;
+}
+
+.moon-icon {
+  opacity: 0;
+  transform: rotate(-90deg);
+  position: absolute;
+}
+
+.theme-toggle.active .sun-icon {
+  opacity: 0;
+  transform: rotate(90deg);
+}
+
+.theme-toggle.active .moon-icon {
+  opacity: 1;
+  transform: rotate(0);
+}
+
+/* Add section dividers */
+.section {
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  background-color: var(--card-bg);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+.section:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.section:last-child {
+  margin-bottom: 2rem; /* Change from 0 to add bottom margin */
+  padding-bottom: 2rem; /* Change from 0 to add bottom padding */
+  border-bottom: 1px solid var(--border-color); /* Add border to last section */
+}
+
+/* Improved heading styles */
+.section-heading {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-top: -0.5rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Button spacing and consistency */
+button,
+.btn-primary,
+.secondary-button {
+  background-color: var(--primary-color);
+  color: var(--white);
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.btn-secondary {
+  background-color: #e9ecef;
+  color: #2d3436;
+
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: 100%;
+  margin-top: 1.5rem;
+}
+button:hover,
+.btn-primary:hover,
+.secondary-button:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Action buttons group */
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.action-buttons button,
+.action-buttons .secondary-button {
+  margin-top: 0;
+}
+
+/* Improved metrics cards for dark mode */
+.dark-theme .metrics-container {
+  background: var(--metric-bg);
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-dark);
+}
+
+.dark-theme .metric-card {
+  background: var(--card-bg);
+  border: 1px solid #2d3748;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-theme .metric-card:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.35);
+  transform: translateY(-2px);
+  border-color: #4a5568;
+}
+
+.dark-theme .metric-card h3 {
+  color: #e2e8f0;
+}
+
+.dark-theme .metric-value {
+  color: #a0aec0;
+}
+
+.dark-theme .metric-trend.positive {
+  color: #2ecc71;
+}
+
+.dark-theme .metric-trend.negative {
+  color: #e74c3c;
+}
+
+/* Improve button contrast in dark mode for metrics controls */
+.dark-theme .btn-secondary {
+  background-color: #2d3748;
+  color: #e2e8f0;
+}
+
+.dark-theme .btn-secondary:hover {
+  background-color: #4a5568;
+}
+
+/* Fix section styling in dark mode */
+.dark-theme .section {
+  border-color: var(--border-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dark-theme .section:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-theme .section-heading {
+  border-bottom-color: var(--border-color);
+}
+
+/* Updated Modal Styling */
+.custom-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.custom-modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  width: 450px;
+  max-width: 90%;
+  border: 1px solid var(--border-color);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.close-modal {
+  font-size: 28px;
+  cursor: pointer;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.modal-body {
+  padding: 24px;
+  color: var(--text-primary);
+}
+
+.modal-body p {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 20px 24px;
+  border-top: 1px solid var(--border-color);
+  gap: 16px;
+}
+
+.primary-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.primary-button:hover {
+  background-color: var(--primary-hover);
+}
+
+.secondary-button {
+  background-color: #e9ecef;
+  color: #2d3436;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.secondary-button:hover {
+  background-color: var(--border-color);
+}
+
+/* Dark theme support */
+.dark-theme .modal-content {
+  background-color: var(--card-bg);
+}
+
+.dark-theme .modal-header,
+.dark-theme .modal-footer {
+  border-color: var(--border-color);
+}
+
+.dark-theme .close-modal,
+.dark-theme .modal-body,
+.dark-theme .modal-header h3 {
+  color: var(--text-primary);
+}
+
+.dark-theme .secondary-button {
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.dark-theme .secondary-button:hover {
+  background-color: var(--border-color);
 }

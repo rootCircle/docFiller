@@ -52,7 +52,22 @@ export class MetricsManager {
   }
 
   async resetMetrics(): Promise<void> {
-    await this.saveMetrics(this.getDefaultMetrics());
+    return new Promise<void>((resolve, reject) => {
+      try {
+        chrome.storage.sync.set(
+          { [MetricsManager.STORAGE_KEY]: this.getDefaultMetrics() },
+          () => {
+            if (chrome.runtime.lastError) {
+              reject(new Error(chrome.runtime.lastError.message));
+            } else {
+              resolve();
+            }
+          },
+        );
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 
   public async endFormFilling(llmModel: LLMEngineType): Promise<void> {

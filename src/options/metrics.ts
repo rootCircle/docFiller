@@ -1,5 +1,6 @@
 import { MetricsCalculator } from '@utils/metricsCalculator';
 import { MetricsManager } from '@utils/storage/metricsManager';
+import { showToast } from '@utils/toastUtils';
 
 export class MetricsUI {
   private updateInterval: number | undefined;
@@ -43,7 +44,65 @@ export class MetricsUI {
       exportBtn?.removeEventListener('click', this._handlers.export);
       resetBtn?.removeEventListener('click', this._handlers.reset);
     }
+
+    // Remove modal event listeners
+    const resetModal = document.getElementById('resetMetricsModal');
+    const closeModalBtn = document.querySelector('.close-modal');
+    const cancelResetBtn = document.getElementById('cancelResetMetrics');
+    const confirmResetBtn = document.getElementById('confirmResetMetrics');
+
+    if (closeModalBtn) {
+      closeModalBtn.removeEventListener('click', this.closeModal);
+    }
+
+    if (cancelResetBtn) {
+      cancelResetBtn.removeEventListener('click', this.closeModal);
+    }
+
+    if (confirmResetBtn) {
+      confirmResetBtn.removeEventListener(
+        'click',
+        this.handleResetConfirmation,
+      );
+    }
+
+    if (resetModal) {
+      window.removeEventListener('click', this.handleOutsideClick);
+    }
   }
+
+  private closeModal = (): void => {
+    const resetModal = document.getElementById('resetMetricsModal');
+    resetModal?.classList.add('hidden');
+  };
+
+  private handleOutsideClick = (event: MouseEvent): void => {
+    const resetModal = document.getElementById('resetMetricsModal');
+    if (event.target === resetModal) {
+      this.closeModal();
+    }
+  };
+
+  private handleResetConfirmation = async (): Promise<void> => {
+    try {
+      await MetricsManager.getInstance().resetMetrics();
+      this.closeModal();
+
+      // Use toast instead of alert
+      showToast('Metrics reset successfully!', 'success');
+
+      // Update the UI to reflect the reset
+      await this.updateMetricsDisplay();
+    } catch (error) {
+      this.closeModal();
+
+      // Use toast for error message instead of alert
+      showToast(
+        `Failed to reset metrics: ${error instanceof Error ? error.message : String(error)}`,
+        'error',
+      );
+    }
+  };
 
   private async updateMetricsDisplay(): Promise<void> {
     try {
@@ -126,16 +185,38 @@ export class MetricsUI {
   private setupEventListeners(): void {
     const exportBtn = document.getElementById('exportMetrics');
     const resetBtn = document.getElementById('resetMetrics');
+    const resetModal = document.getElementById('resetMetricsModal');
+    const closeModalBtn = document.querySelector('.close-modal');
+    const cancelResetBtn = document.getElementById('cancelResetMetrics');
+    const confirmResetBtn = document.getElementById('confirmResetMetrics');
 
     const exportHandler = () => void this.exportMetricsData();
-    const resetHandler = () => void this.resetMetricsData();
+    const resetHandler = () => {
+      if (resetModal) {
+        resetModal.classList.remove('hidden');
+      }
+    };
 
     exportBtn?.addEventListener('click', exportHandler);
     resetBtn?.addEventListener('click', resetHandler);
 
-    // window.addEventListener('formFillComplete', () => {
-    //   this.updateMetricsDisplay().catch((error) => console.error('Error updating metrics display:', error));
-    // });
+    // Set up modal event listeners
+    if (closeModalBtn) {
+      closeModalBtn.addEventListener('click', this.closeModal);
+    }
+
+    if (cancelResetBtn) {
+      cancelResetBtn.addEventListener('click', this.closeModal);
+    }
+
+    if (confirmResetBtn) {
+      confirmResetBtn.addEventListener('click', this.handleResetConfirmation);
+    }
+
+    // Close modal when clicking outside
+    if (resetModal) {
+      window.addEventListener('click', this.handleOutsideClick);
+    }
 
     this._handlers = {
       export: exportHandler,
@@ -158,25 +239,7 @@ export class MetricsUI {
     } catch (error) {
       // biome-ignore lint/suspicious/noConsole: debugging metrics UI functionality
       console.error('Failed to export metrics:', error);
-      alert('Failed to export metrics. Please try again.');
-    }
-  }
-
-  private async resetMetricsData(): Promise<void> {
-    if (
-      confirm(
-        'Are you sure you want to reset all metrics? This action cannot be undone.',
-      )
-    ) {
-      try {
-        await MetricsManager.getInstance().resetMetrics();
-        await this.updateMetricsDisplay();
-        alert('Metrics reset successfully!');
-      } catch (error) {
-        // biome-ignore lint/suspicious/noConsole: debugging metrics UI functionality
-        console.error('Failed to reset metrics:', error);
-        alert('Failed to reset metrics. Please try again.');
-      }
+      showToast('Failed to export metrics. Please try again.', 'error');
     }
   }
 }
