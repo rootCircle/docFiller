@@ -5,7 +5,10 @@
 import { DEFAULT_PROPERTIES } from '@utils/defaultProperties';
 import { LLMEngineType, getModelName } from '@utils/llmEngineTypes';
 import { EMPTY_STRING } from '@utils/settings';
-import { getSkipMarkedStatus } from '@utils/storage/getProperties';
+import {
+  getEnableDarkTheme,
+  getSkipMarkedStatus,
+} from '@utils/storage/getProperties';
 import { setSkipMarkedStatus } from '@utils/storage/setProperties';
 import { showToast } from '@utils/toastUtils';
 import {
@@ -25,45 +28,58 @@ import {
   handleProfileFormSubmit,
 } from './optionProfileHandler';
 
-// Add cache control setup function
+// Update setupCacheControls function
 function setupCacheControls() {
+  // Setup advanced options toggle
+  const advancedOptionsToggle = document.getElementById(
+    'advancedOptionsToggle',
+  );
+  const advancedOptionsPanel = document.getElementById('advancedOptionsPanel');
+
+  if (advancedOptionsToggle && advancedOptionsPanel) {
+    advancedOptionsToggle.addEventListener('click', () => {
+      advancedOptionsToggle.classList.toggle('expanded');
+      advancedOptionsPanel.classList.toggle('hidden');
+    });
+  }
+
+  // Setup response caching toggle
   const cachingToggle = document.getElementById(
-    'enable-response-caching',
-  ) as HTMLInputElement;
+    'enable-response-caching-toggle',
+  );
   const clearCacheButton = document.getElementById(
     'clear-response-cache',
   ) as HTMLButtonElement;
 
-  // if (!cachingToggle || !clearCacheButton) {
-  //   //biome-ignore lint/suspicious/noConsole: Ignoring console statement for debugging purposes
-  //   console.warn('Cache control elements not found in the DOM');
-  //   return;
-  // }
+  if (cachingToggle && clearCacheButton) {
+    // Initialize toggle state
+    chrome.storage.sync.get('enableResponseCaching', (result) => {
+      const enabled =
+        result['enableResponseCaching'] ??
+        DEFAULT_PROPERTIES.enableResponseCaching;
+      cachingToggle.classList.toggle('active', enabled);
+    });
 
-  chrome.storage.sync.get('enableResponseCaching', (result) => {
-    cachingToggle.checked =
-      result['enableResponseCaching'] ??
-      DEFAULT_PROPERTIES.enableResponseCaching;
-  });
+    // Add click handler for toggle
+    cachingToggle.addEventListener('click', () => {
+      const isActive = cachingToggle.classList.contains('active');
+      cachingToggle.classList.toggle('active', !isActive);
+      chrome.storage.sync.set({ enableResponseCaching: !isActive });
+    });
 
-  cachingToggle.addEventListener('change', () => {
-    chrome.storage.sync.set({ enableResponseCaching: cachingToggle.checked });
-  });
+    // Handle clear cache button
+    clearCacheButton.addEventListener('click', async (event) => {
+      // Prevent default form submission behavior
+      event.preventDefault();
 
-  // Handle clear cache button
-  clearCacheButton.addEventListener('click', async (event) => {
-    // Prevent default form submission behavior
-    event.preventDefault();
-
-    try {
-      await clearResponseCache();
-      // Don't need this toast as it's shown inside clearResponseCache
-      // showToast('Response cache cleared successfully', 'success');
-    } catch (error) {
-      // Don't need this toast as it's shown inside clearResponseCache
-      // showToast(`Failed to clear cache: ${error}`, 'error');
-    }
-  });
+      try {
+        await clearResponseCache();
+        // Toast is shown inside clearResponseCache
+      } catch (error) {
+        // Error handling is inside clearResponseCache
+      }
+    });
+  }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -94,6 +110,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const currentState = await getSkipMarkedStatus();
     skipMarkedToggleButton.classList.toggle('active', currentState);
   });
+
+
   const modalHTML = `
     <div id="addProfileModal" class="modal hidden">
       <div class="modal-content">
@@ -159,6 +177,39 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
+// Add this after your skipMarkedToggleButton code
+document.addEventListener('DOMContentLoaded', async () => {
+  // Dark Theme toggle button initialization
+  const darkThemeToggleButton = document.getElementById(
+    'darkThemeToggleButton',
+  );
+  if (darkThemeToggleButton) {
+    const initialDarkTheme = await getEnableDarkTheme();
+    darkThemeToggleButton.classList.toggle('active', initialDarkTheme);
+
+    // Set initial theme state
+    if (initialDarkTheme) {
+      document.documentElement.classList.add('dark-theme');
+    } else {
+      document.documentElement.classList.remove('dark-theme');
+    }
+
+    darkThemeToggleButton.addEventListener('click', async () => {
+      // Toggle the dark theme setting
+      const currentState = await getEnableDarkTheme();
+      await chrome.storage.sync.set({ enableDarkTheme: !currentState });
+
+      // Update UI
+      darkThemeToggleButton.classList.toggle('active', !currentState);
+      if (!currentState) {
+        document.documentElement.classList.add('dark-theme');
+      } else {
+        document.documentElement.classList.remove('dark-theme');
+      }
+    });
+  }
+});
+
 // Settings related event listeners
 
 (
@@ -175,15 +226,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-(
-  document.getElementById('enableDarkTheme') as HTMLInputElement
-)?.addEventListener('change', function () {
-  if (this.checked) {
-    document.documentElement.classList.add('dark-theme');
-  } else {
-    document.documentElement.classList.remove('dark-theme');
-  }
-});
+// (
+//   document.getElementById('enableDarkTheme') as HTMLInputElement
+// )?.addEventListener('change', function () {
+//   if (this.checked) {
+//     document.documentElement.classList.add('dark-theme');
+//   } else {
+//     document.documentElement.classList.remove('dark-theme');
+//   }
+// });
 
 document.addEventListener('DOMContentLoaded', () => {
   const sleepDurationInput = document.getElementById(
@@ -277,11 +328,8 @@ document.addEventListener('DOMContentLoaded', () => {
         (items['enableConsensus'] as boolean) ??
           DEFAULT_PROPERTIES.enableConsensus,
       );
-      enableDarkThemeCheckbox.checked = Boolean(
-        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-        (items['enableDarkTheme'] as boolean) ??
-          DEFAULT_PROPERTIES.enableDarkTheme,
-      );
+      // Remove or comment out this line:
+      // enableDarkThemeCheckbox.checked = Boolean(items['enableDarkTheme'] ?? DEFAULT_PROPERTIES.enableDarkTheme);
 
       const weights =
         // biome-ignore lint/complexity/useLiteralKeys: <explanation>
@@ -328,6 +376,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const toggleDarkTheme = (enableDarkTheme: boolean) => {
+    const darkThemeToggleButton = document.getElementById(
+      'darkThemeToggleButton',
+    );
+    if (darkThemeToggleButton) {
+      darkThemeToggleButton.classList.toggle('active', enableDarkTheme);
+    }
+
     if (enableDarkTheme) {
       document.documentElement.classList.add('dark-theme');
     } else {
@@ -426,15 +481,19 @@ document.addEventListener('DOMContentLoaded', () => {
       const sleepDuration = Number.parseInt(sleepDurationInput.value, 10);
       const llmModel = llmModelSelect.value;
       const enableConsensus = enableConsensusCheckbox.checked;
-      const enableDarkTheme = enableDarkThemeCheckbox.checked;
+      const enableDarkTheme = (
+        document.getElementById('darkThemeToggleButton') as HTMLButtonElement
+      )?.classList.contains('active');
       const chatGptApiKey = chatGptApiKeyInput.value;
       const geminiApiKey = geminiApiKeyInput.value;
       const mistralApiKey = mistralApiKeyInput.value;
       const anthropicApiKey = anthropicApiKeyInput.value;
       // Add this line to get the cache toggle state
       const enableResponseCaching =
-        (document.getElementById('enable-response-caching') as HTMLInputElement)
-          ?.checked ?? DEFAULT_PROPERTIES.enableResponseCaching;
+        document
+          .getElementById('enable-response-caching-toggle')
+          ?.classList.contains('active') ??
+        DEFAULT_PROPERTIES.enableResponseCaching;
 
       const llmWeights = {
         [LLMEngineType.ChatGPT]: Number.parseFloat(weightChatGPTInput.value),

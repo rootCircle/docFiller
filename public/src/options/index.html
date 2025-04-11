@@ -15,77 +15,14 @@
   <body>
     <h1>Settings</h1>
     <div class="container">
-      <div class="profiles-container">
-        <div class="profile-cards"></div>
-      </div>
-      <div id="addProfileModal" class="modal hidden">
-        <div class="modal-content">
-          <span class="close-button">&times;</span>
-          <h2>Add New Profile</h2>
-          <form id="addProfileForm">
-            <div class="form-group">
-              <label for="profileName">Name</label>
-              <input type="text" id="profileName" name="profileName" required />
-            </div>
-
-            <div class="form-group">
-              <label for="profileImage">Image URL</label>
-              <input
-                type="text"
-                id="profileImage"
-                name="profileImage"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="profilePrompt">Prompt</label>
-              <textarea
-                id="profilePrompt"
-                name="profilePrompt"
-                required
-              ></textarea>
-            </div>
-
-            <div class="form-group">
-              <label for="profileShortDescription">Short Description</label>
-              <input
-                type="text"
-                id="profileShortDescription"
-                name="profileShortDescription"
-                required
-              />
-            </div>
-
-            <div class="form-actions">
-              <button type="submit" class="submit-button">Add Profile</button>
-              <button type="button" class="cancel-button">Cancel</button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <form id="optionsForm">
-        <div class="form-group">
-          <label for="sleepDuration">Sleep Duration (ms)</label>
-          <input
-            type="number"
-            id="sleepDuration"
-            name="sleepDuration"
-            min="100"
-            step="100"
-            value="2000"
-          />
-        </div>
-
+      <!-- Model Settings Section -->
+      <div class="section">
+        <h2 class="section-heading">AI Model Settings</h2>
         <div class="toggleConsensusMenu">
           <input type="checkbox" id="enableConsensus" name="enableConsensus" />
-          <label for="enableConsensus">Enable Consensus</label>
-        </div>
-
-        <div class="toggleConsensusMenu">
-          <input type="checkbox" id="enableDarkTheme" name="enableDarkTheme" />
-          <label for="enableDarkTheme">Dark Theme</label>
+          <label for="enableConsensus" class="setting-label"
+            >Enable Consensus</label
+          >
         </div>
 
         <div id="singleModelOptions" class="form-group">
@@ -384,6 +321,34 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Behavior Settings Section -->
+      <div class="section">
+        <h2 class="section-heading">General Settings</h2>
+
+        <div class="setting-group">
+          <div class="toggle-setting">
+            <span class="setting-label">Dark Theme</span>
+            <div id="darkThemeToggleButton" class="creative-toggle">
+              <div class="toggle-track">
+                <div class="toggle-thumb">
+                  <svg class="check-icon" viewBox="0 0 24 24">
+                    <path
+                      d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"
+                    />
+                  </svg>
+                  <svg class="cross-icon" viewBox="0 0 24 24">
+                    <path
+                      d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="setting-group">
           <div class="toggle-setting">
             <span class="setting-label">Skip Already Filled Questions</span>
@@ -405,30 +370,68 @@
             </div>
           </div>
         </div>
+        <div class="toggle-heading" id="advancedOptionsToggle">
+          <span class="setting-label">Advanced Options</span>
+          <svg class="toggle-arrow" viewBox="0 0 24 24">
+            <path d="M7 10l5 5 5-5z" />
+          </svg>
+        </div>
 
-        <button type="button" id="saveButton">Save Changes</button>
-        <div class="settings-section">
-          <h3>Response Caching</h3>
-          <div class="setting-item">
-            <label for="enable-response-caching">Enable Response Caching</label>
-            <div class="toggle-switch">
-              <input type="checkbox" id="enable-response-caching" />
-              <span class="slider round"></span>
+        <div id="advancedOptionsPanel" class="advanced-panel hidden">
+          <!-- Sleep Duration moved here -->
+          <div class="form-group">
+            <label for="sleepDuration">Sleep Duration (ms)</label>
+            <input
+              type="number"
+              id="sleepDuration"
+              name="sleepDuration"
+              min="100"
+              step="100"
+              value="2000"
+            />
+          </div>
+
+          <!-- Response caching section -->
+          <div class="toggle-setting">
+            <span class="setting-label">Enable Response Caching</span>
+            <div id="enable-response-caching-toggle" class="creative-toggle">
+              <div class="toggle-track">
+                <div class="toggle-thumb">
+                  <svg class="check-icon" viewBox="0 0 24 24">
+                    <path
+                      d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"
+                    />
+                  </svg>
+                  <svg class="cross-icon" viewBox="0 0 24 24">
+                    <path
+                      d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"
+                    />
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
-          <p class="setting-description">
-            When enabled, DocFiller will remember responses to questions and
-            reuse them when it encounters the same questions in future forms.
-          </p>
-          <div class="setting-item">
-            <button id="clear-response-cache" class="btn btn-secondary">
+
+          <div class="form-group">
+            <button
+              type="button"
+              id="clear-response-cache"
+              class="secondary-button "
+            >
               Clear Response Cache
             </button>
           </div>
         </div>
+      </div>
 
-        <hr style="margin-top: 20px; margin-bottom: 20px" />
+      <!-- Actions Section -->
+      <div class="action-buttons">
+        <button type="button" id="saveButton">Save Changes</button>
+      </div>
 
+      <!-- Metrics Section -->
+      <div class="section">
+        <h2 class="section-heading">Usage Metrics</h2>
         <div class="metrics-container">
           <!-- Loading State -->
           <div id="metricsLoading" class="metrics-loading hidden">
@@ -478,7 +481,67 @@
             </div>
           </div>
         </div>
-      </form>
+      </div>
+    </div>
+
+    <div id="addProfileModal" class="modal hidden">
+      <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2>Add New Profile</h2>
+        <form id="addProfileForm">
+          <div class="form-group">
+            <label for="profileName">Name</label>
+            <input type="text" id="profileName" name="profileName" required />
+          </div>
+
+          <div class="form-group">
+            <label for="profileImage">Image URL</label>
+            <input type="text" id="profileImage" name="profileImage" required />
+          </div>
+
+          <div class="form-group">
+            <label for="profilePrompt">Prompt</label>
+            <textarea
+              id="profilePrompt"
+              name="profilePrompt"
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="profileShortDescription">Short Description</label>
+            <input
+              type="text"
+              id="profileShortDescription"
+              name="profileShortDescription"
+              required
+            />
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="submit-button">Add Profile</button>
+            <button type="button" class="cancel-button">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div id="resetMetricsModal" class="custom-modal hidden">
+      <div class="modal-content">
+        <div class="modal-body">
+          <p>
+            Are you sure you want to reset all metrics? This action cannot be
+            undone.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button id="cancelResetMetrics" class="secondary-button">
+            Cancel
+          </button>
+          <button id="confirmResetMetrics" class="primary-button">
+            Reset Metrics
+          </button>
+        </div>
+      </div>
     </div>
     <div id="toast-container" class="toast-container">
       <div id="toast" class="toast">
