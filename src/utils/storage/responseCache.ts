@@ -43,6 +43,16 @@ export async function storeResponse(
   type: QType,
 ): Promise<void> {
   try {
+    // Don't store null, undefined, or empty responses
+    if (!answer || answer.trim() === '') {
+      //biome-ignore lint/suspicious/noConsole: Debug logging
+      console.log(
+        '[CACHE] Skipping storage of empty response for question:',
+        question,
+      );
+      return;
+    }
+
     //biome-ignore lint/suspicious/noConsole: Debug logging
     console.log(`[CACHE] Storing ${type} response for question:`, question);
 
@@ -100,7 +110,7 @@ export async function getCachedResponses(): Promise<ResponseCache> {
         });
       },
     );
-
+    //biome-ignore lint/complexity/useLiteralKeys: Property name contains hyphens
     return result['docFillerResponseCache'] || {};
   } catch (error) {
     //biome-ignore lint/suspicious/noConsole: Error logging
@@ -141,12 +151,24 @@ export async function getCachedResponse(
     console.log('[CACHE] Available keys:', Object.keys(cachedResponses));
 
     if (cachedResponses[key]) {
+      const cachedResponse = cachedResponses[key].answer;
+
+      // Don't return empty responses
+      if (!cachedResponse || cachedResponse.trim() === '') {
+        //biome-ignore lint/suspicious/noConsole: Debug logging
+        console.log(
+          `[CACHE] Found empty response for ${type} question, ignoring:`,
+          question,
+        );
+        return null;
+      }
+
       //biome-ignore lint/suspicious/noConsole: Debug logging
       console.log(
         `[CACHE] Found matching entry for ${type} question:`,
         question,
       );
-      return cachedResponses[key].answer;
+      return cachedResponse;
     }
 
     // Fall back to old-style keys for backward compatibility
@@ -155,12 +177,24 @@ export async function getCachedResponse(
       cachedResponses[legacyKey] &&
       (!type || cachedResponses[legacyKey].type === type)
     ) {
+      const cachedResponse = cachedResponses[legacyKey].answer;
+
+      // Don't return empty responses
+      if (!cachedResponse || cachedResponse.trim() === '') {
+        //biome-ignore lint/suspicious/noConsole: Debug logging
+        console.log(
+          `[CACHE] Found empty legacy response for ${type} question, ignoring:`,
+          question,
+        );
+        return null;
+      }
+
       //biome-ignore lint/suspicious/noConsole: Debug logging
       console.log(
         `[CACHE] Found legacy key match for ${type} question:`,
         question,
       );
-      return cachedResponses[legacyKey].answer;
+      return cachedResponse;
     }
 
     //biome-ignore lint/suspicious/noConsole: Debug logging
@@ -183,6 +217,7 @@ export async function getCachedResponse(
 export function createResponseFromCache(
   cachedResponseText: string,
   questionType: QType,
+  //biome-ignore lint/suspicious/noExplicitAny: Function returns different response types
 ): any {
   //biome-ignore lint/suspicious/noConsole: Debug logging
   console.log(
@@ -300,39 +335,66 @@ export function createResponseFromCache(
     }
   } else if (questionType === QType.DROPDOWN) {
     try {
-      // Try to parse as JSON for dropdown responses
-      //biome-ignore lint/suspicious/noImplicitAnyLet: Using mixed type by design
-      const parsedDropdown = JSON.parse(cachedResponseText);
+      //
+      let parsedResponse: unknown;
+      try {
+        parsedResponse = JSON.parse(cachedResponseText);
+      } catch (_e) {
+        // If not JSON, use the text directly
+        parsedResponse = cachedResponseText;
+      }
+
+      // Based on gptEngine.ts, we need to return a genericResponse with answer property
       //biome-ignore lint/suspicious/noConsole: Debug logging
-      console.log('[CACHE DEBUG] Successfully parsed Dropdown JSON');
+      console.log('[CACHE DEBUG] Creating dropdown response');
+
       return {
-        dropdown: parsedDropdown,
-        selection: parsedDropdown,
-        text: cachedResponseText,
+        genericResponse: {
+          answer: parsedResponse,
+        },
+        // Include these for backward compatibility
+        dropdown: parsedResponse,
+        selection: parsedResponse,
+        text:
+          typeof parsedResponse === 'string'
+            ? parsedResponse
+            : JSON.stringify(parsedResponse),
       };
     } catch (_e) {
-      // For dropdown, fallback to text
+      // For dropdown, use the text directly as the selection
       //biome-ignore lint/suspicious/noConsole: Debug logging
       console.log('[CACHE] Using text for dropdown response');
+
       return {
+        genericResponse: {
+          answer: cachedResponseText,
+        },
         dropdown: cachedResponseText,
         selection: cachedResponseText,
         text: cachedResponseText,
       };
     }
   } else if (questionType === QType.TEXT_EMAIL) {
-    // For email text, just use the text response but in email format
+    // For email text, create a genericResponse with answer property
     //biome-ignore lint/suspicious/noConsole: Debug logging
-    console.log('[CACHE DEBUG] Using email text response');
+    console.log('[CACHE DEBUG] Creating email response');
+
     return {
+      genericResponse: {
+        answer: cachedResponseText,
+      },
       email: cachedResponseText,
       text: cachedResponseText,
     };
   } else if (questionType === QType.TEXT_URL) {
-    // For URL text, just use the text response but in URL format
+    // For URL text, create a genericResponse with answer property
     //biome-ignore lint/suspicious/noConsole: Debug logging
-    console.log('[CACHE DEBUG] Using URL text response');
+    console.log('[CACHE DEBUG] Creating URL response');
+
     return {
+      genericResponse: {
+        answer: cachedResponseText,
+      },
       url: cachedResponseText,
       text: cachedResponseText,
     };
@@ -387,6 +449,7 @@ export function createResponseFromCache(
  */
 //biome-ignore lint/suspicious/noExplicitAny: Function handles different response types
 export function prepareResponseForCache(
+  //biome-ignore lint/suspicious/noExplicitAny: Function handles different response types
   response: any,
   type: QType,
 ): string | null {
@@ -526,14 +589,14 @@ export function prepareResponseForCache(
       return JSON.stringify(response.value);
     }
 
-    if (response.text && !isNaN(Number(response.text))) {
+    if (response.text && !Number.isNaN(Number(response.text))) {
       // Text that's a number
       //biome-ignore lint/suspicious/noConsole: Debug logging
       console.log('[CACHE DEBUG] Found numeric text:', response.text);
       return response.text;
     }
 
-    if (typeof response === 'number' || !isNaN(Number(response))) {
+    if (typeof response === 'number' || !Number.isNaN(Number(response))) {
       // Handle direct number responses
       //biome-ignore lint/suspicious/noConsole: Debug logging
       console.log('[CACHE DEBUG] Found direct number value:', response);
@@ -546,6 +609,27 @@ export function prepareResponseForCache(
   } else if (type === QType.DROPDOWN) {
     //biome-ignore lint/suspicious/noConsole: Debug logging
     console.log('[CACHE DEBUG] Processing DROPDOWN type');
+
+    // Check for genericResponse first (from gptEngine.ts)
+    if (
+      response.genericResponse &&
+      response.genericResponse.answer !== undefined
+    ) {
+      //biome-ignore lint/suspicious/noConsole: Debug logging
+      console.log(
+        '[CACHE DEBUG] Found genericResponse.answer property:',
+        response.genericResponse.answer,
+      );
+
+      // If it's an object, stringify it
+      if (typeof response.genericResponse.answer === 'object') {
+        return JSON.stringify(response.genericResponse.answer);
+      }
+
+      return String(response.genericResponse.answer);
+    }
+
+    // Check for dropdown-specific properties in order of preference
     if (response.dropdown) {
       //biome-ignore lint/suspicious/noConsole: Debug logging
       console.log('[CACHE DEBUG] Found dropdown property');
@@ -558,6 +642,18 @@ export function prepareResponseForCache(
       return JSON.stringify(response.selection);
     }
 
+    if (response.value) {
+      //biome-ignore lint/suspicious/noConsole: Debug logging
+      console.log('[CACHE DEBUG] Found value property');
+      return JSON.stringify(response.value);
+    }
+
+    if (response.option) {
+      //biome-ignore lint/suspicious/noConsole: Debug logging
+      console.log('[CACHE DEBUG] Found option property');
+      return JSON.stringify(response.option);
+    }
+
     if (response.text) {
       //biome-ignore lint/suspicious/noConsole: Debug logging
       console.log('[CACHE DEBUG] No dropdown property, falling back to text');
@@ -566,6 +662,20 @@ export function prepareResponseForCache(
   } else if (type === QType.TEXT_EMAIL) {
     //biome-ignore lint/suspicious/noConsole: Debug logging
     console.log('[CACHE DEBUG] Processing TEXT_EMAIL type');
+
+    // Check for genericResponse first (from gptEngine.ts)
+    if (
+      response.genericResponse &&
+      response.genericResponse.answer !== undefined
+    ) {
+      //biome-ignore lint/suspicious/noConsole: Debug logging
+      console.log(
+        '[CACHE DEBUG] Found genericResponse.answer property:',
+        response.genericResponse.answer,
+      );
+      return String(response.genericResponse.answer);
+    }
+
     if (response.email) {
       //biome-ignore lint/suspicious/noConsole: Debug logging
       console.log('[CACHE DEBUG] Found email property');
@@ -580,10 +690,37 @@ export function prepareResponseForCache(
   } else if (type === QType.TEXT_URL) {
     //biome-ignore lint/suspicious/noConsole: Debug logging
     console.log('[CACHE DEBUG] Processing TEXT_URL type');
+
+    // Check for genericResponse first (from gptEngine.ts)
+    if (
+      response.genericResponse &&
+      response.genericResponse.answer !== undefined
+    ) {
+      //biome-ignore lint/suspicious/noConsole: Debug logging
+      console.log(
+        '[CACHE DEBUG] Found genericResponse.answer property:',
+        response.genericResponse.answer,
+      );
+      return String(response.genericResponse.answer);
+    }
+
+    // Check for URL-specific properties in order of preference
     if (response.url) {
       //biome-ignore lint/suspicious/noConsole: Debug logging
       console.log('[CACHE DEBUG] Found url property');
       return response.url;
+    }
+
+    if (response.link) {
+      //biome-ignore lint/suspicious/noConsole: Debug logging
+      console.log('[CACHE DEBUG] Found link property');
+      return response.link;
+    }
+
+    if (response.href) {
+      //biome-ignore lint/suspicious/noConsole: Debug logging
+      console.log('[CACHE DEBUG] Found href property');
+      return response.href;
     }
 
     if (response.text) {
@@ -635,6 +772,14 @@ export function prepareResponseForCache(
     // For text-based responses (TEXT, PARAGRAPH, etc.)
     //biome-ignore lint/suspicious/noConsole: Debug logging
     console.log('[CACHE DEBUG] Using text property for', type);
+
+    // Don't store empty responses
+    if (!response.text || response.text.trim() === '') {
+      //biome-ignore lint/suspicious/noConsole: Debug logging
+      console.log('[CACHE DEBUG] Empty text response, not storing');
+      return null;
+    }
+
     return response.text;
   }
 
@@ -642,6 +787,14 @@ export function prepareResponseForCache(
     // Direct string responses
     //biome-ignore lint/suspicious/noConsole: Debug logging
     console.log('[CACHE DEBUG] Response is a direct string');
+
+    // Don't store empty responses
+    if (!response || response.trim() === '') {
+      //biome-ignore lint/suspicious/noConsole: Debug logging
+      console.log('[CACHE DEBUG] Empty string response, not storing');
+      return null;
+    }
+
     return response;
   }
 
@@ -684,7 +837,6 @@ export async function clearResponseCache(): Promise<void> {
     });
   }
 }
-
 /**
  * Clear cached responses older than a specified time
  * @param maxAge Maximum age in milliseconds
@@ -729,79 +881,3 @@ export async function clearOldResponses(maxAge: number): Promise<void> {
     console.error('[CACHE ERROR] Error clearing old responses:', error);
   }
 }
-
-/**
- * Get cache statistics
- * @returns Promise resolving to an object with cache statistics
- */
-// export async function getCacheStats(): Promise<{
-//   totalEntries: number;
-//   byType: { [type: string]: number };
-//   oldestEntry: Date | null;
-//   newestEntry: Date | null;
-// }> {
-//   try {
-//     const cachedResponses = await getCachedResponses();
-//     const keys = Object.keys(cachedResponses);
-
-//     if (keys.length === 0) {
-//       return {
-//         totalEntries: 0,
-//         byType: {},
-//         oldestEntry: null,
-//         newestEntry: null,
-//       };
-//     }
-
-//     let oldest = Infinity;
-//     let newest = 0;
-//     const typeCount: { [type: string]: number } = {};
-
-//     for (const key of keys) {
-//       const entry = cachedResponses[key];
-
-//       // Convert type to string for counting
-//       const typeString = String(entry.type);
-
-//       // Update type counts
-//       if (!typeCount[typeString]) {
-//         typeCount[typeString] = 0;
-//       }
-//       typeCount[typeString]++;
-
-//       // Update timestamps
-//       if (entry.timestamp < oldest) oldest = entry.timestamp;
-//       if (entry.timestamp > newest) newest = entry.timestamp;
-//     }
-
-//     return {
-//       totalEntries: keys.length,
-//       byType: typeCount,
-//       oldestEntry: new Date(oldest),
-//       newestEntry: new Date(newest),
-//     };
-//   } catch (error) {
-//     console.error('[CACHE ERROR] Error getting cache stats:', error);
-//     return {
-//       totalEntries: 0,
-//       byType: {},
-//       oldestEntry: null,
-//       newestEntry: null,
-//     };
-//   }
-// }
-
-/**
- * Auto-clean old cache entries based on maxAge setting
- * Call this function periodically to keep the cache from growing too large
- */
-// export async function autoCleanCache(): Promise<void> {
-//   try {
-//     const maxAge = await getResponseCacheMaxAge();
-//     await clearOldResponses(maxAge);
-//     const stats = await getCacheStats();
-//     console.log('[CACHE] Auto-clean complete. Current cache stats:', stats);
-//   } catch (error) {
-//     console.error('[CACHE ERROR] Error during auto-clean:', error);
-//   }
-// }

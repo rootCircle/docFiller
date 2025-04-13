@@ -27,11 +27,11 @@ const DEFAULT_PROPERTIES: typeDefaultProperties = {
   sleep_duration: 1500,
   model: LLMEngineType.Gemini,
   enableConsensus: false,
-  enableDarkTheme: true,
+  enableDarkTheme: false,
   llmWeights: LLMWeightsMap,
   automaticFillingEnabled: true,
   enableResponseCaching: true,
-  responseCacheMaxAge: 30 * 24 * 60 * 60 * 1000,
+  responseCacheMaxAge: 10 * 24 * 60 * 60 * 1000,
   defaultProfileKey: 'default',
   defaultProfile: {
     name: 'All Rounder',

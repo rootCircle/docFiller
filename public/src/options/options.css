@@ -1565,3 +1565,16 @@ button:hover,
 .dark-theme .secondary-button:hover {
   background-color: var(--border-color);
 }
+
+/* Fixed button styles for dark theme */
+.dark-theme .secondary-button,
+.dark-theme .btn-secondary {
+  background-color: #2d3748;
+  color: #d8dbdf;
+  border: 1px solid var(--border-color);
+}
+
+.dark-theme .secondary-button:hover,
+.dark-theme .btn-secondary:hover {
+  background-color: #4a5568;
+}
