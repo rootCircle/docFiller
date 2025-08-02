@@ -1,7 +1,9 @@
+# For Addons/Extension Reviewers
+
 > [!WARNING]
 > docFiller requires API keys, so get one from ChatGPT/Gemini/Claude/Mistral or use local models like Ollama, ChromeAI.
 
-### Setting Up docFiller
+## Setting Up docFiller
 
 1. Clone the repository and navigate to the project folder:
 
@@ -16,7 +18,7 @@
    bun i
    ```
 
-### Running docFiller on Different Browsers
+## Running docFiller on Different Browsers
 
 - **For Firefox:**
 
@@ -30,25 +32,25 @@
   bun dev:chromium
   ```
 
-### Packaging the Extension
+## Packaging the Extension
 
 To package the extension, run:
 
 ```bash
-bun package
+bun package:firefox
 ```
 
 The packaged extension will be saved in the `web-ext-artifacts` directory.
 
-### Modifying for Chromium Browsers
+## Modifying for Chromium Browsers
 
 For Chromium-based browsers, follow these steps:
 
-1. Unzip the package found in the `web-ext-artifacts` directory.
-2. Open the `manifest.json` file and remove the `background.scripts` property (as it's not supported).
-3. Re-zip the package.
+```bash
+bun package:chromium
+```
 
-### Using docFiller
+## Using docFiller
 
 1. Open any Google Form (e.g., [this dummy form](https://docs.google.com/forms/d/e/1FAIpQLSd-Qz6EaprQiTza30v5tJezdt-xUfV2ALzeYt3EClXWN3mxXA/viewform?usp=sf_link)).
 2. Open the popup and enter your API keys as instructed.
