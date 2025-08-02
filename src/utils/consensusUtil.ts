@@ -60,8 +60,12 @@ function flattenObject(obj: LLMResponse, prefix = ''): FlattenedLLMResponse {
       ) {
         acc[propKey] = value as LLMResponseValue;
       } else {
-        // biome-ignore lint/performance/noAccumulatingSpread: todo fix this later
-        Object.assign(acc, flattenObject(value as LLMResponse, propKey));
+        const flattened = flattenObject(value as LLMResponse, propKey);
+        for (const [flattenedKey, flattenedValue] of Object.entries(
+          flattened,
+        )) {
+          acc[flattenedKey] = flattenedValue;
+        }
       }
       return acc;
     },
