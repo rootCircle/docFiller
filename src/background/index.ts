@@ -20,12 +20,17 @@ chrome.runtime.onInstalled.addListener(async () => {
 });
 
 chrome.runtime.onMessage.addListener(
-  (message: MagicPromptMessage, _sender, sendResponse) => {
+  (
+    message: ChromeResponseMessage | MagicPromptMessage,
+    _sender,
+    sendResponse,
+  ) => {
     if (message.type === 'MAGIC_PROMPT_GEN') {
+      const magicMessage = message as MagicPromptMessage;
       try {
-        const instance = new LLMEngine(message.model);
+        const instance = new LLMEngine(magicMessage.model);
         instance
-          .invokeMagicLLM(message.questions)
+          .invokeMagicLLM(magicMessage.questions)
           .then((response) => {
             sendResponse({ value: response });
           })
@@ -45,17 +50,13 @@ chrome.runtime.onMessage.addListener(
       }
       return true;
     }
-    return false;
-  },
-);
 
-chrome.runtime.onMessage.addListener(
-  (message: ChromeResponseMessage, _sender, sendResponse) => {
     if (message.type === 'API_CALL') {
+      const apiMessage = message as ChromeResponseMessage;
       try {
-        const instance = new LLMEngine(message.model);
+        const instance = new LLMEngine(apiMessage.model);
         instance
-          .invokeLLM(message.prompt, message.questionType)
+          .invokeLLM(apiMessage.prompt, apiMessage.questionType)
           .then((response) => {
             sendResponse({ value: response });
           })
@@ -83,6 +84,7 @@ chrome.runtime.onMessage.addListener(
       }
       return true;
     }
+
     return false;
   },
 );

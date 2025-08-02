@@ -125,35 +125,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // biome-ignore lint/suspicious/noConsole: debugging options functionality
     console.error('Error initializing options:', error);
   }
-});
 
-// Settings related event listeners
-
-(
-  document.getElementById('enableConsensus') as HTMLInputElement
-)?.addEventListener('change', function () {
-  const consensusWeights = document.getElementById('consensusWeights');
-  const singleModelOptions = document.getElementById('singleModelOptions');
-  if (this.checked) {
-    consensusWeights?.classList.remove('hidden');
-    singleModelOptions?.classList.add('hidden');
-  } else {
-    consensusWeights?.classList.add('hidden');
-    singleModelOptions?.classList.remove('hidden');
-  }
-});
-
-(
-  document.getElementById('enableDarkTheme') as HTMLInputElement
-)?.addEventListener('change', function () {
-  if (this.checked) {
-    document.documentElement.classList.add('dark-theme');
-  } else {
-    document.documentElement.classList.remove('dark-theme');
-  }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
   const sleepDurationInput = document.getElementById(
     'sleepDuration',
   ) as HTMLInputElement;
@@ -430,4 +402,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     void saveOptions();
   });
+});
+
+// Settings related event listeners
+
+(
+  document.getElementById('enableConsensus') as HTMLInputElement
+)?.addEventListener('change', function () {
+  const consensusWeights = document.getElementById('consensusWeights');
+  const singleModelOptions = document.getElementById('singleModelOptions');
+  if (this.checked) {
+    consensusWeights?.classList.remove('hidden');
+    singleModelOptions?.classList.add('hidden');
+  } else {
+    consensusWeights?.classList.add('hidden');
+    singleModelOptions?.classList.remove('hidden');
+  }
+});
+
+(
+  document.getElementById('enableDarkTheme') as HTMLInputElement
+)?.addEventListener('change', function () {
+  if (this.checked) {
+    document.documentElement.classList.add('dark-theme');
+  } else {
+    document.documentElement.classList.remove('dark-theme');
+  }
 });
