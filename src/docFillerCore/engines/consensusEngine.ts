@@ -44,19 +44,32 @@ class ConsensusEngine {
       0,
     );
 
-    if (currentSum === 1) {
+    if (Math.abs(currentSum - 1) < 1e-10) {
       return;
     }
 
-    const nonZeroCount = Array.from(this.llmWeights.values()).filter(
+    const nonZeroWeights = Array.from(this.llmWeights.values()).filter(
       (w) => w > 0,
-    ).length;
-    const adjustment =
-      (1 - currentSum) / (nonZeroCount ?? this.llmWeights.size);
+    );
+    const nonZeroCount = nonZeroWeights.length;
+
+    if (nonZeroCount === 0) {
+      return;
+    }
+
+    if (currentSum === 0) {
+      const equalWeight = 1 / nonZeroCount;
+      this.llmWeights.forEach((value, key) => {
+        if (value > 0) {
+          this.llmWeights.set(key, equalWeight);
+        }
+      });
+      return;
+    }
+
+    const scaleFactor = 1 / currentSum;
     this.llmWeights.forEach((value, key) => {
-      if (value > 0) {
-        this.llmWeights.set(key, value + adjustment);
-      }
+      this.llmWeights.set(key, Math.max(0, value * scaleFactor));
     });
   }
 
