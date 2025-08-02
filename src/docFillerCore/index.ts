@@ -18,6 +18,14 @@ import {
   getSelectedProfileKey,
   loadProfiles,
 } from '@utils/storage/profiles/profileManager';
+import {
+  createResponseFromCache,
+  getCachedResponse,
+  prepareResponseForCache,
+  storeResponse,
+} from '@utils/storage/responseCache';
+import { getEnableResponseCaching } from '@utils/storage/getProperties';
+import { QType } from '@utils/questionTypes';
 
 async function runDocFillerEngine() {
   const questions = new QuestionExtractorEngine().getValidQuestions();
@@ -97,6 +105,7 @@ async function runDocFillerEngine() {
     });
   }
 
+
   for (const question of questions) {
     try {
       const fieldType = checker.detectType(question);
@@ -135,6 +144,54 @@ async function runDocFillerEngine() {
         }
 
         metricsManager.incrementToBeFilledQuestions();
+        const enableResponseCaching = await getEnableResponseCaching();
+
+        if (enableResponseCaching && fieldValue.title) {
+          const questionText = fieldValue.title;
+          const questionType = fieldType;
+
+          const cachedResponseText = await getCachedResponse(
+            questionText,
+            questionType,
+          );
+
+          if (cachedResponseText) {
+            // biome-ignore lint/suspicious/noConsole: <explanation>
+            console.log(
+              `[CACHE] Using cached response for ${questionType} question:`,
+              questionText,
+            );
+
+            // Use the helper function to create the appropriate response object
+            const cachedResponse = createResponseFromCache(
+              cachedResponseText,
+              questionType,
+            );
+            // biome-ignore lint/suspicious/noConsole: <explanation>
+            console.log('[CACHE] Constructed response object:', cachedResponse);
+
+            const fillerStatus = await filler.fill(
+              fieldType,
+              fieldValue,
+              cachedResponse,
+            );
+            // biome-ignore lint/suspicious/noConsole: <explanation>
+            console.log(
+              `[CACHE] Filler status for cached response: ${fillerStatus}`,
+            );
+
+            // Apply opacity if enabled
+            if (enableOpacity) {
+              question.style.opacity = '0.6';
+            }
+
+            // Update metrics
+            if (fillerStatus) {
+              metricsManager.incrementSuccessfulQuestions();
+            }
+            continue;
+          }
+        }
 
         const promptString = prompts.getPrompt(fieldType, fieldValue);
         // biome-ignore lint/suspicious/noConsole: <explanation>
@@ -164,6 +221,33 @@ async function runDocFillerEngine() {
           console.log('No response from LLM');
           continue;
         }
+
+        if (enableResponseCaching && fieldValue.title) {
+          const questionText = fieldValue.title;
+          const questionType = fieldType;
+
+          // Use the helper function to prepare the response for caching
+          const responseToCache = prepareResponseForCache(
+            response,
+            questionType,
+          );
+
+          if (responseToCache) {
+            await storeResponse(questionText, responseToCache, questionType);
+            // biome-ignore lint/suspicious/noConsole: <explanation>
+            console.log(
+              `[CACHE] Stored ${questionType} response in cache for:`,
+              questionText,
+            );
+          } else {
+            // biome-ignore lint/suspicious/noConsole: <explanation>
+            console.error(
+              `[CACHE ERROR] Unable to extract response for ${questionType}:`,
+              questionText,
+            );
+          }
+        }
+
         const parsed_response = validator.validate(
           fieldType,
           fieldValue,

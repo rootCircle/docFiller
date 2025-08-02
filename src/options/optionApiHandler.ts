@@ -32,14 +32,12 @@ function updateApiKeyLink(
   }
 }
 
-function updateConsensusApiLinks(
-  enableConsensusCheckbox: HTMLInputElement,
-): void {
+function updateConsensusApiLinks(isConsensusEnabled: boolean): void {
   const consensusSection = document.getElementById(
     'consensusWeights',
   ) as HTMLElement;
 
-  if (enableConsensusCheckbox.checked) {
+  if (isConsensusEnabled) {
     consensusSection.classList.remove('hidden');
 
     updateConsensusApiLink(

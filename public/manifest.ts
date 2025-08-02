@@ -48,7 +48,7 @@ export async function getManifest() {
       '96': 'assets/icons/icon-form-96.png',
     },
     author: 'rootCircle',
-    permissions: ['activeTab', 'storage'],
+    permissions: ['activeTab', 'storage', 'alarms'],
     host_permissions: [
       'http://docs.google.com/forms/d/e/*/viewform',
       'https://docs.google.com/forms/d/e/*/viewform',

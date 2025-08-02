@@ -1,10 +1,16 @@
+// biome-ignore lint/suspicious/noConsole: <explanation>
+
 import { DEFAULT_PROPERTIES } from '@utils/defaultProperties';
 import { LLMEngineType, getModelName } from '@utils/llmEngineTypes';
 import { EMPTY_STRING } from '@utils/settings';
-import { getSkipMarkedStatus } from '@utils/storage/getProperties';
+import {
+  getEnableDarkTheme,
+  getSkipMarkedStatus,
+} from '@utils/storage/getProperties';
 import { setSkipMarkedStatus } from '@utils/storage/setProperties';
 import { showToast } from '@utils/toastUtils';
-
+import { clearResponseCache } from '@utils/storage/responseCache';
+import { getResponseCacheMaxAge } from '@utils/storage/getProperties';
 import { MetricsUI } from './metrics';
 import {
   updateApiKeyInputField,
@@ -17,6 +23,53 @@ import {
   handleProfileFormSubmit,
 } from './optionProfileHandler';
 
+function setupCacheControls() {
+  const advancedOptionsToggle = document.getElementById(
+    'advancedOptionsToggle',
+  );
+  const advancedOptionsPanel = document.getElementById('advancedOptionsPanel');
+
+  if (advancedOptionsToggle && advancedOptionsPanel) {
+    advancedOptionsToggle.addEventListener('click', () => {
+      advancedOptionsToggle.classList.toggle('expanded');
+      advancedOptionsPanel.classList.toggle('hidden');
+    });
+  }
+
+  // Setup response caching toggle
+  const cachingToggle = document.getElementById(
+    'enable-response-caching-toggle',
+  );
+  const clearCacheButton = document.getElementById(
+    'clear-response-cache',
+  ) as HTMLButtonElement;
+
+  if (cachingToggle && clearCacheButton) {
+    // Initialize toggle state
+    chrome.storage.sync.get('enableResponseCaching', (result) => {
+      const enabled =
+        //biome-ignore lint/complexity/useLiteralKeys: Property name contains hyphens
+        result['enableResponseCaching'] ??
+        DEFAULT_PROPERTIES.enableResponseCaching;
+      cachingToggle.classList.toggle('active', enabled);
+    });
+
+    // Add click handler for toggle
+    cachingToggle.addEventListener('click', () => {
+      const isActive = cachingToggle.classList.contains('active');
+      cachingToggle.classList.toggle('active', !isActive);
+      chrome.storage.sync.set({ enableResponseCaching: !isActive });
+    });
+
+    // Handle clear cache button
+    clearCacheButton.addEventListener('click', async (event) => {
+      // Prevent default form submission behavior
+      event.preventDefault();
+      await clearResponseCache();
+    });
+  }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   const metricsUI = new MetricsUI();
   await metricsUI.initialize();
@@ -24,6 +77,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   window.addEventListener('unload', () => {
     metricsUI.cleanup();
   });
+
+  // Initialize cache controls
+  setupCacheControls();
 
   const skipMarkedToggleButton = document.getElementById(
     'skipMarkedToggleButton',
@@ -36,12 +92,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   skipMarkedToggleButton.addEventListener('click', async () => {
     await setSkipMarkedStatus().catch((error) => {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      //biome-ignore lint/suspicious/noConsole: Ignoring console statement for error logging
       console.error('Error toggling state:', error);
     });
     const currentState = await getSkipMarkedStatus();
     skipMarkedToggleButton.classList.toggle('active', currentState);
   });
+
   const modalHTML = `
     <div id="addProfileModal" class="modal hidden">
       <div class="modal-content">
@@ -107,29 +164,36 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-// Settings related event listeners
+// Add this after your skipMarkedToggleButton code
+document.addEventListener('DOMContentLoaded', async () => {
+  // Dark Theme toggle button initialization
+  const darkThemeToggleButton = document.getElementById(
+    'darkThemeToggleButton',
+  );
+  if (darkThemeToggleButton) {
+    const initialDarkTheme = await getEnableDarkTheme();
+    darkThemeToggleButton.classList.toggle('active', initialDarkTheme);
 
-(
-  document.getElementById('enableConsensus') as HTMLInputElement
-)?.addEventListener('change', function () {
-  const consensusWeights = document.getElementById('consensusWeights');
-  const singleModelOptions = document.getElementById('singleModelOptions');
-  if (this.checked) {
-    consensusWeights?.classList.remove('hidden');
-    singleModelOptions?.classList.add('hidden');
-  } else {
-    consensusWeights?.classList.add('hidden');
-    singleModelOptions?.classList.remove('hidden');
-  }
-});
+    // Set initial theme state
+    if (initialDarkTheme) {
+      document.documentElement.classList.add('dark-theme');
+    } else {
+      document.documentElement.classList.remove('dark-theme');
+    }
 
-(
-  document.getElementById('enableDarkTheme') as HTMLInputElement
-)?.addEventListener('change', function () {
-  if (this.checked) {
-    document.documentElement.classList.add('dark-theme');
-  } else {
-    document.documentElement.classList.remove('dark-theme');
+    darkThemeToggleButton.addEventListener('click', async () => {
+      // Toggle the dark theme setting
+      const currentState = await getEnableDarkTheme();
+      await chrome.storage.sync.set({ enableDarkTheme: !currentState });
+
+      // Update UI
+      darkThemeToggleButton.classList.toggle('active', !currentState);
+      if (!currentState) {
+        document.documentElement.classList.add('dark-theme');
+      } else {
+        document.documentElement.classList.remove('dark-theme');
+      }
+    });
   }
 });
 
@@ -140,9 +204,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const llmModelSelect = document.getElementById(
     'llmModel',
   ) as HTMLSelectElement;
-  const enableConsensusCheckbox = document.getElementById(
-    'enableConsensus',
-  ) as HTMLInputElement;
+  const enableConsensusToggleButton = document.getElementById(
+    'enableConsensusToggleButton',
+  );
   const enableDarkThemeCheckbox = document.getElementById(
     'enableDarkTheme',
   ) as HTMLInputElement;
@@ -187,15 +251,75 @@ document.addEventListener('DOMContentLoaded', () => {
   const apiKeyInputLink = document.getElementById(
     'singleApiKeyLink',
   ) as HTMLAnchorElement;
+  const singleModelOptions = document.getElementById('singleModelOptions');
 
   initializeOptionPasswordField();
 
   modelSelect.addEventListener('change', () => {
     updateApiKeyLink(modelSelect, apiKeyInputLink);
   });
-  enableConsensusCheckbox.addEventListener('change', () => {
-    updateConsensusApiLinks(enableConsensusCheckbox);
-  });
+
+  // Define the toggleConsensusOptions function
+  const toggleConsensusOptions = (enableConsensus: boolean) => {
+    if (enableConsensus) {
+      consensusWeightsDiv.classList.remove('hidden');
+      singleModelOptions?.classList.add('hidden');
+
+      // Hide the individual model selection and API key input
+      document.querySelector('label[for="llmModel"]')?.classList.add('hidden');
+      document
+        .querySelector('label[for="singleApiKey"]')
+        ?.classList.add('hidden');
+      llmModelSelect.parentElement?.classList.add('hidden');
+      singleApiKeyInput.parentElement?.classList.add('hidden');
+    } else {
+      consensusWeightsDiv.classList.add('hidden');
+      singleModelOptions?.classList.remove('hidden');
+
+      // Show the individual model selection and API key input
+      document
+        .querySelector('label[for="llmModel"]')
+        ?.classList.remove('hidden');
+      document
+        .querySelector('label[for="singleApiKey"]')
+        ?.classList.remove('hidden');
+      llmModelSelect.parentElement?.classList.remove('hidden');
+      singleApiKeyInput.parentElement?.classList.remove('hidden');
+
+      // Make sure the API key input is updated based on the selected model
+      updateSingleApiKeyInput(llmModelSelect.value);
+    }
+  };
+
+  // Initialize the consensus toggle button only once
+  if (enableConsensusToggleButton) {
+    // Remove any existing event listeners (just to be safe)
+    const newToggleButton = enableConsensusToggleButton.cloneNode(true);
+    if (enableConsensusToggleButton.parentNode) {
+      enableConsensusToggleButton.parentNode.replaceChild(
+        newToggleButton,
+        enableConsensusToggleButton,
+      );
+    }
+
+    // Add the event listener to the new button
+    newToggleButton.addEventListener('click', () => {
+      const isCurrentlyActive = (
+        newToggleButton as HTMLElement
+      ).classList.contains('active');
+      (newToggleButton as HTMLElement).classList.toggle('active');
+
+      // Important: We're toggling from the current state to the opposite state
+      const newState = !isCurrentlyActive;
+      toggleConsensusOptions(newState);
+      updateConsensusApiLinks(newState);
+
+      // If we're switching to single model mode, make sure the API key is updated
+      if (!newState) {
+        updateSingleApiKeyInput(llmModelSelect.value);
+      }
+    });
+  }
 
   chrome.storage.sync.get(
     [
@@ -208,30 +332,55 @@ document.addEventListener('DOMContentLoaded', () => {
       'geminiApiKey',
       'mistralApiKey',
       'anthropicApiKey',
+      'enableResponseCaching',
     ],
     (items) => {
       sleepDurationInput.value = String(
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['sleepDuration'] as number) ?? DEFAULT_PROPERTIES.sleep_duration,
       );
       llmModelSelect.value =
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['llmModel'] as string) ?? getModelName(DEFAULT_PROPERTIES.model);
 
-      updateApiKeyInputField(singleApiKeyInput, llmModelSelect);
-      enableConsensusCheckbox.checked = Boolean(
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+      // Load all API keys first
+      chatGptApiKeyInput.value =
+        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+        (items['chatGptApiKey'] as string) ?? EMPTY_STRING;
+      geminiApiKeyInput.value =
+        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+        (items['geminiApiKey'] as string) ?? EMPTY_STRING;
+      mistralApiKeyInput.value =
+        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+        (items['mistralApiKey'] as string) ?? EMPTY_STRING;
+      anthropicApiKeyInput.value =
+        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+        (items['anthropicApiKey'] as string) ?? EMPTY_STRING;
+
+      // Update for toggle button
+      const isConsensusEnabled = Boolean(
+        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['enableConsensus'] as boolean) ??
           DEFAULT_PROPERTIES.enableConsensus,
       );
-      enableDarkThemeCheckbox.checked = Boolean(
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-        (items['enableDarkTheme'] as boolean) ??
-          DEFAULT_PROPERTIES.enableDarkTheme,
-      );
+
+      // Set the initial state of the toggle button
+      if (enableConsensusToggleButton) {
+        enableConsensusToggleButton.classList.toggle(
+          'active',
+          isConsensusEnabled,
+        );
+      }
+
+      // Now update the single API key input based on the selected model
+      // This needs to happen AFTER all individual API keys are loaded
+      updateSingleApiKeyInput(llmModelSelect.value);
+
+      // Apply the initial UI state
+      toggleConsensusOptions(isConsensusEnabled);
 
       const weights =
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
+        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['llmWeights'] as Record<LLMEngineType, number>) ??
         DEFAULT_PROPERTIES.llmWeights;
       weightChatGPTInput.value = String(weights[LLMEngineType.ChatGPT]);
@@ -241,26 +390,11 @@ document.addEventListener('DOMContentLoaded', () => {
       weightMistralInput.value = String(weights[LLMEngineType.Mistral]);
       weightAnthropicInput.value = String(weights[LLMEngineType.Anthropic]);
 
-      chatGptApiKeyInput.value =
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-        (items['chatGptApiKey'] as string) ?? EMPTY_STRING;
-      geminiApiKeyInput.value =
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-        (items['geminiApiKey'] as string) ?? EMPTY_STRING;
-      mistralApiKeyInput.value =
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-        (items['mistralApiKey'] as string) ?? EMPTY_STRING;
-      anthropicApiKeyInput.value =
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-        (items['anthropicApiKey'] as string) ?? EMPTY_STRING;
-
-      toggleConsensusOptions(enableConsensusCheckbox.checked);
       toggleDarkTheme(enableDarkThemeCheckbox.checked);
 
       // Initial call to set up the form when it loads
       updateApiKeyLink(modelSelect, apiKeyInputLink);
-      updateConsensusApiLinks(enableConsensusCheckbox);
-      updateSingleApiKeyInput(llmModelSelect.value);
+      updateConsensusApiLinks(isConsensusEnabled);
     },
   );
 
@@ -275,32 +409,17 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const toggleDarkTheme = (enableDarkTheme: boolean) => {
+    const darkThemeToggleButton = document.getElementById(
+      'darkThemeToggleButton',
+    );
+    if (darkThemeToggleButton) {
+      darkThemeToggleButton.classList.toggle('active', enableDarkTheme);
+    }
+
     if (enableDarkTheme) {
       document.documentElement.classList.add('dark-theme');
     } else {
       document.documentElement.classList.remove('dark-theme');
-    }
-  };
-
-  const toggleConsensusOptions = (enableConsensus: boolean) => {
-    if (enableConsensus) {
-      consensusWeightsDiv.classList.remove('hidden');
-      document.querySelector('label[for="llmModel"]')?.classList.add('hidden');
-      document
-        .querySelector('label[for="singleApiKey"]')
-        ?.classList.add('hidden');
-      llmModelSelect.parentElement?.classList.add('hidden');
-      singleApiKeyInput.parentElement?.classList.add('hidden');
-    } else {
-      consensusWeightsDiv.classList.add('hidden');
-      document
-        .querySelector('label[for="llmModel"]')
-        ?.classList.remove('hidden');
-      document
-        .querySelector('label[for="singleApiKey"]')
-        ?.classList.remove('hidden');
-      llmModelSelect.parentElement?.classList.remove('hidden');
-      singleApiKeyInput.parentElement?.classList.remove('hidden');
     }
   };
 
@@ -316,7 +435,6 @@ document.addEventListener('DOMContentLoaded', () => {
         break;
       case getModelName(LLMEngineType.Ollama):
       case getModelName(LLMEngineType.ChromeAI):
-        apiKeyValue = '';
         break;
       case getModelName(LLMEngineType.Mistral):
         apiKeyValue = mistralApiKeyInput.value;
@@ -325,7 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
         apiKeyValue = anthropicApiKeyInput.value;
         break;
       default:
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        //biome-ignore lint/suspicious/noConsole: Ignoring console statement for debugging purposes
         console.warn('Unknown model selected:', selectedModel);
         break;
     }
@@ -360,11 +478,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  enableConsensusCheckbox.addEventListener('change', (e: Event) => {
-    const target = e.target as HTMLInputElement;
-    toggleConsensusOptions(target.checked);
-  });
-
   llmModelSelect.addEventListener('change', () => {
     updateSingleApiKeyInput(llmModelSelect.value);
   });
@@ -373,12 +486,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveOptions = async () => {
       const sleepDuration = Number.parseInt(sleepDurationInput.value, 10);
       const llmModel = llmModelSelect.value;
-      const enableConsensus = enableConsensusCheckbox.checked;
-      const enableDarkTheme = enableDarkThemeCheckbox.checked;
+      // Update for toggle button
+      const enableConsensus =
+        document
+          .getElementById('enableConsensusToggleButton')
+          ?.classList.contains('active') ?? DEFAULT_PROPERTIES.enableConsensus;
+      const enableDarkTheme = (
+        document.getElementById('darkThemeToggleButton') as HTMLButtonElement
+      )?.classList.contains('active');
       const chatGptApiKey = chatGptApiKeyInput.value;
       const geminiApiKey = geminiApiKeyInput.value;
       const mistralApiKey = mistralApiKeyInput.value;
       const anthropicApiKey = anthropicApiKeyInput.value;
+      // Add this line to get the cache toggle state
+      const enableResponseCaching =
+        document
+          .getElementById('enable-response-caching-toggle')
+          ?.classList.contains('active') ??
+        DEFAULT_PROPERTIES.enableResponseCaching;
 
       const llmWeights = {
         [LLMEngineType.ChatGPT]: Number.parseFloat(weightChatGPTInput.value),
@@ -386,7 +511,9 @@ document.addEventListener('DOMContentLoaded', () => {
         [LLMEngineType.Ollama]: Number.parseFloat(weightOllamaInput.value),
         [LLMEngineType.ChromeAI]: Number.parseFloat(weightChromeAIInput.value),
         [LLMEngineType.Mistral]: Number.parseFloat(weightMistralInput.value),
-        [LLMEngineType.Anthropic]: Number.parseFloat(weightAnthropicInput.value),
+        [LLMEngineType.Anthropic]: Number.parseFloat(
+          weightAnthropicInput.value,
+        ),
       };
 
       try {
@@ -402,6 +529,7 @@ document.addEventListener('DOMContentLoaded', () => {
               geminiApiKey,
               mistralApiKey,
               anthropicApiKey,
+              enableResponseCaching, // Add this line to save the cache setting
             },
             () => {
               if (chrome.runtime.lastError) {
