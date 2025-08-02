@@ -33,7 +33,7 @@ async function runDocFillerEngine() {
   let llm: LLMEngine | null = null;
   const metricsManager = MetricsManager.getInstance();
   if (enableConsensus) {
-    consensusEngine = new ConsensusEngine();
+    consensusEngine = await ConsensusEngine.getInstance();
   } else {
     try {
       llm = new LLMEngine(await Settings.getInstance().getCurrentLLMModel());

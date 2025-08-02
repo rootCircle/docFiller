@@ -59,7 +59,7 @@ For development setup, see instructions in [CONTRIBUTING.md](./docs/CONTRIBUTING
 Once the extension is installed, you can start using it immediately. Simply click on the extension icon in your browser toolbar to access its features. For usage instructions and additional details, please refer to the [documentation](docs).
 
 > [!NOTE]
-> When running Ollama, make sure `gemma2:2b` is installed and run ollama using `OLLAMA_ORIGINS=* ollama serve` or `set OLLAMA_ORIGINS=* && ollama serve` in Linux & Windows CMD respectively!
+> When running Ollama, make sure `gemma3n:e4b` is installed and run ollama using `OLLAMA_ORIGINS=* HOME=/var/lib/ollama OLLAMA_MODELS=/var/lib/ollama ollama serve` or `set OLLAMA_ORIGINS=* && ollama serve` in Linux & Windows CMD respectively!
 
 ## Contributing
 

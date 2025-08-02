@@ -3,7 +3,7 @@ import { EMPTY_STRING } from '@utils/settings';
 enum LLMEngineType {
   ChatGPT = 'gpt4-o',
   Gemini = 'gemini-pro',
-  Ollama = 'code-gemma2:2b',
+  Ollama = 'gemma3n:e4b',
   Anthropic = 'claude',
   Mistral = 'mistral',
   ChromeAI = 'chrome-gemini-nano',

@@ -4,12 +4,14 @@ import { analyzeWeightedObjects } from '@utils/consensusUtil';
 import { DEFAULT_PROPERTIES } from '@utils/defaultProperties';
 import type { LLMEngineType } from '@utils/llmEngineTypes';
 import type { QType } from '@utils/questionTypes';
+import { Settings } from '@utils/settings';
 
 class ConsensusEngine {
   private validateEngine: ValidatorEngine;
   private llmWeights: Map<LLMEngineType, number>;
+  private static instance: ConsensusEngine | null = null;
 
-  public constructor() {
+  private constructor() {
     this.validateEngine = new ValidatorEngine();
     this.llmWeights = new Map<LLMEngineType, number>(
       Object.entries(DEFAULT_PROPERTIES.llmWeights) as [
@@ -18,6 +20,22 @@ class ConsensusEngine {
       ][],
     );
     this.distributeWeights();
+  }
+
+  public static async getInstance(): Promise<ConsensusEngine> {
+    if (!ConsensusEngine.instance) {
+      ConsensusEngine.instance = new ConsensusEngine();
+
+      const weights = await Settings.getInstance().getConsensusWeights();
+      if (weights) {
+        ConsensusEngine.instance.llmWeights = new Map<LLMEngineType, number>(
+          Object.entries(weights) as [LLMEngineType, number][],
+        );
+      }
+      ConsensusEngine.instance.distributeWeights();
+    }
+
+    return ConsensusEngine.instance;
   }
 
   private distributeWeights() {
