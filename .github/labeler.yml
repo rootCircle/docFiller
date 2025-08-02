@@ -1,95 +1,115 @@
 # Label for documentation-related changes
 "documentation":
   - changed-files:
-    - "docs/**"
-    - "*.md"
+    - any-glob-to-any-file:
+      - docs/**
+      - '*.md'
 
 # Label for public assets and styling
 "assets":
   - changed-files:
-    - "public/assets/**"
+    - any-glob-to-any-file:
+      - public/assets/**
 
 "popup":
   - changed-files:
-    - "public/src/popup/**"
-    - "src/popup/**"
+    - any-glob-to-any-file:
+      - public/src/popup/**
+      - src/popup/**
 
 "options-page":
   - changed-files:
-    - "public/src/options/**"
-    - "src/options/**"
+    - any-glob-to-any-file:
+      - public/src/options/**
+      - src/options/**
 
 "background":
   - changed-files:
-    - "src/background/**"
+    - any-glob-to-any-file:
+      - src/background/**
 
 "content script":
   - changed-files:
-    - "src/contentScript/**"
+    - any-glob-to-any-file:
+      - src/contentScript/**
 
 "core":
   - changed-files:
-    - "src/docFillerCore/**"
+    - any-glob-to-any-file:
+      - src/docFillerCore/**
 
 "consensus-engine":
   - changed-files:
-    - "src/docFillerCore/engines/consensusEngine.ts"
+    - any-glob-to-any-file:
+      - src/docFillerCore/engines/consensusEngine.ts
 
 "extractor-engine":
   - changed-files:
-    - "src/docFillerCore/engines/fieldExtractorEngine.ts"
+    - any-glob-to-any-file:
+      - src/docFillerCore/engines/fieldExtractorEngine.ts
 
 "filler-engine":
   - changed-files:
-    - "src/docFillerCore/engines/fillerEngine.ts"
+    - any-glob-to-any-file:
+      - src/docFillerCore/engines/fillerEngine.ts
 
 "gpt-engine":
   - changed-files:
-    - "src/docFillerCore/engines/gptEngine.ts"
+    - any-glob-to-any-file:
+      - src/docFillerCore/engines/gptEngine.ts
 
 "prompt-engine":
   - changed-files:
-    - "src/docFillerCore/engines/promptEngine.ts"
+    - any-glob-to-any-file:
+      - src/docFillerCore/engines/promptEngine.ts
 
 "parser-engine":
   - changed-files:
-    - "src/docFillerCore/engines/validatorEngine.ts"
+    - any-glob-to-any-file:
+      - src/docFillerCore/engines/validatorEngine.ts
 
 "utils":
   - changed-files:
-    - "src/utils/**"
+    - any-glob-to-any-file:
+      - src/utils/**
 
 "manifest":
   - changed-files:
-    - "public/manifest.ts"
+    - any-glob-to-any-file:
+      - public/manifest.ts
 
 # Label for TypeScript utilities and tools
 "config":
   - changed-files:
-    - "eslint.config.js"
-    - "tsconfig.json"
-    - ".prettierrc"
-    - "biome.json"
+    - any-glob-to-any-file:
+      - eslint.config.js
+      - tsconfig.json
+      - .prettierrc
+      - biome.json
 
 # Label for licensing and governance
 "governance":
   - changed-files:
-    - "LICENSE"
-    - "docs/GOVERNANCE.md"
-    - "docs/CODE_OF_CONDUCT.md"
+    - any-glob-to-any-file:
+      - LICENSE
+      - docs/GOVERNANCE.md
+      - docs/CODE_OF_CONDUCT.md
 
 # Label for testing or metrics
 "metrics":
   - changed-files:
-    - "src/options/metrics.ts"
-    - "src/utils/metricsCalculator.ts"
+    - any-glob-to-any-file:
+      - src/options/metrics.ts
+      - src/utils/metricsCalculator.ts
 
 # Label for build and CI-related files
 "build":
   - changed-files:
-    - "Makefile"
-    - "tools/**"
+    - any-glob-to-any-file:
+      - Makefile
+      - tools/**
 
 "ci":
   - changed-files:
-    - ".github/workflows/**"
+    - any-glob-to-any-file:
+      - .github/workflows/**
