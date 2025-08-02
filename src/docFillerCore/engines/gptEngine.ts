@@ -8,7 +8,7 @@ import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { RunnableSequence } from '@langchain/core/runnables';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { ChatMistralAI } from '@langchain/mistralai';
-import { Ollama } from '@langchain/ollama';
+import { ChatOllama } from '@langchain/ollama';
 import { ChatOpenAI } from '@langchain/openai';
 import { DEFAULT_PROPERTIES } from '@utils/defaultProperties';
 import { LLMEngineType } from '@utils/llmEngineTypes';
@@ -29,7 +29,7 @@ import { z } from 'zod';
 
 type LLMInstance =
   | ChatOpenAI
-  | Ollama
+  | ChatOllama
   | ChatGoogleGenerativeAI
   | ChatAnthropic
   | ChatMistralAI
@@ -106,8 +106,8 @@ export class LLMEngine {
         });
         break;
       case LLMEngineType.Ollama:
-        this.instances[engine] = new Ollama({
-          model: 'gemma3n:e4b',
+        this.instances[engine] = new ChatOllama({
+          model: 'qwen3:4b',
           temperature: 0,
           maxRetries: 2,
         });
