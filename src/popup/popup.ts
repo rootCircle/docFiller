@@ -13,18 +13,6 @@ import { showToast } from '@utils/toastUtils';
 document.addEventListener('DOMContentLoaded', async () => {
   let previousState = false;
 
-  try {
-    const automaticFillingEnabled = await getIsEnabled();
-    previousState = automaticFillingEnabled;
-    updateToggleState(automaticFillingEnabled);
-  } catch (error) {
-    // biome-ignore lint/suspicious/noConsole: debugging storage error in popup
-    console.error('Error loading automatic filling state:', error);
-    // Use default value if storage fails
-    const automaticFillingEnabled = DEFAULT_PROPERTIES.automaticFillingEnabled;
-    previousState = automaticFillingEnabled;
-    updateToggleState(automaticFillingEnabled);
-  }
   const toggleButton = document.getElementById('toggleButton');
   const toggleOn = toggleButton
     ? safeQuerySelector<HTMLElement>(toggleButton, '.toggle-on')
@@ -42,6 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const apiMessageText = apiMessage
     ? safeQuerySelector<HTMLElement>(apiMessage, '.api-message-text')
     : null;
+
   if (
     !toggleButton ||
     !toggleOn ||
@@ -54,6 +43,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     // biome-ignore lint/suspicious/noConsole: debugging popup functionality
     console.error('Required elements not found');
     return;
+  }
+
+  function updateToggleState(isEnabled: boolean): void {
+    if (toggleOn) {
+      toggleOn.style.display = isEnabled ? 'block' : 'none';
+    }
+    if (toggleOff) {
+      toggleOff.style.display = isEnabled ? 'none' : 'block';
+    }
+    if (fillSection) {
+      fillSection.style.display = isEnabled ? 'none' : 'flex';
+    }
+  }
+
+  try {
+    const automaticFillingEnabled = await getIsEnabled();
+    previousState = automaticFillingEnabled;
+    updateToggleState(automaticFillingEnabled);
+  } catch (error) {
+    // biome-ignore lint/suspicious/noConsole: debugging storage error in popup
+    console.error('Error loading automatic filling state:', error);
+    // Use default value if storage fails
+    const automaticFillingEnabled = DEFAULT_PROPERTIES.automaticFillingEnabled;
+    previousState = automaticFillingEnabled;
+    updateToggleState(automaticFillingEnabled);
   }
   refreshButton.style.display = 'none';
   fillSection.style.display = 'none';
@@ -158,18 +172,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.error('Failed to reload tab:', error);
     });
   });
-
-  function updateToggleState(isEnabled: boolean): void {
-    if (toggleOn) {
-      toggleOn.style.display = isEnabled ? 'block' : 'none';
-    }
-    if (toggleOff) {
-      toggleOff.style.display = isEnabled ? 'none' : 'block';
-    }
-    if (fillSection) {
-      fillSection.style.display = isEnabled ? 'none' : 'flex';
-    }
-  }
 
   async function setTheme() {
     const isDarkTheme = await getEnableDarkTheme();
