@@ -34,9 +34,11 @@ You can also verify the version of `docFiller` and the extension through the bad
 
 - Open `CHANGELOG.md`.
 - Locate the entry for the **current unreleased version**. This may be in the format:
+
   ```
   ## v<major>.<minor>.<patch> [Unreleased] (as of YYYY-MM-DD)
   ```
+
   - If the current version in `package.json` is different from the "unreleased" version in the changelog, **update** the version in the changelog to match `package.json`.
   - Change the entry format to:
     ```

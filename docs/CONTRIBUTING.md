@@ -26,7 +26,6 @@ If you're planning to contribute to the development of this web extension, here 
 - Use `bun` instead of `npm`, `pnpm` or `yarn` while installing the packages, the project default package manager. You can install bun from [official website](https://bun.sh/).
 
 - To get started, follow these steps:
-
   1. Clone the repository:
 
      ```bash
@@ -40,7 +39,6 @@ If you're planning to contribute to the development of this web extension, here 
      ```
 
   3. Test the extension:
-
   - Firefox
 
     ```bash
@@ -54,7 +52,6 @@ If you're planning to contribute to the development of this web extension, here 
     ```bash
     bun run dev:chromium
     ```
-
   4. **Make your changes**: Make the changes you want in your local copy of the repository.
 
   5. **Test your changes**: Ensure that your changes work as expected. Test thoroughly before proceeding. Run lint checks before proceeding.
