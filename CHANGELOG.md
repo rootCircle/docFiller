@@ -1,9 +1,24 @@
 # Changelog
 
-## v1.4.6 [Unreleased] (as of 2025-04-10)
+## v1.5.1 [Unreleased] (as of 2025-08-03)
 
-- fix `developer` key in manifest file in non-firefox browser.
-- deps: upgrade to latest
+## v1.5.0 (2025-08-03)
+
+- fix: `developer` key in manifest file in non-firefox browser
+- deps: upgrade to latest dependencies (biome to 2.x, langchain, @types/node)
+- update models to latest `gemini-2.5-flash-lite`, `gpt-4.1-mini`, `claude-4-sonnet-latest` and `qwen3:4b`
+- fix: issue with ChatGPT model not supporting temperature with o3-mini
+- critical fix: _consensus weights were not being respected at all by consensus engine_, and DEFAULT_WEIGHTS were being used! Fixed that
+- fix: distribute weight logic to scaling rather than linear
+- refactor: centralize storage operations with helper functions and improve error handling
+- fix: enhance error handling in LLMEngine and background scripts
+- perf: avoid mutations in consensusUtils
+- refactor: implement safe DOM access utilities to prevent runtime errors
+- fix: merge listeners in chrome runtime and options as well
+- feat: implement ConsensusEngine cleanup on unload events in content script, options, and popup
+- ci: update labeler configuration
+- fix: resolve temporal dead zone error with `toggleOn` variable in popup script
+- fix: implement comprehensive memory leak prevention in ConsensusEngine with LLM pooling and cleanup methods
 
 ## v1.4.5 (2025-02-26)
 
