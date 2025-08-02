@@ -1,21 +1,28 @@
 import { DEFAULT_PROPERTIES } from '@utils/defaultProperties';
 import { validateLLMConfiguration } from '@utils/missingApiKey';
-import { getEnableDarkTheme } from '@utils/storage/getProperties';
+import { getEnableDarkTheme, getIsEnabled } from '@utils/storage/getProperties';
+import { setIsEnabled } from '@utils/storage/setProperties';
 import {
   getSelectedProfileKey,
   loadProfiles,
 } from '@utils/storage/profiles/profileManager';
 import { showToast } from '@utils/toastUtils';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   let previousState = false;
-  chrome.storage.sync.get(['automaticFillingEnabled'], (items) => {
-    const automaticFillingEnabled =
-      (items['automaticFillingEnabled'] as boolean) ??
-      DEFAULT_PROPERTIES.automaticFillingEnabled;
+
+  try {
+    const automaticFillingEnabled = await getIsEnabled();
     previousState = automaticFillingEnabled;
     updateToggleState(automaticFillingEnabled);
-  });
+  } catch (error) {
+    // biome-ignore lint/suspicious/noConsole: debugging storage error in popup
+    console.error('Error loading automatic filling state:', error);
+    // Use default value if storage fails
+    const automaticFillingEnabled = DEFAULT_PROPERTIES.automaticFillingEnabled;
+    previousState = automaticFillingEnabled;
+    updateToggleState(automaticFillingEnabled);
+  }
   const toggleButton = document.getElementById('toggleButton');
   const toggleOn = toggleButton?.querySelector('.toggle-on') as HTMLElement;
   const toggleOff = toggleButton?.querySelector('.toggle-off') as HTMLElement;
@@ -78,29 +85,16 @@ document.addEventListener('DOMContentLoaded', () => {
   toggleButton.addEventListener('click', () => {
     const saveState = async () => {
       try {
-        await new Promise<void>((resolve, reject) => {
-          chrome.storage.sync.get(['automaticFillingEnabled'], (items) => {
-            const newState = !(
-              items?.['automaticFillingEnabled'] ??
-              DEFAULT_PROPERTIES.automaticFillingEnabled
-            );
-            chrome.storage.sync.set(
-              { automaticFillingEnabled: newState },
-              () => {
-                if (chrome.runtime.lastError) {
-                  reject(new Error(chrome.runtime.lastError.message));
-                } else {
-                  if (previousState !== newState) {
-                    refreshButton.style.display = 'flex';
-                  }
-                  previousState = newState;
-                  updateToggleState(newState);
-                  resolve();
-                }
-              },
-            );
-          });
-        });
+        const currentState = await getIsEnabled();
+        const newState = !currentState;
+        await setIsEnabled(newState);
+
+        if (previousState !== newState) {
+          refreshButton.style.display = 'flex';
+        }
+        previousState = newState;
+        updateToggleState(newState);
+
         await checkAndUpdateApiMessage();
       } catch (error) {
         // biome-ignore lint/suspicious/noConsole: debugging popup functionality

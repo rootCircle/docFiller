@@ -1,120 +1,67 @@
 import { DEFAULT_PROPERTIES } from '@utils/defaultProperties';
 import { v4 } from 'uuid';
 
-import { profilesData } from './profilesData';
+import { profilesData } from '@utils/storage/profiles/profilesData';
+import {
+  getStorageItem,
+  setStorageItems,
+  getMultipleStorageItems,
+} from '@utils/storage/storageHelper';
 
-function loadProfiles(): Promise<Profiles> {
-  return new Promise((resolve) => {
-    chrome.storage.sync.get(['customProfiles'], (result) => {
-      const customProfiles: Profiles =
-        (result['customProfiles'] as Profiles) || {};
+async function loadProfiles(): Promise<Profiles> {
+  const customProfiles =
+    (await getStorageItem<Profiles>('customProfiles')) || {};
 
-      const mergedProfiles = {
-        [DEFAULT_PROPERTIES.defaultProfileKey]:
-          DEFAULT_PROPERTIES.defaultProfile,
-        ...profilesData,
-        ...customProfiles,
-      };
+  return {
+    [DEFAULT_PROPERTIES.defaultProfileKey]: DEFAULT_PROPERTIES.defaultProfile,
+    ...profilesData,
+    ...customProfiles,
+  };
+}
 
-      resolve(mergedProfiles);
-    });
+async function saveCustomProfile(profile: Profile): Promise<void> {
+  const customProfiles =
+    (await getStorageItem<Profiles>('customProfiles')) || {};
+  const profileKey = v4();
+
+  const updatedProfiles = {
+    ...customProfiles,
+    [profileKey]: profile,
+  };
+
+  await setStorageItems({
+    customProfiles: updatedProfiles,
+    selectedProfileKey: profileKey,
   });
 }
 
-function saveCustomProfile(profile: Profile): Promise<void> {
-  return new Promise((resolve, reject) => {
-    chrome.storage.sync.get(['customProfiles'], (result) => {
-      const customProfiles: Profiles =
-        (result['customProfiles'] as Profiles) || {};
+async function deleteProfile(profileKey: string): Promise<void> {
+  const { customProfiles, selectedProfileKey } = await getMultipleStorageItems<{
+    customProfiles: Profiles;
+    selectedProfileKey: string;
+  }>(['customProfiles', 'selectedProfileKey']);
 
-      const profileKey = v4();
+  const profiles = customProfiles || {};
+  const { [profileKey]: _deletedProfile, ...remainingProfiles } = profiles;
 
-      const updatedProfiles = {
-        ...customProfiles,
+  const updates: Record<string, Profiles | string> = {
+    customProfiles: remainingProfiles,
+  };
 
-        [profileKey]: profile,
-      };
+  if (selectedProfileKey === profileKey) {
+    updates['selectedProfileKey'] = '';
+  }
 
-      chrome.storage.sync.set(
-        {
-          customProfiles: updatedProfiles,
-          selectedProfileKey: profileKey,
-        },
-        () => {
-          if (chrome.runtime.lastError) {
-            reject(
-              new Error(
-                chrome.runtime.lastError?.message || 'Unknown error occurred',
-              ),
-            );
-          } else {
-            resolve();
-          }
-        },
-      );
-    });
-  });
+  await setStorageItems(updates);
 }
 
-function deleteProfile(profileKey: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    chrome.storage.sync.get(
-      ['customProfiles', 'selectedProfileKey'],
-      (result) => {
-        const customProfiles: Profiles =
-          (result['customProfiles'] as Profiles) || {};
-        const { [profileKey]: _deletedProfile, ...remainingProfiles } =
-          customProfiles;
-
-        const updates: Record<string, Profiles | string> = {
-          customProfiles: remainingProfiles,
-        };
-
-        if (result['selectedProfileKey'] === profileKey) {
-          updates['selectedProfileKey'] = '';
-        }
-
-        chrome.storage.sync.set(updates, () => {
-          if (chrome.runtime.lastError) {
-            reject(
-              new Error(
-                chrome.runtime.lastError.message || 'Failed to delete profile',
-              ),
-            );
-          } else {
-            resolve();
-          }
-        });
-      },
-    );
-  });
+async function saveSelectedProfileKey(profileKey: string): Promise<void> {
+  await setStorageItems({ selectedProfileKey: profileKey });
 }
 
-function saveSelectedProfileKey(profileKey: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    chrome.storage.sync.set({ selectedProfileKey: profileKey }, () => {
-      if (chrome.runtime.lastError) {
-        reject(
-          new Error(
-            chrome.runtime.lastError?.message || 'Unknown error occurred',
-          ),
-        );
-      } else {
-        resolve();
-      }
-    });
-  });
-}
-
-async function getSelectedProfileKey() {
-  return await new Promise<string>((resolve) => {
-    chrome.storage.sync.get(['selectedProfileKey'], (result) => {
-      resolve(
-        (result['selectedProfileKey'] as string) ??
-          DEFAULT_PROPERTIES.defaultProfileKey,
-      );
-    });
-  });
+async function getSelectedProfileKey(): Promise<string> {
+  const selectedProfileKey = await getStorageItem<string>('selectedProfileKey');
+  return selectedProfileKey ?? DEFAULT_PROPERTIES.defaultProfileKey;
 }
 
 export {

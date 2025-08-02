@@ -1,8 +1,28 @@
-import { DEFAULT_PROPERTIES } from '@utils/defaultProperties';
 import { LLMEngineType, getModelName } from '@utils/llmEngineTypes';
-import { EMPTY_STRING } from '@utils/settings';
-import { getSkipMarkedStatus } from '@utils/storage/getProperties';
-import { setSkipMarkedStatus } from '@utils/storage/setProperties';
+import {
+  getSkipMarkedSetting,
+  getSleepDuration,
+  getLLMModel,
+  getEnableConsensus,
+  getEnableDarkTheme,
+  getLLMWeights,
+  getChatGptApiKey,
+  getGeminiApiKey,
+  getMistralApiKey,
+  getAnthropicApiKey,
+} from '@utils/storage/getProperties';
+import {
+  setToggleSkipMarkedStatus,
+  setSleepDuration,
+  setLLMModel,
+  setEnableConsensus,
+  setEnableDarkTheme,
+  setLLMWeights,
+  setChatGptApiKey,
+  setGeminiApiKey,
+  setMistralApiKey,
+  setAnthropicApiKey,
+} from '@utils/storage/setProperties';
 import { showToast } from '@utils/toastUtils';
 
 import { MetricsUI } from './metrics';
@@ -31,15 +51,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!skipMarkedToggleButton) {
     return;
   }
-  const initialState = await getSkipMarkedStatus();
+  const initialState = await getSkipMarkedSetting();
   skipMarkedToggleButton.classList.toggle('active', initialState);
 
   skipMarkedToggleButton.addEventListener('click', async () => {
-    await setSkipMarkedStatus().catch((error) => {
+    await setToggleSkipMarkedStatus().catch((error) => {
       // biome-ignore lint/suspicious/noConsole: debugging options functionality
       console.error('Error toggling state:', error);
     });
-    const currentState = await getSkipMarkedStatus();
+    const currentState = await getSkipMarkedSetting();
     skipMarkedToggleButton.classList.toggle('active', currentState);
   });
   const modalHTML = `
@@ -197,53 +217,49 @@ document.addEventListener('DOMContentLoaded', () => {
     updateConsensusApiLinks(enableConsensusCheckbox);
   });
 
-  chrome.storage.sync.get(
-    [
-      'sleepDuration',
-      'llmModel',
-      'enableConsensus',
-      'enableDarkTheme',
-      'llmWeights',
-      'chatGptApiKey',
-      'geminiApiKey',
-      'mistralApiKey',
-      'anthropicApiKey',
-    ],
-    (items) => {
-      sleepDurationInput.value = String(
-        (items['sleepDuration'] as number) ?? DEFAULT_PROPERTIES.sleep_duration,
-      );
-      llmModelSelect.value =
-        (items['llmModel'] as string) ?? getModelName(DEFAULT_PROPERTIES.model);
+  // Load settings using centralized getter functions
+  const loadSettings = async () => {
+    try {
+      const [
+        sleepDuration,
+        llmModel,
+        enableConsensus,
+        enableDarkTheme,
+        llmWeights,
+        chatGptApiKey,
+        geminiApiKey,
+        mistralApiKey,
+        anthropicApiKey,
+      ] = await Promise.all([
+        getSleepDuration(),
+        getLLMModel(),
+        getEnableConsensus(),
+        getEnableDarkTheme(),
+        getLLMWeights(),
+        getChatGptApiKey(),
+        getGeminiApiKey(),
+        getMistralApiKey(),
+        getAnthropicApiKey(),
+      ]);
+
+      sleepDurationInput.value = String(sleepDuration);
+      llmModelSelect.value = llmModel;
 
       updateApiKeyInputField(singleApiKeyInput, llmModelSelect);
-      enableConsensusCheckbox.checked = Boolean(
-        (items['enableConsensus'] as boolean) ??
-          DEFAULT_PROPERTIES.enableConsensus,
-      );
-      enableDarkThemeCheckbox.checked = Boolean(
-        (items['enableDarkTheme'] as boolean) ??
-          DEFAULT_PROPERTIES.enableDarkTheme,
-      );
+      enableConsensusCheckbox.checked = enableConsensus;
+      enableDarkThemeCheckbox.checked = enableDarkTheme;
 
-      const weights =
-        (items['llmWeights'] as Record<LLMEngineType, number>) ??
-        DEFAULT_PROPERTIES.llmWeights;
-      weightChatGPTInput.value = String(weights[LLMEngineType.ChatGPT]);
-      weightGeminiInput.value = String(weights[LLMEngineType.Gemini]);
-      weightOllamaInput.value = String(weights[LLMEngineType.Ollama]);
-      weightChromeAIInput.value = String(weights[LLMEngineType.ChromeAI]);
-      weightMistralInput.value = String(weights[LLMEngineType.Mistral]);
-      weightAnthropicInput.value = String(weights[LLMEngineType.Anthropic]);
+      weightChatGPTInput.value = String(llmWeights[LLMEngineType.ChatGPT]);
+      weightGeminiInput.value = String(llmWeights[LLMEngineType.Gemini]);
+      weightOllamaInput.value = String(llmWeights[LLMEngineType.Ollama]);
+      weightChromeAIInput.value = String(llmWeights[LLMEngineType.ChromeAI]);
+      weightMistralInput.value = String(llmWeights[LLMEngineType.Mistral]);
+      weightAnthropicInput.value = String(llmWeights[LLMEngineType.Anthropic]);
 
-      chatGptApiKeyInput.value =
-        (items['chatGptApiKey'] as string) ?? EMPTY_STRING;
-      geminiApiKeyInput.value =
-        (items['geminiApiKey'] as string) ?? EMPTY_STRING;
-      mistralApiKeyInput.value =
-        (items['mistralApiKey'] as string) ?? EMPTY_STRING;
-      anthropicApiKeyInput.value =
-        (items['anthropicApiKey'] as string) ?? EMPTY_STRING;
+      chatGptApiKeyInput.value = chatGptApiKey;
+      geminiApiKeyInput.value = geminiApiKey;
+      mistralApiKeyInput.value = mistralApiKey;
+      anthropicApiKeyInput.value = anthropicApiKey;
 
       toggleConsensusOptions(enableConsensusCheckbox.checked);
       toggleDarkTheme(enableDarkThemeCheckbox.checked);
@@ -252,8 +268,15 @@ document.addEventListener('DOMContentLoaded', () => {
       updateApiKeyLink(modelSelect, apiKeyInputLink);
       updateConsensusApiLinks(enableConsensusCheckbox);
       updateSingleApiKeyInput(llmModelSelect.value);
-    },
-  );
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: debugging options functionality
+      console.error('Error loading settings:', error);
+      showToast('Error loading settings. Using defaults.', 'error');
+    }
+  };
+
+  // Load settings on page load
+  void loadSettings();
 
   llmModelSelect.addEventListener('change', () => {
     const apiKeyInput = document.getElementById(
@@ -383,28 +406,19 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       try {
-        await new Promise<void>((resolve, reject) => {
-          chrome.storage.sync.set(
-            {
-              sleepDuration,
-              llmModel,
-              enableConsensus,
-              enableDarkTheme,
-              llmWeights,
-              chatGptApiKey,
-              geminiApiKey,
-              mistralApiKey,
-              anthropicApiKey,
-            },
-            () => {
-              if (chrome.runtime.lastError) {
-                reject(new Error(chrome.runtime.lastError.message));
-              } else {
-                resolve();
-              }
-            },
-          );
-        });
+        // Save all settings using centralized setter functions
+        await Promise.all([
+          setSleepDuration(sleepDuration),
+          setLLMModel(llmModel),
+          setEnableConsensus(enableConsensus),
+          setEnableDarkTheme(enableDarkTheme),
+          setLLMWeights(llmWeights),
+          setChatGptApiKey(chatGptApiKey),
+          setGeminiApiKey(geminiApiKey),
+          setMistralApiKey(mistralApiKey),
+          setAnthropicApiKey(anthropicApiKey),
+        ]);
+
         showToast('Settings saved successfully!', 'success');
       } catch (error) {
         showToast(

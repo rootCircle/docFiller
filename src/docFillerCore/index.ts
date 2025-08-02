@@ -18,6 +18,7 @@ import {
   getSelectedProfileKey,
   loadProfiles,
 } from '@utils/storage/profiles/profileManager';
+import { setStorageItem } from '@utils/storage/storageHelper';
 
 async function runDocFillerEngine() {
   const questions = new QuestionExtractorEngine().getValidQuestions();
@@ -86,15 +87,19 @@ async function runDocFillerEngine() {
     if (response?.value) {
       profiles[selectedProfile].system_prompt = response.value.system_prompt;
     }
-    await chrome.storage.sync.set({
-      customProfiles: {
+    try {
+      await setStorageItem('customProfiles', {
         ...profiles,
         [selectedProfile]: {
           ...profiles[selectedProfile],
           system_prompt: response.value?.system_prompt,
         },
-      },
-    });
+      });
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: debugging storage error in docFiller core
+      console.error('Failed to save magic prompt to storage:', error);
+      // Continue execution even if storage fails
+    }
   }
 
   for (const question of questions) {

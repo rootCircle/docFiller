@@ -1,5 +1,6 @@
 import type { LLMEngineType } from '@utils/llmEngineTypes';
 import { MetricsCalculator } from '@utils/metricsCalculator';
+import { getStorageItem, setStorageItem } from '@utils/storage/storageHelper';
 
 export class MetricsManager {
   private static instance: MetricsManager;
@@ -82,11 +83,10 @@ export class MetricsManager {
 
   async getMetrics(): Promise<MetricsData> {
     try {
-      const result = await chrome.storage.sync.get(MetricsManager.STORAGE_KEY);
-      return (
-        (result[MetricsManager.STORAGE_KEY] as MetricsData) ||
-        this.getDefaultMetrics()
+      const result = await getStorageItem<MetricsData>(
+        MetricsManager.STORAGE_KEY,
       );
+      return result ?? this.getDefaultMetrics();
     } catch (error) {
       // biome-ignore lint/suspicious/noConsole: debugging metrics operations
       console.error('Error getting metrics:', error);
@@ -164,9 +164,7 @@ export class MetricsManager {
 
   async saveMetrics(metrics: MetricsData): Promise<void> {
     try {
-      await chrome.storage.sync.set({
-        [MetricsManager.STORAGE_KEY]: metrics,
-      });
+      await setStorageItem(MetricsManager.STORAGE_KEY, metrics);
     } catch (error) {
       // biome-ignore lint/suspicious/noConsole: debugging metrics operations
       console.error('Error saving metrics:', error);
