@@ -1,5 +1,6 @@
 import { DEFAULT_PROPERTIES } from '@utils/defaultProperties';
 import { safeQuerySelector } from '@utils/domUtils';
+import { ConsensusEngine } from '@docFillerCore/engines/consensusEngine';
 import { validateLLMConfiguration } from '@utils/missingApiKey';
 import { getEnableDarkTheme, getIsEnabled } from '@utils/storage/getProperties';
 import { setIsEnabled } from '@utils/storage/setProperties';
@@ -209,4 +210,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // biome-ignore lint/suspicious/noConsole: error handling for popup initialization
     console.error,
   );
+});
+
+// Clean up ConsensusEngine when popup is closed
+window.addEventListener('beforeunload', () => {
+  ConsensusEngine.dispose();
 });

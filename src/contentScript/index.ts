@@ -1,4 +1,5 @@
 import { runDocFillerEngine } from '@docFillerCore/index';
+import { ConsensusEngine } from '@docFillerCore/engines/consensusEngine';
 import { type MessageResponse, isFillFormMessage } from '@utils/messageTypes';
 import { getIsEnabled } from '@utils/storage/getProperties';
 
@@ -47,3 +48,8 @@ getIsEnabled()
   })
   // biome-ignore lint/suspicious/noConsole: error handling for main extension flow
   .catch(console.error);
+
+// Clean up ConsensusEngine when the page is about to unload
+window.addEventListener('beforeunload', () => {
+  ConsensusEngine.dispose();
+});

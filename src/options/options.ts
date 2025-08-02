@@ -1,5 +1,6 @@
 import { LLMEngineType, getModelName } from '@utils/llmEngineTypes';
 import { safeGetElementById, ifElementExists } from '@utils/domUtils';
+import { ConsensusEngine } from '@docFillerCore/engines/consensusEngine';
 import {
   getSkipMarkedSetting,
   getSleepDuration,
@@ -44,6 +45,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   window.addEventListener('unload', () => {
     metricsUI.cleanup();
+    ConsensusEngine.dispose();
   });
 
   const skipMarkedToggleButton = document.getElementById(
