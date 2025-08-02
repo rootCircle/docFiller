@@ -1,4 +1,5 @@
 import { EMPTY_STRING } from '@utils/settings';
+import { safeGetElementById } from '@utils/domUtils';
 
 export const initializeOptionPasswordField = () => {
   const passwordToggles = document.querySelectorAll('.password-toggle');
@@ -6,7 +7,7 @@ export const initializeOptionPasswordField = () => {
   passwordToggles.forEach((toggle) => {
     const button = toggle as HTMLButtonElement;
     const inputId = button.getAttribute('data-for') || EMPTY_STRING;
-    const input = document.getElementById(inputId) as HTMLInputElement;
+    const input = safeGetElementById<HTMLInputElement>(inputId);
 
     if (input) {
       input.type = 'password';

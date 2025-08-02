@@ -1,4 +1,5 @@
 import { DEFAULT_PROPERTIES } from '@utils/defaultProperties';
+import { safeQuerySelector } from '@utils/domUtils';
 import { validateLLMConfiguration } from '@utils/missingApiKey';
 import { getEnableDarkTheme, getIsEnabled } from '@utils/storage/getProperties';
 import { setIsEnabled } from '@utils/storage/setProperties';
@@ -24,18 +25,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateToggleState(automaticFillingEnabled);
   }
   const toggleButton = document.getElementById('toggleButton');
-  const toggleOn = toggleButton?.querySelector('.toggle-on') as HTMLElement;
-  const toggleOff = toggleButton?.querySelector('.toggle-off') as HTMLElement;
+  const toggleOn = toggleButton
+    ? safeQuerySelector<HTMLElement>(toggleButton, '.toggle-on')
+    : null;
+  const toggleOff = toggleButton
+    ? safeQuerySelector<HTMLElement>(toggleButton, '.toggle-off')
+    : null;
   const fillSection = document.querySelector<HTMLElement>(
     '.button-section-vertical-right',
   );
   const refreshButton = document.querySelector<HTMLElement>(
     '.button-section-vertical-left',
   );
-  const apiMessage = document.querySelector('.api-message') as HTMLElement;
-  const apiMessageText = apiMessage?.querySelector(
-    '.api-message-text',
-  ) as HTMLElement;
+  const apiMessage = safeQuerySelector<HTMLElement>(document, '.api-message');
+  const apiMessageText = apiMessage
+    ? safeQuerySelector<HTMLElement>(apiMessage, '.api-message-text')
+    : null;
   if (
     !toggleButton ||
     !toggleOn ||
@@ -62,12 +67,18 @@ document.addEventListener('DOMContentLoaded', async () => {
       multiple = 's';
     }
     if (validation.invalidEngines.length > 0) {
-      apiMessage.style.display = 'block';
+      if (apiMessage) {
+        apiMessage.style.display = 'block';
+      }
       if (validation.isConsensusEnabled) {
-        apiMessageText.textContent = `Please add API keys in Options for the required model${multiple} (${validation.invalidEngines.join(', ')}) or set their weight${multiple} to 0 in consensus settings`;
+        if (apiMessageText) {
+          apiMessageText.textContent = `Please add API keys in Options for the required model${multiple} (${validation.invalidEngines.join(', ')}) or set their weight${multiple} to 0 in consensus settings`;
+        }
       } else {
-        apiMessageText.textContent =
-          'Please add an API key in Options to use DocFiller';
+        if (apiMessageText) {
+          apiMessageText.textContent =
+            'Please add an API key in Options to use DocFiller';
+        }
       }
       toggleButton?.classList.add('disabled');
 
@@ -75,7 +86,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         toggleButton.style.pointerEvents = 'none';
       }
     } else {
-      apiMessage.style.display = 'none';
+      if (apiMessage) {
+        apiMessage.style.display = 'none';
+      }
       toggleButton?.classList.remove('disabled');
       if (toggleButton) {
         toggleButton.style.pointerEvents = 'cursor';
@@ -146,8 +159,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   function updateToggleState(isEnabled: boolean): void {
-    toggleOn.style.display = isEnabled ? 'block' : 'none';
-    toggleOff.style.display = isEnabled ? 'none' : 'block';
+    if (toggleOn) {
+      toggleOn.style.display = isEnabled ? 'block' : 'none';
+    }
+    if (toggleOff) {
+      toggleOff.style.display = isEnabled ? 'none' : 'block';
+    }
     if (fillSection) {
       fillSection.style.display = isEnabled ? 'none' : 'flex';
     }
@@ -163,21 +180,29 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   async function fillProfile() {
-    const imageUrlInput = document.querySelector(
+    const imageUrlInput = safeQuerySelector<HTMLImageElement>(
+      document,
       '.profile-avatar img',
-    ) as HTMLImageElement;
-    const nameElement = document.querySelector('.profile-name') as HTMLElement;
+    );
+    const nameElement = safeQuerySelector<HTMLElement>(
+      document,
+      '.profile-name',
+    );
 
     const selectedProfileKey = await getSelectedProfileKey();
     const profiles = await loadProfiles();
 
-    imageUrlInput.src =
-      profiles[selectedProfileKey]?.image_url ??
-      DEFAULT_PROPERTIES.defaultProfile.image_url;
+    if (imageUrlInput) {
+      imageUrlInput.src =
+        profiles[selectedProfileKey]?.image_url ??
+        DEFAULT_PROPERTIES.defaultProfile.image_url;
+    }
 
-    nameElement.textContent =
-      profiles[selectedProfileKey]?.name ??
-      DEFAULT_PROPERTIES.defaultProfile.name;
+    if (nameElement) {
+      nameElement.textContent =
+        profiles[selectedProfileKey]?.name ??
+        DEFAULT_PROPERTIES.defaultProfile.name;
+    }
   }
 
   Promise.all([checkAndUpdateApiMessage(), setTheme(), fillProfile()]).catch(

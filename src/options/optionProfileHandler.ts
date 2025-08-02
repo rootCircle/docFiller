@@ -1,4 +1,6 @@
 import { DEFAULT_PROPERTIES } from '@utils/defaultProperties';
+import { safeQuerySelector } from '@utils/domUtils';
+import { EMPTY_STRING } from '@utils/settings';
 import {
   deleteProfile,
   getSelectedProfileKey,
@@ -76,34 +78,56 @@ async function createProfileCards() {
           'addProfileForm',
         ) as HTMLFormElement;
         if (modal && form) {
-          (form.querySelector('#profileName') as HTMLInputElement).value =
-            profile.name;
-          (form.querySelector('#profileImage') as HTMLInputElement).value =
-            profile.image_url;
-          (form.querySelector('#profilePrompt') as HTMLTextAreaElement).value =
-            profile.system_prompt;
-          (
-            form.querySelector('#profileShortDescription') as HTMLInputElement
-          ).value = profile.short_description;
+          const profileNameInput = safeQuerySelector<HTMLInputElement>(
+            form,
+            '#profileName',
+          );
+          const profileImageInput = safeQuerySelector<HTMLInputElement>(
+            form,
+            '#profileImage',
+          );
+          const profilePromptInput = safeQuerySelector<HTMLTextAreaElement>(
+            form,
+            '#profilePrompt',
+          );
+          const profileShortDescInput = safeQuerySelector<HTMLInputElement>(
+            form,
+            '#profileShortDescription',
+          );
+
+          if (profileNameInput) profileNameInput.value = profile.name;
+          if (profileImageInput) profileImageInput.value = profile.image_url;
+          if (profilePromptInput)
+            profilePromptInput.value = profile.system_prompt;
+          if (profileShortDescInput)
+            profileShortDescInput.value = profile.short_description;
 
           modal.classList.remove('hidden');
 
           form.onsubmit = async (submitEvent) => {
             submitEvent.preventDefault();
+            const profileNameInput = safeQuerySelector<HTMLInputElement>(
+              form,
+              '#profileName',
+            );
+            const profileImageInput = safeQuerySelector<HTMLInputElement>(
+              form,
+              '#profileImage',
+            );
+            const profilePromptInput = safeQuerySelector<HTMLTextAreaElement>(
+              form,
+              '#profilePrompt',
+            );
+            const profileShortDescInput = safeQuerySelector<HTMLInputElement>(
+              form,
+              '#profileShortDescription',
+            );
+
             const updatedProfile: Profile = {
-              name: (form.querySelector('#profileName') as HTMLInputElement)
-                .value,
-              image_url: (
-                form.querySelector('#profileImage') as HTMLInputElement
-              ).value,
-              system_prompt: (
-                form.querySelector('#profilePrompt') as HTMLTextAreaElement
-              ).value,
-              short_description: (
-                form.querySelector(
-                  '#profileShortDescription',
-                ) as HTMLInputElement
-              ).value,
+              name: profileNameInput?.value || EMPTY_STRING,
+              image_url: profileImageInput?.value || EMPTY_STRING,
+              system_prompt: profilePromptInput?.value || EMPTY_STRING,
+              short_description: profileShortDescInput?.value || EMPTY_STRING,
               is_custom: true,
             };
             try {
@@ -199,20 +223,34 @@ function showAddProfileModal() {
 async function handleProfileFormSubmit(submitEvent: Event) {
   submitEvent.preventDefault();
   const form = submitEvent.target as HTMLFormElement;
-  const imageUrl = (form.querySelector('#profileImage') as HTMLInputElement)
-    .value;
+
+  const profileImageInput = safeQuerySelector<HTMLInputElement>(
+    form,
+    '#profileImage',
+  );
+  const profileNameInput = safeQuerySelector<HTMLInputElement>(
+    form,
+    '#profileName',
+  );
+  const profilePromptInput = safeQuerySelector<HTMLTextAreaElement>(
+    form,
+    '#profilePrompt',
+  );
+  const profileShortDescInput = safeQuerySelector<HTMLInputElement>(
+    form,
+    '#profileShortDescription',
+  );
+
+  const imageUrl = profileImageInput?.value || EMPTY_STRING;
 
   // Use the dummy image URL if no image URL is provided
   const defaultImageUrl = DEFAULT_PROPERTIES.defaultProfile.image_url;
 
   const newProfile: Profile = {
-    name: (form.querySelector('#profileName') as HTMLInputElement).value,
-    image_url: imageUrl.trim() ?? defaultImageUrl,
-    system_prompt: (form.querySelector('#profilePrompt') as HTMLTextAreaElement)
-      .value,
-    short_description: (
-      form.querySelector('#profileShortDescription') as HTMLInputElement
-    ).value,
+    name: profileNameInput?.value || EMPTY_STRING,
+    image_url: imageUrl.trim() || defaultImageUrl,
+    system_prompt: profilePromptInput?.value || EMPTY_STRING,
+    short_description: profileShortDescInput?.value || EMPTY_STRING,
     is_custom: true,
   };
 

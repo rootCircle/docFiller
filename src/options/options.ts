@@ -1,4 +1,5 @@
 import { LLMEngineType, getModelName } from '@utils/llmEngineTypes';
+import { safeGetElementById, ifElementExists } from '@utils/domUtils';
 import {
   getSkipMarkedSetting,
   getSleepDuration,
@@ -171,20 +172,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   const anthropicApiKeyInput = document.getElementById(
     'anthropicApiKey',
   ) as HTMLInputElement;
-  const saveButton = document.getElementById('saveButton') as HTMLButtonElement;
-  const singleApiKeyInput = document.getElementById(
-    'singleApiKey',
-  ) as HTMLInputElement;
-  const modelSelect = document.getElementById('llmModel') as HTMLSelectElement;
-  const apiKeyInputLink = document.getElementById(
-    'singleApiKeyLink',
-  ) as HTMLAnchorElement;
+  const saveButton = safeGetElementById<HTMLButtonElement>('saveButton');
+  const singleApiKeyInput =
+    safeGetElementById<HTMLInputElement>('singleApiKey');
+  const modelSelect = safeGetElementById<HTMLSelectElement>('llmModel');
+  const apiKeyInputLink =
+    safeGetElementById<HTMLAnchorElement>('singleApiKeyLink');
 
   initializeOptionPasswordField();
 
-  modelSelect.addEventListener('change', () => {
-    updateApiKeyLink(modelSelect, apiKeyInputLink);
-  });
+  // Safe event listener setup for model select
+  if (modelSelect && apiKeyInputLink) {
+    modelSelect.addEventListener('change', () => {
+      updateApiKeyLink(modelSelect, apiKeyInputLink);
+    });
+  }
+
   enableConsensusCheckbox.addEventListener('change', () => {
     updateConsensusApiLinks(enableConsensusCheckbox);
   });
@@ -217,7 +220,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       sleepDurationInput.value = String(sleepDuration);
       llmModelSelect.value = llmModel;
 
-      updateApiKeyInputField(singleApiKeyInput, llmModelSelect);
+      if (singleApiKeyInput) {
+        updateApiKeyInputField(singleApiKeyInput, llmModelSelect);
+      }
       enableConsensusCheckbox.checked = enableConsensus;
       enableDarkThemeCheckbox.checked = enableDarkTheme;
 
@@ -237,7 +242,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       toggleDarkTheme(enableDarkThemeCheckbox.checked);
 
       // Initial call to set up the form when it loads
-      updateApiKeyLink(modelSelect, apiKeyInputLink);
+      if (modelSelect && apiKeyInputLink) {
+        updateApiKeyLink(modelSelect, apiKeyInputLink);
+      }
       updateConsensusApiLinks(enableConsensusCheckbox);
       updateSingleApiKeyInput(llmModelSelect.value);
     } catch (error) {
@@ -276,7 +283,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         .querySelector('label[for="singleApiKey"]')
         ?.classList.add('hidden');
       llmModelSelect.parentElement?.classList.add('hidden');
-      singleApiKeyInput.parentElement?.classList.add('hidden');
+      singleApiKeyInput?.parentElement?.classList.add('hidden');
     } else {
       consensusWeightsDiv.classList.add('hidden');
       document
@@ -286,7 +293,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         .querySelector('label[for="singleApiKey"]')
         ?.classList.remove('hidden');
       llmModelSelect.parentElement?.classList.remove('hidden');
-      singleApiKeyInput.parentElement?.classList.remove('hidden');
+      singleApiKeyInput?.parentElement?.classList.remove('hidden');
     }
   };
 
@@ -316,35 +323,39 @@ document.addEventListener('DOMContentLoaded', async () => {
         break;
     }
 
-    singleApiKeyInput.value = apiKeyValue;
+    if (singleApiKeyInput) {
+      singleApiKeyInput.value = apiKeyValue;
+    }
   };
 
-  singleApiKeyInput.addEventListener('input', () => {
-    const selectedModel = llmModelSelect.value;
-    const apiKeyValue = singleApiKeyInput.value;
+  if (singleApiKeyInput) {
+    singleApiKeyInput.addEventListener('input', () => {
+      const selectedModel = llmModelSelect.value;
+      const apiKeyValue = singleApiKeyInput.value;
 
-    switch (selectedModel) {
-      case getModelName(LLMEngineType.ChatGPT):
-        chatGptApiKeyInput.value = apiKeyValue;
-        break;
-      case getModelName(LLMEngineType.Gemini):
-        geminiApiKeyInput.value = apiKeyValue;
-        break;
-      case getModelName(LLMEngineType.Ollama):
-      case getModelName(LLMEngineType.ChromeAI):
-        break;
-      case getModelName(LLMEngineType.Mistral):
-        mistralApiKeyInput.value = apiKeyValue;
-        break;
-      case getModelName(LLMEngineType.Anthropic):
-        anthropicApiKeyInput.value = apiKeyValue;
-        break;
-      default:
-        // biome-ignore lint/suspicious/noConsole: debugging options functionality
-        console.warn('Unknown model selected:', selectedModel);
-        break;
-    }
-  });
+      switch (selectedModel) {
+        case getModelName(LLMEngineType.ChatGPT):
+          chatGptApiKeyInput.value = apiKeyValue;
+          break;
+        case getModelName(LLMEngineType.Gemini):
+          geminiApiKeyInput.value = apiKeyValue;
+          break;
+        case getModelName(LLMEngineType.Ollama):
+        case getModelName(LLMEngineType.ChromeAI):
+          break;
+        case getModelName(LLMEngineType.Mistral):
+          mistralApiKeyInput.value = apiKeyValue;
+          break;
+        case getModelName(LLMEngineType.Anthropic):
+          anthropicApiKeyInput.value = apiKeyValue;
+          break;
+        default:
+          // biome-ignore lint/suspicious/noConsole: debugging options functionality
+          console.warn('Unknown model selected:', selectedModel);
+          break;
+      }
+    });
+  }
 
   enableConsensusCheckbox.addEventListener('change', (e: Event) => {
     const target = e.target as HTMLInputElement;
@@ -355,77 +366,80 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateSingleApiKeyInput(llmModelSelect.value);
   });
 
-  saveButton.addEventListener('click', () => {
-    const saveOptions = async () => {
-      const sleepDuration = Number.parseInt(sleepDurationInput.value, 10);
-      const llmModel = llmModelSelect.value;
-      const enableConsensus = enableConsensusCheckbox.checked;
-      const enableDarkTheme = enableDarkThemeCheckbox.checked;
-      const chatGptApiKey = chatGptApiKeyInput.value;
-      const geminiApiKey = geminiApiKeyInput.value;
-      const mistralApiKey = mistralApiKeyInput.value;
-      const anthropicApiKey = anthropicApiKeyInput.value;
+  if (saveButton) {
+    saveButton.addEventListener('click', () => {
+      const saveOptions = async () => {
+        const sleepDuration = Number.parseInt(sleepDurationInput.value, 10);
+        const llmModel = llmModelSelect.value;
+        const enableConsensus = enableConsensusCheckbox.checked;
+        const enableDarkTheme = enableDarkThemeCheckbox.checked;
+        const chatGptApiKey = chatGptApiKeyInput.value;
+        const geminiApiKey = geminiApiKeyInput.value;
+        const mistralApiKey = mistralApiKeyInput.value;
+        const anthropicApiKey = anthropicApiKeyInput.value;
 
-      const llmWeights = {
-        [LLMEngineType.ChatGPT]: Number.parseFloat(weightChatGPTInput.value),
-        [LLMEngineType.Gemini]: Number.parseFloat(weightGeminiInput.value),
-        [LLMEngineType.Ollama]: Number.parseFloat(weightOllamaInput.value),
-        [LLMEngineType.ChromeAI]: Number.parseFloat(weightChromeAIInput.value),
-        [LLMEngineType.Mistral]: Number.parseFloat(weightMistralInput.value),
-        [LLMEngineType.Anthropic]: Number.parseFloat(
-          weightAnthropicInput.value,
-        ),
+        const llmWeights = {
+          [LLMEngineType.ChatGPT]: Number.parseFloat(weightChatGPTInput.value),
+          [LLMEngineType.Gemini]: Number.parseFloat(weightGeminiInput.value),
+          [LLMEngineType.Ollama]: Number.parseFloat(weightOllamaInput.value),
+          [LLMEngineType.ChromeAI]: Number.parseFloat(
+            weightChromeAIInput.value,
+          ),
+          [LLMEngineType.Mistral]: Number.parseFloat(weightMistralInput.value),
+          [LLMEngineType.Anthropic]: Number.parseFloat(
+            weightAnthropicInput.value,
+          ),
+        };
+
+        try {
+          // Save all settings using centralized setter functions
+          await Promise.all([
+            setSleepDuration(sleepDuration),
+            setLLMModel(llmModel),
+            setEnableConsensus(enableConsensus),
+            setEnableDarkTheme(enableDarkTheme),
+            setLLMWeights(llmWeights),
+            setChatGptApiKey(chatGptApiKey),
+            setGeminiApiKey(geminiApiKey),
+            setMistralApiKey(mistralApiKey),
+            setAnthropicApiKey(anthropicApiKey),
+          ]);
+
+          showToast('Settings saved successfully!', 'success');
+        } catch (error) {
+          showToast(
+            `Error saving options. Please try again. ${error instanceof Error ? error.message : String(error)}`,
+            'error',
+          );
+        }
       };
 
-      try {
-        // Save all settings using centralized setter functions
-        await Promise.all([
-          setSleepDuration(sleepDuration),
-          setLLMModel(llmModel),
-          setEnableConsensus(enableConsensus),
-          setEnableDarkTheme(enableDarkTheme),
-          setLLMWeights(llmWeights),
-          setChatGptApiKey(chatGptApiKey),
-          setGeminiApiKey(geminiApiKey),
-          setMistralApiKey(mistralApiKey),
-          setAnthropicApiKey(anthropicApiKey),
-        ]);
+      void saveOptions();
+    });
+  }
+});
 
-        showToast('Settings saved successfully!', 'success');
-      } catch (error) {
-        showToast(
-          `Error saving options. Please try again. ${error instanceof Error ? error.message : String(error)}`,
-          'error',
-        );
-      }
-    };
-
-    void saveOptions();
+// Settings related event listeners - Using safe DOM access
+ifElementExists<HTMLInputElement>('enableConsensus', (enableConsensusEl) => {
+  enableConsensusEl.addEventListener('change', function () {
+    const consensusWeights = safeGetElementById('consensusWeights');
+    const singleModelOptions = safeGetElementById('singleModelOptions');
+    if (this.checked) {
+      consensusWeights?.classList.remove('hidden');
+      singleModelOptions?.classList.add('hidden');
+    } else {
+      consensusWeights?.classList.add('hidden');
+      singleModelOptions?.classList.remove('hidden');
+    }
   });
 });
 
-// Settings related event listeners
-
-(
-  document.getElementById('enableConsensus') as HTMLInputElement
-)?.addEventListener('change', function () {
-  const consensusWeights = document.getElementById('consensusWeights');
-  const singleModelOptions = document.getElementById('singleModelOptions');
-  if (this.checked) {
-    consensusWeights?.classList.remove('hidden');
-    singleModelOptions?.classList.add('hidden');
-  } else {
-    consensusWeights?.classList.add('hidden');
-    singleModelOptions?.classList.remove('hidden');
-  }
-});
-
-(
-  document.getElementById('enableDarkTheme') as HTMLInputElement
-)?.addEventListener('change', function () {
-  if (this.checked) {
-    document.documentElement.classList.add('dark-theme');
-  } else {
-    document.documentElement.classList.remove('dark-theme');
-  }
+ifElementExists<HTMLInputElement>('enableDarkTheme', (enableDarkThemeEl) => {
+  enableDarkThemeEl.addEventListener('change', function () {
+    if (this.checked) {
+      document.documentElement.classList.add('dark-theme');
+    } else {
+      document.documentElement.classList.remove('dark-theme');
+    }
+  });
 });
