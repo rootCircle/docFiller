@@ -1,75 +1,95 @@
 # Label for documentation-related changes
 "documentation":
-  - "docs/**"
-  - "*.md"
+  - changed-files:
+    - "docs/**"
+    - "*.md"
 
 # Label for public assets and styling
 "assets":
-  - "public/assets/**"
+  - changed-files:
+    - "public/assets/**"
 
 "popup":
-  - "public/src/popup/**"
-  - "src/popup/**"
+  - changed-files:
+    - "public/src/popup/**"
+    - "src/popup/**"
 
 "options-page":
-  - "public/src/options/**"
-  - "src/options/**"
+  - changed-files:
+    - "public/src/options/**"
+    - "src/options/**"
 
 "background":
-  - "src/background/**"
+  - changed-files:
+    - "src/background/**"
 
 "content script":
-  - "src/contentScript/**"
+  - changed-files:
+    - "src/contentScript/**"
 
 "core":
-  - "src/docFillerCore/**"
+  - changed-files:
+    - "src/docFillerCore/**"
 
 "consensus-engine":
-  - "src/docFillerCore/engines/consensusEngine.ts"
+  - changed-files:
+    - "src/docFillerCore/engines/consensusEngine.ts"
 
 "extractor-engine":
-  - "src/docFillerCore/engines/fieldExtractorEngine.ts"
+  - changed-files:
+    - "src/docFillerCore/engines/fieldExtractorEngine.ts"
 
 "filler-engine":
-  - "src/docFillerCore/engines/fillerEngine.ts"
+  - changed-files:
+    - "src/docFillerCore/engines/fillerEngine.ts"
 
 "gpt-engine":
-  - "src/docFillerCore/engines/gptEngine.ts"
+  - changed-files:
+    - "src/docFillerCore/engines/gptEngine.ts"
 
 "prompt-engine":
-  - "src/docFillerCore/engines/promptEngine.ts"
+  - changed-files:
+    - "src/docFillerCore/engines/promptEngine.ts"
 
 "parser-engine":
-  - "src/docFillerCore/engines/validatorEngine.ts"
+  - changed-files:
+    - "src/docFillerCore/engines/validatorEngine.ts"
 
 "utils":
-  - "src/utils/**"
+  - changed-files:
+    - "src/utils/**"
 
 "manifest":
-  - "public/manifest.ts"
+  - changed-files:
+    - "public/manifest.ts"
 
 # Label for TypeScript utilities and tools
 "config":
-  - "eslint.config.js"
-  - "tsconfig.json"
-  - ".prettierrc"
-  - "biome.json"
+  - changed-files:
+    - "eslint.config.js"
+    - "tsconfig.json"
+    - ".prettierrc"
+    - "biome.json"
 
 # Label for licensing and governance
 "governance":
-  - "LICENSE"
-  - "docs/GOVERNANCE.md"
-  - "docs/CODE_OF_CONDUCT.md"
+  - changed-files:
+    - "LICENSE"
+    - "docs/GOVERNANCE.md"
+    - "docs/CODE_OF_CONDUCT.md"
 
 # Label for testing or metrics
 "metrics":
-  - "src/options/metrics.ts"
-  - "src/utils/metricsCalculator.ts"
+  - changed-files:
+    - "src/options/metrics.ts"
+    - "src/utils/metricsCalculator.ts"
 
 # Label for build and CI-related files
 "build":
-  - "Makefile"
-  - "tools/**"
+  - changed-files:
+    - "Makefile"
+    - "tools/**"
 
 "ci":
-  - ".github/workflows/**"
+  - changed-files:
+    - ".github/workflows/**"
