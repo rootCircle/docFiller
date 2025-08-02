@@ -4,6 +4,9 @@ lint:
 format:
 	bun format:check
 
+format-fix:
+	bun format
+
 tsc:
 	bun typecheck
 

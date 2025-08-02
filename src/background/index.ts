@@ -62,10 +62,24 @@ chrome.runtime.onMessage.addListener(
           .catch((error) => {
             // biome-ignore lint/suspicious/noConsole: debugging error in background script
             console.error('Error getting response:', error);
+            sendResponse({
+              error: {
+                message: error instanceof Error ? error.message : String(error),
+                context: 'Failed to get response from LLMEngine',
+                // stack: error instanceof Error ? error.stack : undefined
+              },
+            });
           });
       } catch (error) {
         // biome-ignore lint/suspicious/noConsole: debugging error in background script
         console.error('Error creating LLMEngine instance:', error);
+        sendResponse({
+          error: {
+            message: error instanceof Error ? error.message : String(error),
+            context: 'Failed to create LLMEngine instance',
+            // stack: error instanceof Error ? error.stack : undefined
+          },
+        });
       }
       return true;
     }

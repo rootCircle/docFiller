@@ -152,13 +152,34 @@ export class LLMEngine {
       questionType,
       model: engineType,
     };
+
     try {
-      return await chrome.runtime.sendMessage(item).then((response) => {
-        return response?.value;
-      });
+      const response = await chrome.runtime.sendMessage(item);
+
+      if (!response) {
+        throw new Error('No response received from chrome.runtime.sendMessage');
+      }
+
+      if (typeof response !== 'object') {
+        throw new Error(
+          `Invalid response type: expected object, got ${typeof response}`,
+        );
+      }
+
+      if (response?.error) {
+        const errorMessage =
+          typeof response.error === 'string'
+            ? response.error
+            : JSON.stringify(response.error);
+        throw new Error(errorMessage);
+      }
+
+      return response.value ?? null;
     } catch (error) {
       // biome-ignore lint/suspicious/noConsole: debugging error in LLM engine
-      console.error('Error getting response:', error);
+      console.error('Error getting LLM response ↴');
+      // biome-ignore lint/suspicious/noConsole: debugging error in LLM engine
+      console.error(error);
       return null;
     }
   }
@@ -298,7 +319,7 @@ Count and incorporate ALL question domains to ensure comprehensive expertise.`;
     } catch (error) {
       // biome-ignore lint/suspicious/noConsole: debugging error in LLM engine
       console.error('Error getting response:', error);
-      return null;
+      throw error;
     }
   }
 
