@@ -108,8 +108,7 @@ export class DetectBoxType {
   private isLinearScale(element: HTMLElement): boolean {
     const optionBox = element.querySelector('div[role=radiogroup] label');
     return Boolean(
-      optionBox?.querySelector('div') &&
-        !optionBox.querySelector('span'),
+      optionBox?.querySelector('div') && !optionBox.querySelector('span'),
     );
   }
 

@@ -1,4 +1,4 @@
-// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
+// biome-ignore lint/complexity/noStaticOnlyClass: utility class with static methods for metrics calculation
 export class MetricsCalculator {
   // Constants
   private static MANUAL_TIME_PER_QUESTION = 23;
@@ -68,10 +68,16 @@ export class MetricsCalculator {
       .split('T')[0];
     const todayTotal = metricHistory
       .filter((entry) => entry.date === today)
-      .reduce((sum, entry) => sum + MetricsCalculator.calculateTimeDifference(entry), 0);
+      .reduce(
+        (sum, entry) => sum + MetricsCalculator.calculateTimeDifference(entry),
+        0,
+      );
     const yesterdayTotal = metricHistory
       .filter((entry) => entry.date === yesterday)
-      .reduce((sum, entry) => sum + MetricsCalculator.calculateTimeDifference(entry), 0);
+      .reduce(
+        (sum, entry) => sum + MetricsCalculator.calculateTimeDifference(entry),
+        0,
+      );
     const dailyTrend =
       (yesterdayTotal === 0
         ? 1

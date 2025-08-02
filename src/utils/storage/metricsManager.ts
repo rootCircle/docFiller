@@ -88,7 +88,7 @@ export class MetricsManager {
         this.getDefaultMetrics()
       );
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: debugging metrics operations
       console.error('Error getting metrics:', error);
       return this.getDefaultMetrics();
     }
@@ -156,7 +156,7 @@ export class MetricsManager {
       this.updateAIMetrics(metrics, params);
       await this.saveMetrics(metrics);
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: debugging metrics operations
       console.error('Error updating metrics:', error);
       throw error;
     }
@@ -168,7 +168,7 @@ export class MetricsManager {
         [MetricsManager.STORAGE_KEY]: metrics,
       });
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: debugging metrics operations
       console.error('Error saving metrics:', error);
       throw error;
     }
@@ -262,7 +262,7 @@ export class MetricsManager {
         MetricsManager.MAX_HISTORY_DAYS,
       );
     }
-    // biome-ignore lint/suspicious/noConsole: <explanation>
+    // biome-ignore lint/suspicious/noConsole: debugging metrics operations
     console.log('Metrics History : ', metrics);
   }
 

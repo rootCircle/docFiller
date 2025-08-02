@@ -47,7 +47,7 @@ export async function copyFileOrDirectory(path: string, targetPath: string) {
       return;
     }
   } catch (err) {
-    // biome-ignore lint/suspicious/noConsole: <explanation>
+    // biome-ignore lint/suspicious/noConsole: build script output for development
     console.error(`Error statting path:${err}`);
     return;
   }
@@ -58,7 +58,7 @@ export async function copyFileOrDirectory(path: string, targetPath: string) {
     await mkdir(targetDir, { recursive: true });
     await copyFile(path, targetPath);
   } catch (error) {
-    // biome-ignore lint/suspicious/noConsole: <explanation>
+    // biome-ignore lint/suspicious/noConsole: build script output for development
     console.error(`Error:${error}`);
   }
 }

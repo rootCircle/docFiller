@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   skipMarkedToggleButton.addEventListener('click', async () => {
     await setSkipMarkedStatus().catch((error) => {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: debugging options functionality
       console.error('Error toggling state:', error);
     });
     const currentState = await getSkipMarkedStatus();
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     });
   } catch (error) {
-    // biome-ignore lint/suspicious/noConsole: <explanation>
+    // biome-ignore lint/suspicious/noConsole: debugging options functionality
     console.error('Error initializing options:', error);
   }
 });
@@ -211,27 +211,22 @@ document.addEventListener('DOMContentLoaded', () => {
     ],
     (items) => {
       sleepDurationInput.value = String(
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['sleepDuration'] as number) ?? DEFAULT_PROPERTIES.sleep_duration,
       );
       llmModelSelect.value =
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['llmModel'] as string) ?? getModelName(DEFAULT_PROPERTIES.model);
 
       updateApiKeyInputField(singleApiKeyInput, llmModelSelect);
       enableConsensusCheckbox.checked = Boolean(
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['enableConsensus'] as boolean) ??
           DEFAULT_PROPERTIES.enableConsensus,
       );
       enableDarkThemeCheckbox.checked = Boolean(
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['enableDarkTheme'] as boolean) ??
           DEFAULT_PROPERTIES.enableDarkTheme,
       );
 
       const weights =
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['llmWeights'] as Record<LLMEngineType, number>) ??
         DEFAULT_PROPERTIES.llmWeights;
       weightChatGPTInput.value = String(weights[LLMEngineType.ChatGPT]);
@@ -242,16 +237,12 @@ document.addEventListener('DOMContentLoaded', () => {
       weightAnthropicInput.value = String(weights[LLMEngineType.Anthropic]);
 
       chatGptApiKeyInput.value =
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['chatGptApiKey'] as string) ?? EMPTY_STRING;
       geminiApiKeyInput.value =
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['geminiApiKey'] as string) ?? EMPTY_STRING;
       mistralApiKeyInput.value =
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['mistralApiKey'] as string) ?? EMPTY_STRING;
       anthropicApiKeyInput.value =
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (items['anthropicApiKey'] as string) ?? EMPTY_STRING;
 
       toggleConsensusOptions(enableConsensusCheckbox.checked);
@@ -325,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
         apiKeyValue = anthropicApiKeyInput.value;
         break;
       default:
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: debugging options functionality
         console.warn('Unknown model selected:', selectedModel);
         break;
     }
@@ -354,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
         anthropicApiKeyInput.value = apiKeyValue;
         break;
       default:
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: debugging options functionality
         console.warn('Unknown model selected:', selectedModel);
         break;
     }
@@ -386,7 +377,9 @@ document.addEventListener('DOMContentLoaded', () => {
         [LLMEngineType.Ollama]: Number.parseFloat(weightOllamaInput.value),
         [LLMEngineType.ChromeAI]: Number.parseFloat(weightChromeAIInput.value),
         [LLMEngineType.Mistral]: Number.parseFloat(weightMistralInput.value),
-        [LLMEngineType.Anthropic]: Number.parseFloat(weightAnthropicInput.value),
+        [LLMEngineType.Anthropic]: Number.parseFloat(
+          weightAnthropicInput.value,
+        ),
       };
 
       try {

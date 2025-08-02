@@ -1,5 +1,8 @@
 import { DEFAULT_PROPERTIES } from '@utils/defaultProperties';
-import { type LLMEngineType, getModelTypeFromName } from '@utils/llmEngineTypes';
+import {
+  type LLMEngineType,
+  getModelTypeFromName,
+} from '@utils/llmEngineTypes';
 import {
   getEnableConsensus,
   getEnableDarkTheme,

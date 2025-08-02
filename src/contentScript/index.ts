@@ -17,7 +17,7 @@ chrome.runtime.onMessage.addListener(
         })
 
         .catch((error: Error) => {
-          // biome-ignore lint/suspicious/noConsole: <explanation>
+          // biome-ignore lint/suspicious/noConsole: debugging error in content script
           console.error('Error running doc filler:', error);
 
           sendResponse({
@@ -37,11 +37,13 @@ chrome.runtime.onMessage.addListener(
 getIsEnabled()
   .then((isEnabled) => {
     if (isEnabled === true) {
+      // biome-ignore lint/suspicious/noConsole: error handling for background doc filler engine
       runDocFillerEngine().catch(console.error);
     } else {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: debugging info when extension is disabled
       console.log('Doc Filler is currently disabled');
     }
     return Promise.resolve();
   })
+  // biome-ignore lint/suspicious/noConsole: error handling for main extension flow
   .catch(console.error);

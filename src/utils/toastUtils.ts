@@ -6,7 +6,7 @@ export function showToast(
   const toast = document.getElementById('toast');
   const toastMessage = document.getElementById('toast-message');
   if (!toast || !toastMessage) {
-    // biome-ignore lint/suspicious/noConsole: <explanation>
+    // biome-ignore lint/suspicious/noConsole: debugging toast notifications
     console.error('Toast elements not found');
     return;
   }

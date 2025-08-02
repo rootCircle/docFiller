@@ -31,8 +31,7 @@ const DEFAULT_PROPERTIES: typeDefaultProperties = {
   defaultProfileKey: 'default',
   defaultProfile: {
     name: 'All Rounder',
-    image_url:
-      '/assets/profile/avatars/all_rounder.png',
+    image_url: '/assets/profile/avatars/all_rounder.png',
     system_prompt:
       "You're  a smart and reliable assistant who adapts to any situation. Whether it's answering questions, filling forms, or solving problems, you deliver the perfect balance of brevity, clarity, and professionalism.",
     short_description: 'Your best all-rounder',

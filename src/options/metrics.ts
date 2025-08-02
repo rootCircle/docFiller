@@ -19,12 +19,12 @@ export class MetricsUI {
       // Update metrics every 5 seconds
       this.updateInterval = window.setInterval(() => {
         this.updateMetricsDisplay().catch((error) => {
-          // biome-ignore lint/suspicious/noConsole: <explanation>
+          // biome-ignore lint/suspicious/noConsole: debugging metrics UI functionality
           console.error('Error updating metrics display:', error);
         });
       }, 5000);
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: debugging metrics UI functionality
       console.error('Failed to initialize metrics:', error);
     } finally {
       loadingEl?.classList.add('hidden');
@@ -113,7 +113,7 @@ export class MetricsUI {
           `;
       }
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: debugging metrics UI functionality
       console.error('Error updating metrics display:', error);
       const errorEl = document.getElementById('metricsError');
       if (errorEl) {
@@ -156,7 +156,7 @@ export class MetricsUI {
       a.click();
       URL.revokeObjectURL(url);
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: debugging metrics UI functionality
       console.error('Failed to export metrics:', error);
       alert('Failed to export metrics. Please try again.');
     }
@@ -173,7 +173,7 @@ export class MetricsUI {
         await this.updateMetricsDisplay();
         alert('Metrics reset successfully!');
       } catch (error) {
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: debugging metrics UI functionality
         console.error('Failed to reset metrics:', error);
         alert('Failed to reset metrics. Please try again.');
       }

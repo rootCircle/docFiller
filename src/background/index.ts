@@ -30,7 +30,7 @@ chrome.runtime.onMessage.addListener(
             sendResponse({ value: response });
           })
           .catch((error: unknown) => {
-            // biome-ignore lint/suspicious/noConsole: <explanation>
+            // biome-ignore lint/suspicious/noConsole: debugging error in background script
             console.error('Error generating magic prompt:', error);
             if (error instanceof Error) {
               sendResponse({ error: error.message });
@@ -39,7 +39,7 @@ chrome.runtime.onMessage.addListener(
             }
           });
       } catch (error) {
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: debugging error in background script
         console.error('Error creating LLMEngine instance:', error);
         sendResponse({ error: String(error) });
       }
@@ -60,11 +60,11 @@ chrome.runtime.onMessage.addListener(
             sendResponse({ value: response });
           })
           .catch((error) => {
-            // biome-ignore lint/suspicious/noConsole: <explanation>
+            // biome-ignore lint/suspicious/noConsole: debugging error in background script
             console.error('Error getting response:', error);
           });
       } catch (error) {
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: debugging error in background script
         console.error('Error creating LLMEngine instance:', error);
       }
       return true;

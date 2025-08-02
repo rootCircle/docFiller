@@ -25,7 +25,7 @@ async function getFiles(
       if (dirent.isDirectory()) {
         return getFiles(res, validFileExtensions);
       }
-        return Promise.resolve(res);
+      return Promise.resolve(res);
     }),
   );
 

@@ -3,11 +3,10 @@ import { v4 } from 'uuid';
 
 import { profilesData } from './profilesData';
 
-async function loadProfiles(): Promise<Profiles> {
+function loadProfiles(): Promise<Profiles> {
   return new Promise((resolve) => {
     chrome.storage.sync.get(['customProfiles'], (result) => {
       const customProfiles: Profiles =
-        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (result['customProfiles'] as Profiles) || {};
 
       const mergedProfiles = {
@@ -22,11 +21,10 @@ async function loadProfiles(): Promise<Profiles> {
   });
 }
 
-async function saveCustomProfile(profile: Profile): Promise<void> {
+function saveCustomProfile(profile: Profile): Promise<void> {
   return new Promise((resolve, reject) => {
     chrome.storage.sync.get(['customProfiles'], (result) => {
       const customProfiles: Profiles =
-        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (result['customProfiles'] as Profiles) || {};
 
       const profileKey = v4();
@@ -58,24 +56,21 @@ async function saveCustomProfile(profile: Profile): Promise<void> {
   });
 }
 
-async function deleteProfile(profileKey: string): Promise<void> {
+function deleteProfile(profileKey: string): Promise<void> {
   return new Promise((resolve, reject) => {
     chrome.storage.sync.get(
       ['customProfiles', 'selectedProfileKey'],
       (result) => {
         const customProfiles: Profiles =
-          // biome-ignore lint/complexity/useLiteralKeys: <explanation>
           (result['customProfiles'] as Profiles) || {};
-        const { [profileKey]: deletedProfile, ...remainingProfiles } =
+        const { [profileKey]: _deletedProfile, ...remainingProfiles } =
           customProfiles;
 
         const updates: Record<string, Profiles | string> = {
           customProfiles: remainingProfiles,
         };
 
-        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         if (result['selectedProfileKey'] === profileKey) {
-          // biome-ignore lint/complexity/useLiteralKeys: <explanation>
           updates['selectedProfileKey'] = '';
         }
 
@@ -95,7 +90,7 @@ async function deleteProfile(profileKey: string): Promise<void> {
   });
 }
 
-async function saveSelectedProfileKey(profileKey: string): Promise<void> {
+function saveSelectedProfileKey(profileKey: string): Promise<void> {
   return new Promise((resolve, reject) => {
     chrome.storage.sync.set({ selectedProfileKey: profileKey }, () => {
       if (chrome.runtime.lastError) {
@@ -115,9 +110,8 @@ async function getSelectedProfileKey() {
   return await new Promise<string>((resolve) => {
     chrome.storage.sync.get(['selectedProfileKey'], (result) => {
       resolve(
-        // biome-ignore lint/complexity/useLiteralKeys: <explanation>
         (result['selectedProfileKey'] as string) ??
-        DEFAULT_PROPERTIES.defaultProfileKey,
+          DEFAULT_PROPERTIES.defaultProfileKey,
       );
     });
   });

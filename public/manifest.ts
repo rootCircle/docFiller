@@ -19,7 +19,6 @@ export async function getManifest() {
   }
 
   const pkg = (await fs.readJSON(r('package.json'))) as typeof PkgType;
-  // biome-ignore lint/complexity/useLiteralKeys: <explanation>
   const targetBrowser = process.env['BROWSER'];
   if (!targetBrowser) {
     throw new Error('BROWSER environment variable must be set');
@@ -69,7 +68,7 @@ export async function getManifest() {
         ],
         js: ['src/contentScript/index.js'],
       },
-    ]
+    ],
   };
 
   const manifest: Manifest.WebExtensionManifest = {
@@ -78,9 +77,8 @@ export async function getManifest() {
       developer: {
         name: 'rootCircle',
         url: 'https://github.com/rootCircle',
-      }
-    }
-    ),
+      },
+    }),
     background: (() => {
       if (isFirefoxBased) {
         return { scripts: ['src/background/index.js'] };
@@ -98,7 +96,7 @@ export async function getManifest() {
         },
         gecko_android: {
           strict_min_version: '120.0',
-        }
+        },
       }),
     },
   };

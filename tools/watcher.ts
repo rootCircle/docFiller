@@ -4,6 +4,7 @@ import copyContents, { copyFileOrDirectory } from './copier';
 import { writeManifest } from './manifestWriter';
 
 const buildWatch = async () => {
+  // biome-ignore lint/suspicious/noConsole: build watcher error handling
   runBuild(true).catch(console.error);
   await copyContents('./public', './build');
 
@@ -31,10 +32,10 @@ const buildWatch = async () => {
       await new Promise((resolve) => setTimeout(resolve, 100));
 
       await writeManifest();
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: watcher script output for development
       console.log('Manifest updated due to change');
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: watcher script error output for development
       console.error('Error handling manifest change:', error);
     }
   };
@@ -44,6 +45,7 @@ const buildWatch = async () => {
   publicWatcher.on('unlink', handlePublicChange);
   publicWatcher.on('unlinkDir', handlePublicChange);
   publicWatcher.on('addDir', handlePublicChange);
+  // biome-ignore lint/suspicious/noConsole: file watcher error handling
   publicWatcher.on('error', console.error);
 
   manifestWatcher.on('change', handleManifestChange);
@@ -51,5 +53,5 @@ const buildWatch = async () => {
   manifestWatcher.on('unlink', handleManifestChange);
 };
 
-
+// biome-ignore lint/suspicious/noConsole: main watcher process error handling
 buildWatch().catch(console.error);

@@ -28,19 +28,20 @@ export async function writeManifest() {
 
     if (JSON.stringify(existingManifest) !== JSON.stringify(manifest)) {
       await fs.writeJSON(r('build/manifest.json'), manifest, { spaces: 2 });
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: build script output for development
       console.log(`✓ manifest.json updated for ${browser}`);
     } else {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: build script output for development
       console.log('No changes detected in manifest content');
     }
   } catch (error) {
-    // biome-ignore lint/suspicious/noConsole: <explanation>
+    // biome-ignore lint/suspicious/noConsole: build script error output
     console.error('Error writing manifest:', error);
     throw error;
   }
 }
 
 if (require.main === module) {
+  // biome-ignore lint/suspicious/noConsole: build script error handling
   writeManifest().catch(console.error);
 }

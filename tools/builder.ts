@@ -8,10 +8,10 @@ const cleanBuildFolder = async () => {
   try {
     await fs.remove('./build');
     await fs.ensureDir('./build');
-    // biome-ignore lint/suspicious/noConsole: <explanation>
+    // biome-ignore lint/suspicious/noConsole: build script output for development
     console.log('Build folder cleaned and recreated.');
   } catch (error) {
-    // biome-ignore lint/suspicious/noConsole: <explanation>
+    // biome-ignore lint/suspicious/noConsole: build script output for development
     console.error('Error cleaning build folder:', error);
     throw error;
   }
@@ -36,20 +36,20 @@ const build = async (watch: boolean) => {
     });
 
     if (buildStatus.errors.length > 0) {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: build script output for development
       console.error('Build failed');
       for (const message of buildStatus.errors) {
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: build script output for development
         console.error(message.text);
       }
       throw new Error('Error building the ts files!');
     }
 
     if (buildStatus.warnings.length > 0) {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: build script output for development
       console.warn('Build completed with warnings');
       for (const message of buildStatus.warnings) {
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: build script output for development
         console.warn(message.text);
       }
     }
@@ -63,10 +63,10 @@ const runBuild = async (watch: boolean) => {
     }
     await writeManifest();
     await build(watch);
-    // biome-ignore lint/suspicious/noConsole: <explanation>
+    // biome-ignore lint/suspicious/noConsole: build script output for development
     console.log('Build completed successfully.');
   } catch (error) {
-    // biome-ignore lint/suspicious/noConsole: <explanation>
+    // biome-ignore lint/suspicious/noConsole: build script output for development
     console.error('Build failed:', error);
   }
 };

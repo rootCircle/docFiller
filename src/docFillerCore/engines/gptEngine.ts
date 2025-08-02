@@ -71,24 +71,20 @@ export class LLMEngine {
         try {
           this.instantiateEngine(this.engine);
         } catch (error) {
-          // biome-ignore lint/suspicious/noConsole: <explanation>
+          // biome-ignore lint/suspicious/noConsole: debugging error when instantiating engine
           console.error('Error instantiating engine:', error);
         }
       })
       .catch((error) => {
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: debugging error fetching API keys
         console.error('Error fetching API keys:', error);
       });
   }
 
   private async fetchApiKeys(): Promise<void> {
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
     this.apiKeys['chatGptApiKey'] = await getChatGptApiKey();
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
     this.apiKeys['geminiApiKey'] = await getGeminiApiKey();
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
     this.apiKeys['mistralApiKey'] = await getMistralApiKey();
-    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
     this.apiKeys['anthropicApiKey'] = await getAnthropicApiKey();
   }
   public instantiateEngine(engine: LLMEngineType): LLMInstance {
@@ -98,7 +94,6 @@ export class LLMEngine {
           model: 'o3-mini',
           temperature: 0,
           maxRetries: 2,
-          // biome-ignore lint/complexity/useLiteralKeys: <explanation>
           apiKey: this.apiKeys['chatGptApiKey'] as string,
         });
         break;
@@ -107,7 +102,6 @@ export class LLMEngine {
           model: 'gemini-2.0-flash-lite',
           temperature: 0,
           maxRetries: 2,
-          // biome-ignore lint/complexity/useLiteralKeys: <explanation>
           apiKey: this.apiKeys['geminiApiKey'] as string,
         });
         break;
@@ -123,7 +117,6 @@ export class LLMEngine {
           model: 'mistral-large-latest',
           temperature: 0,
           maxRetries: 2,
-          // biome-ignore lint/complexity/useLiteralKeys: <explanation>
           apiKey: this.apiKeys['mistralApiKey'] as string,
         });
         break;
@@ -132,7 +125,6 @@ export class LLMEngine {
           model: 'claude-3-7-sonnet-latest',
           temperature: 0,
           maxRetries: 2,
-          // biome-ignore lint/complexity/useLiteralKeys: <explanation>
           apiKey: this.apiKeys['anthropicApiKey'] as string,
         });
         break;
@@ -165,14 +157,14 @@ export class LLMEngine {
         return response?.value;
       });
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: debugging error in LLM engine
       console.error('Error getting response:', error);
       return null;
     }
   }
   async invokeMagicLLM(questions: string[]): Promise<MagicPromptResponse> {
     try {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: debugging error in LLM engine
       console.log('Invoking magic LLM with questions:', questions);
       const promptText = `
         Analyze these form questions and generate an optimal system prompt:
@@ -193,7 +185,7 @@ export class LLMEngine {
         throw new Error('No response received from LLM');
       }
 
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: debugging error in LLM engine
       console.log('Magic prompt response:', response);
       return {
         subject_context: response.subject_context,
@@ -201,7 +193,7 @@ export class LLMEngine {
         system_prompt: response.system_prompt,
       };
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: debugging error in LLM engine
       console.error('Error in invokeMagicLLM:', error);
       throw error;
     }
@@ -254,7 +246,7 @@ Count and incorporate ALL question domains to ensure comprehensive expertise.`;
       }
       return null;
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: debugging error in LLM engine
       console.error('Error in getMagicResponse:', error);
       return null;
     }
@@ -304,13 +296,13 @@ Count and incorporate ALL question domains to ensure comprehensive expertise.`;
       }
       return null;
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: debugging error in LLM engine
       console.error('Error getting response:', error);
       return null;
     }
   }
 
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: LLM response types are dynamic and need any
   private patchResponse(response: any, questionType: QType): LLMResponse {
     switch (questionType) {
       case QType.DATE:
@@ -347,7 +339,7 @@ Count and incorporate ALL question domains to ensure comprehensive expertise.`;
 
   private getParser(
     questionType: QType,
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    // biome-ignore lint/suspicious/noExplicitAny: LLM response types are dynamic and need any
   ): StructuredOutputParser<any> | DatetimeOutputParser | StringOutputParser {
     switch (questionType) {
       case QType.TEXT:
@@ -489,12 +481,12 @@ Count and incorporate ALL question domains to ensure comprehensive expertise.`;
             multiCorrectOptionsArraySchema,
           );
         }
-          // For multiple-choice with optional 'other' option
-          return StructuredOutputParser.fromZodSchema(
-            multiCorrectOrMultipleOptionSchema.describe(
-              "Schema for a single option in multiple-choice with an optional 'other' option",
-            ),
-          );
+        // For multiple-choice with optional 'other' option
+        return StructuredOutputParser.fromZodSchema(
+          multiCorrectOrMultipleOptionSchema.describe(
+            "Schema for a single option in multiple-choice with an optional 'other' option",
+          ),
+        );
       }
     }
   }

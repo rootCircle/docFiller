@@ -76,7 +76,7 @@ class ConsensusEngine {
           }
         }
       } catch (error) {
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: debugging error in consensus engine
         console.error(error);
       }
     }

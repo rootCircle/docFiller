@@ -60,6 +60,7 @@ function flattenObject(obj: LLMResponse, prefix = ''): FlattenedLLMResponse {
       ) {
         acc[propKey] = value as LLMResponseValue;
       } else {
+        // biome-ignore lint/performance/noAccumulatingSpread: todo fix this later
         Object.assign(acc, flattenObject(value as LLMResponse, propKey));
       }
       return acc;
@@ -72,7 +73,7 @@ function unflattenObject(obj: FlattenedLLMResponse): LLMResponse {
   const result = {} as LLMResponse;
   for (const [key, value] of Object.entries(obj)) {
     const keys = key.split('.');
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    // biome-ignore lint/suspicious/noExplicitAny: dynamic object structure needs any type
     let current: any = result;
     if (typeof current !== 'object') {
       continue;

@@ -38,7 +38,7 @@ async function runDocFillerEngine() {
     try {
       llm = new LLMEngine(await Settings.getInstance().getCurrentLLMModel());
     } catch (e) {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: debugging error when creating LLM engine
       console.error(e);
       return;
     }
@@ -50,11 +50,11 @@ async function runDocFillerEngine() {
   };
   const validation = (await validateLLMConfiguration()) as ValidationResult;
   if (validation.invalidEngines.length > 0) {
-    // biome-ignore lint/suspicious/noConsole: <explanation>
+    // biome-ignore lint/suspicious/noConsole: debugging validation state
     console.log(
       `Consensus is ${validation.isConsensusEnabled ? 'enabled' : 'disabled'}`,
     );
-    // biome-ignore lint/suspicious/noConsole: <explanation>
+    // biome-ignore lint/suspicious/noConsole: debugging invalid engines
     console.error('Invalid engines:', validation.invalidEngines);
     return;
   }
@@ -103,25 +103,25 @@ async function runDocFillerEngine() {
 
       if (fieldType !== null) {
         const fieldValue = fields.getFields(question, fieldType);
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: debugging form field information
         console.log(question);
 
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: debugging field type information
         console.log(`Field Type : ${fieldType}`);
 
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: debugging fields label
         console.log('Fields ↴');
 
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: debugging field value label
         console.log('Field Value ↴');
 
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: debugging field value data
         console.log(fieldValue);
 
         const isFilled = isMarked.markedCheck(fieldType, fieldValue);
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: debugging form filler process
         console.log('Is Already Filled ↴');
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: debugging form filler process
         console.log(isFilled);
         const skipMarkedSettingValue = await getSkipMarkedSetting();
         const enableOpacity = await getEnableOpacityOnSkippedQuestions();
@@ -129,7 +129,7 @@ async function runDocFillerEngine() {
           if (enableOpacity) {
             question.style.opacity = '0.6';
           }
-          // biome-ignore lint/suspicious/noConsole: <explanation>
+          // biome-ignore lint/suspicious/noConsole: debugging form filler process
           console.log('Skipping already marked question:', question);
           continue;
         }
@@ -137,9 +137,9 @@ async function runDocFillerEngine() {
         metricsManager.incrementToBeFilledQuestions();
 
         const promptString = prompts.getPrompt(fieldType, fieldValue);
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: debugging form filler process
         console.log('Prompt ↴');
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: debugging form filler process
         console.log(promptString);
 
         let response = null;
@@ -154,13 +154,13 @@ async function runDocFillerEngine() {
           response = await llm.getResponse(promptString, fieldType, llm.engine);
         }
 
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: debugging form filler process
         console.log('LLM Response ↴');
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: debugging form filler process
         console.log(response);
 
         if (response === null) {
-          // biome-ignore lint/suspicious/noConsole: <explanation>
+          // biome-ignore lint/suspicious/noConsole: debugging form filler process
           console.log('No response from LLM');
           continue;
         }
@@ -169,7 +169,7 @@ async function runDocFillerEngine() {
           fieldValue,
           response,
         );
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: debugging form filler process
         console.log(`Parsed Response : ${parsed_response}`);
 
         if (parsed_response) {
@@ -178,18 +178,18 @@ async function runDocFillerEngine() {
             fieldValue,
             response,
           );
-          // biome-ignore lint/suspicious/noConsole: <explanation>
+          // biome-ignore lint/suspicious/noConsole: debugging form filler process
           console.log(`Filler Status ${fillerStatus}`);
 
           if (fillerStatus) {
             metricsManager.incrementSuccessfulQuestions();
           }
         }
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: debugging form filler process
         console.log();
       }
     } catch (e) {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: debugging form filler process
       console.error(e);
     }
   }

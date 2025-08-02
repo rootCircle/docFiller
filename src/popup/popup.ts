@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let previousState = false;
   chrome.storage.sync.get(['automaticFillingEnabled'], (items) => {
     const automaticFillingEnabled =
-      // biome-ignore lint/complexity/useLiteralKeys: <explanation>
       (items['automaticFillingEnabled'] as boolean) ??
       DEFAULT_PROPERTIES.automaticFillingEnabled;
     previousState = automaticFillingEnabled;
@@ -39,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     !apiMessage ||
     !apiMessageText
   ) {
-    // biome-ignore lint/suspicious/noConsole: <explanation>
+    // biome-ignore lint/suspicious/noConsole: debugging popup functionality
     console.error('Required elements not found');
     return;
   }
@@ -82,8 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await new Promise<void>((resolve, reject) => {
           chrome.storage.sync.get(['automaticFillingEnabled'], (items) => {
             const newState = !(
-              // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-              items['automaticFillingEnabled'] ??
+              items?.['automaticFillingEnabled'] ??
               DEFAULT_PROPERTIES.automaticFillingEnabled
             );
             chrome.storage.sync.set(
@@ -105,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         await checkAndUpdateApiMessage();
       } catch (error) {
-        // biome-ignore lint/suspicious/noConsole: <explanation>
+        // biome-ignore lint/suspicious/noConsole: debugging popup functionality
         console.error(
           `Error saving state. ${error instanceof Error ? error.message : String(error)}`,
         );
@@ -148,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   refreshButton.addEventListener('click', () => {
     chrome.tabs.reload().catch((error) => {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
+      // biome-ignore lint/suspicious/noConsole: debugging popup functionality
       console.error('Failed to reload tab:', error);
     });
   });
@@ -189,6 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   Promise.all([checkAndUpdateApiMessage(), setTheme(), fillProfile()]).catch(
+    // biome-ignore lint/suspicious/noConsole: error handling for popup initialization
     console.error,
   );
 });
