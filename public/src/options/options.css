@@ -1118,7 +1118,6 @@ input[disabled] {
   position: absolute;
   width: 40px;
   height: 40px;
-  background: url("path-to-omnitrix-icon.png") center / contain no-repeat;
   bottom: 10px;
   right: 10px;
   opacity: 0.5;
