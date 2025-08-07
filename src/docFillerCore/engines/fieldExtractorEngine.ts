@@ -523,8 +523,12 @@ export class FieldExtractorEngine {
   }
 
   private getDomDate(element: HTMLElement): DateTimeDomFields {
+    /**
+     * Selects all input elements with type="text" from the given element.
+     * Note: In Firefox, the type attribute is "text", but in Chrome it may be "number".
+     */
     const inputField = element.querySelectorAll(
-      'input[type=text], input[type=date]',
+      'input[type=text], input[type=date], input[type=number]',
     );
     let dateDom: HTMLInputElement | null = null;
     let monthDom: HTMLInputElement | null = null;
@@ -550,8 +554,12 @@ export class FieldExtractorEngine {
   }
 
   private getDomDateAndTime(element: HTMLElement): DateTimeDomFields {
+    /**
+     * Selects all input elements with type="text" from the given element.
+     * Note: In Firefox, the type attribute is "text", but in Chrome it may be "number".
+     */
     const inputField = element.querySelectorAll(
-      'input[type=text], input[type=date]',
+      'input[type=text], input[type=date], input[type=number]',
     );
     let dateDom: HTMLInputElement | null = null;
     let monthDom: HTMLInputElement | null = null;
@@ -591,7 +599,13 @@ export class FieldExtractorEngine {
   }
 
   private getDomDuration(element: HTMLElement): DateTimeDomFields {
-    const inputField = element.querySelectorAll('input[type=text]');
+    /**
+     * Selects all input elements with type="text" from the given element.
+     * Note: In Firefox, the type attribute is "text", but in Chrome it may be "number".
+     */
+    const inputField = element.querySelectorAll(
+      'input[type=text], input[type=number]',
+    );
     let hourDom: HTMLInputElement | null = null;
     let minuteDom: HTMLInputElement | null = null;
     let secondDom: HTMLInputElement | null = null;
@@ -620,8 +634,12 @@ export class FieldExtractorEngine {
   }
 
   private getDomDateWithoutYear(element: HTMLElement): DateTimeDomFields {
+    /**
+     * Selects all input elements with type="text" from the given element.
+     * Note: In Firefox, the type attribute is "text", but in Chrome it may be "number".
+     */
     const inputField = element.querySelectorAll(
-      'input[type=text], input[type=date]',
+      'input[type=text], input[type=date], input[type=number]',
     );
     let dateDom: HTMLInputElement | null = null;
     let monthDom: HTMLInputElement | null = null;
@@ -643,8 +661,12 @@ export class FieldExtractorEngine {
   }
 
   getDomDateTimeWithoutYear(element: HTMLElement): DateTimeDomFields {
+    /**
+     * Selects all input elements with type="text" from the given element.
+     * Note: In Firefox, the type attribute is "text", but in Chrome it may be "number".
+     */
     const inputField = element.querySelectorAll(
-      'input[type=text], input[type=date]',
+      'input[type=text], input[type=date], input[type=number]',
     );
     let dateDom: HTMLInputElement | null = null;
     let monthDom: HTMLInputElement | null = null;
@@ -689,8 +711,12 @@ export class FieldExtractorEngine {
     const meridiem = element.querySelector(
       'div[role=presentation]',
     ) as HTMLElement;
+    /**
+     * Selects all input elements with type="text" from the given element.
+     * Note: In Firefox, the type attribute is "text", but in Chrome it may be "number".
+     */
     const inputField = element.querySelectorAll(
-      'input[type=text], input[type=date]',
+      'input[type=text], input[type=date], input[type=number]',
     );
 
     let dateDom: HTMLInputElement | null = null;
@@ -734,8 +760,12 @@ export class FieldExtractorEngine {
     const meridiem = element.querySelector(
       'div[role=presentation]',
     ) as HTMLElement;
+    /**
+     * Selects all input elements with type="text" from the given element.
+     * Note: In Firefox, the type attribute is "text", but in Chrome it may be "number".
+     */
     const inputField = element.querySelectorAll(
-      'input[type=text], input[type=date]',
+      'input[type=text], input[type=date], input[type=number]',
     );
 
     let hourDom: HTMLInputElement | null = null;
@@ -762,8 +792,12 @@ export class FieldExtractorEngine {
     const meridiem = element.querySelector(
       'div[role=presentation]',
     ) as HTMLElement;
+    /**
+     * Selects all input elements with type="text" from the given element.
+     * Note: In Firefox, the type attribute is "text", but in Chrome it may be "number".
+     */
     const inputField = element.querySelectorAll(
-      'input[type=text], input[type=date]',
+      'input[type=text], input[type=date], input[type=number]',
     );
 
     let dateDom: HTMLInputElement | null = null;
@@ -799,7 +833,13 @@ export class FieldExtractorEngine {
   }
 
   private getDomTime(element: HTMLElement): DateTimeDomFields {
-    const inputField = element.querySelectorAll('input[type=text]');
+    /**
+     * Selects all input elements with type="text" from the given element.
+     * Note: In Firefox, the type attribute is "text", but in Chrome it may be "number".
+     */
+    const inputField = element.querySelectorAll(
+      'input[type=text], input[type=number]',
+    );
 
     let hourDom: HTMLInputElement | null = null;
     let minuteDom: HTMLInputElement | null = null;
