@@ -14,7 +14,6 @@ export class DetectBoxType {
       [key in QType]: boolean;
     } = {
       [QType.DROPDOWN]: this.isDropdown(element),
-      [QType.TEXT]: this.isText(element),
       [QType.PARAGRAPH]: this.isParagraph(element),
       [QType.TEXT_EMAIL]: this.isTextEmail(element),
       [QType.TEXT_URL]: this.isTextURL(element),
@@ -36,6 +35,7 @@ export class DetectBoxType {
       [QType.TIME_WITH_MERIDIEM]: this.isTimeWithMeridiem(element),
       [QType.DATE_TIME_WITH_MERIDIEM_WITHOUT_YEAR]:
         this.isDateWithoutYearWithTimeAndMeridiem(element),
+      [QType.TEXT]: this.isText(element),
     };
 
     for (const key in possibleBoxesMethod) {
@@ -61,7 +61,9 @@ export class DetectBoxType {
     return (
       inputFields.length === 1 &&
       inputType !== 'hidden' &&
-      !['email', 'tel', 'url', 'number'].includes(inputType ?? EMPTY_STRING)
+      !['email', 'tel', 'url', 'number', 'date'].includes(
+        inputType ?? EMPTY_STRING,
+      )
     );
   }
 
@@ -184,7 +186,22 @@ export class DetectBoxType {
       hasMinute,
       hasSecond,
       hasMeridiemField,
+      isChromeDateField,
     ] = this.timeCacher.getTimeParams(element);
+
+    // For chromium based browsers
+    if (isChromeDateField) {
+      return Boolean(
+        inputFieldCount === 1 &&
+          !hasYear &&
+          !hasMonth &&
+          !hasDate &&
+          !hasHour &&
+          !hasMinute &&
+          !hasSecond &&
+          !hasMeridiemField,
+      );
+    }
 
     return Boolean(
       inputFieldCount === 3 &&
@@ -208,7 +225,22 @@ export class DetectBoxType {
       hasMinute,
       hasSecond,
       hasMeridiemField,
+      isChromeDateField,
     ] = this.timeCacher.getTimeParams(element);
+
+    // For chromium based browsers
+    if (isChromeDateField) {
+      return Boolean(
+        inputFieldCount === 3 &&
+          !hasYear &&
+          !hasMonth &&
+          !hasDate &&
+          hasHour &&
+          hasMinute &&
+          !hasSecond &&
+          !hasMeridiemField,
+      );
+    }
 
     return Boolean(
       inputFieldCount === 5 &&
@@ -232,6 +264,7 @@ export class DetectBoxType {
       hasMinute,
       hasSecond,
       hasMeridiemField,
+      _isChromeDateField,
     ] = this.timeCacher.getTimeParams(element);
 
     return Boolean(
@@ -256,6 +289,7 @@ export class DetectBoxType {
       _hasMinute,
       hasSecond,
       hasMeridiemField,
+      _isChromeDateField,
     ] = this.timeCacher.getTimeParams(element);
 
     const hasHourReal = Boolean(
@@ -287,6 +321,7 @@ export class DetectBoxType {
       hasMinute,
       hasSecond,
       hasMeridiemField,
+      _isChromeDateField,
     ] = this.timeCacher.getTimeParams(element);
 
     return Boolean(
@@ -311,6 +346,7 @@ export class DetectBoxType {
       hasMinute,
       hasSecond,
       hasMeridiemField,
+      _isChromeDateField,
     ] = this.timeCacher.getTimeParams(element);
 
     return Boolean(
@@ -335,7 +371,22 @@ export class DetectBoxType {
       hasMinute,
       hasSecond,
       hasMeridiemField,
+      isChromeDateField,
     ] = this.timeCacher.getTimeParams(element);
+
+    // For chromium based browsers
+    if (isChromeDateField) {
+      return Boolean(
+        inputFieldCount === 3 &&
+          !hasYear &&
+          !hasMonth &&
+          !hasDate &&
+          hasHour &&
+          hasMinute &&
+          !hasSecond &&
+          hasMeridiemField,
+      );
+    }
 
     return Boolean(
       inputFieldCount === 5 &&
@@ -359,6 +410,7 @@ export class DetectBoxType {
       hasMinute,
       hasSecond,
       hasMeridiemField,
+      _isChromeDateField,
     ] = this.timeCacher.getTimeParams(element);
 
     return Boolean(
@@ -383,6 +435,7 @@ export class DetectBoxType {
       hasMinute,
       hasSecond,
       hasMeridiemField,
+      _isChromeDateField,
     ] = this.timeCacher.getTimeParams(element);
 
     return Boolean(

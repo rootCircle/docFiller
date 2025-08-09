@@ -16,12 +16,14 @@ export class DetectBoxTypeTimeCacher {
   private hasMinute: boolean | null = null;
   private hasSecond: boolean | null = null;
   private hasMeridiemField: boolean | null = null;
+  private isChromeDateField: boolean | null = null;
 
   public getTimeParams(
     element: HTMLElement,
-    invalidateCache = false,
+    invalidateCache = true,
   ): [
     number | null,
+    boolean | null,
     boolean | null,
     boolean | null,
     boolean | null,
@@ -33,6 +35,11 @@ export class DetectBoxTypeTimeCacher {
     if (element !== this.element || invalidateCache) {
       this.element = element;
       this.inputFieldCount = element.querySelectorAll('input').length;
+      // Special handling for Chrome date fields, as there is different behavior in Chrome and Firefox.
+      this.isChromeDateField = Boolean(
+        element.querySelector('input[type=date]'),
+      );
+
       this.hasYear = Boolean(element.querySelector('input[aria-label="Year"]'));
       this.hasMonth = Boolean(
         element.querySelector('input[aria-label="Month"]'),
@@ -61,6 +68,7 @@ export class DetectBoxTypeTimeCacher {
       this.hasMinute,
       this.hasSecond,
       this.hasMeridiemField,
+      this.isChromeDateField,
     ];
   }
 }
