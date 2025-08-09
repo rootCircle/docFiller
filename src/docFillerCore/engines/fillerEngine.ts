@@ -140,24 +140,27 @@ export class FillerEngine {
     const day = date.getUTCDate().toString().padStart(2, '0');
     const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
     const year = date.getUTCFullYear().toString();
-
     const inputEvent = new Event('input', { bubbles: true });
 
-    if (fieldValue.date) {
-      fieldValue.date.value = day;
-      fieldValue.date.dispatchEvent(inputEvent);
-    }
+    if (fieldValue.chromeDateField) {
+      fieldValue.chromeDateField.value = `${year}-${month}-${day}`;
+      fieldValue.chromeDateField.dispatchEvent(inputEvent);
+    } else {
+      if (fieldValue.date) {
+        fieldValue.date.value = day;
+        fieldValue.date.dispatchEvent(inputEvent);
+      }
 
-    if (fieldValue.month) {
-      fieldValue.month.value = month;
-      fieldValue.month.dispatchEvent(inputEvent);
-    }
+      if (fieldValue.month) {
+        fieldValue.month.value = month;
+        fieldValue.month.dispatchEvent(inputEvent);
+      }
 
-    if (fieldValue.year) {
-      fieldValue.year.value = year;
-      fieldValue.year.dispatchEvent(inputEvent);
+      if (fieldValue.year) {
+        fieldValue.year.value = year;
+        fieldValue.year.dispatchEvent(inputEvent);
+      }
     }
-
     return true;
   }
 
@@ -185,19 +188,24 @@ export class FillerEngine {
 
     const inputEvent = new Event('input', { bubbles: true });
 
-    if (fieldValue.date) {
-      fieldValue.date.value = day;
-      fieldValue.date.dispatchEvent(inputEvent);
-    }
+    if (fieldValue.chromeDateField) {
+      fieldValue.chromeDateField.value = `${year}-${month}-${day}`;
+      fieldValue.chromeDateField.dispatchEvent(inputEvent);
+    } else {
+      if (fieldValue.date) {
+        fieldValue.date.value = day;
+        fieldValue.date.dispatchEvent(inputEvent);
+      }
 
-    if (fieldValue.month) {
-      fieldValue.month.value = month;
-      fieldValue.month.dispatchEvent(inputEvent);
-    }
+      if (fieldValue.month) {
+        fieldValue.month.value = month;
+        fieldValue.month.dispatchEvent(inputEvent);
+      }
 
-    if (fieldValue.year) {
-      fieldValue.year.value = year;
-      fieldValue.year.dispatchEvent(inputEvent);
+      if (fieldValue.year) {
+        fieldValue.year.value = year;
+        fieldValue.year.dispatchEvent(inputEvent);
+      }
     }
 
     if (fieldValue.hour) {
@@ -388,17 +396,22 @@ export class FillerEngine {
 
     const inputEvent = new Event('input', { bubbles: true });
 
-    if (fieldValue.date) {
-      fieldValue.date.value = day;
-      fieldValue.date.dispatchEvent(inputEvent);
-    }
-    if (fieldValue.month) {
-      fieldValue.month.value = month;
-      fieldValue.month.dispatchEvent(inputEvent);
-    }
-    if (fieldValue.year) {
-      fieldValue.year.value = year;
-      fieldValue.year.dispatchEvent(inputEvent);
+    if (fieldValue.chromeDateField) {
+      fieldValue.chromeDateField.value = `${year}-${month}-${day}`;
+      fieldValue.chromeDateField.dispatchEvent(inputEvent);
+    } else {
+      if (fieldValue.date) {
+        fieldValue.date.value = day;
+        fieldValue.date.dispatchEvent(inputEvent);
+      }
+      if (fieldValue.month) {
+        fieldValue.month.value = month;
+        fieldValue.month.dispatchEvent(inputEvent);
+      }
+      if (fieldValue.year) {
+        fieldValue.year.value = year;
+        fieldValue.year.dispatchEvent(inputEvent);
+      }
     }
 
     if (fieldValue.hour) {

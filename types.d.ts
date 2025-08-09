@@ -19,6 +19,7 @@ interface ExtractedValue {
   minute?: HTMLInputElement | null;
   second?: HTMLInputElement | null;
   meridiem?: HTMLElement;
+  chromeDateField?: HTMLInputElement | null;
 }
 
 interface DOMPointer {
@@ -79,6 +80,7 @@ interface DateTimeDomFields {
   minute?: HTMLInputElement | null;
   second?: HTMLInputElement | null;
   meridiem?: HTMLElement;
+  chromeDateField?: HTMLInputElement | null;
 }
 
 interface MultiCorrectOrMultipleOption {

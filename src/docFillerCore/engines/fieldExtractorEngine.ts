@@ -528,11 +528,13 @@ export class FieldExtractorEngine {
      * Note: In Firefox, the type attribute is "text", but in Chrome it may be "number".
      */
     const inputField = element.querySelectorAll(
-      'input[type=text], input[type=date], input[type=number]',
+      'input[type=text], input[type=number]',
     );
     let dateDom: HTMLInputElement | null = null;
     let monthDom: HTMLInputElement | null = null;
     let yearDom: HTMLInputElement | null = null;
+    const chromeDateField: HTMLInputElement | null =
+      element.querySelector('input[type=date]');
 
     inputField.forEach((input) => {
       switch (input.getAttribute('aria-label')) {
@@ -550,7 +552,7 @@ export class FieldExtractorEngine {
       }
     });
 
-    return { date: dateDom, month: monthDom, year: yearDom };
+    return { date: dateDom, month: monthDom, year: yearDom, chromeDateField };
   }
 
   private getDomDateAndTime(element: HTMLElement): DateTimeDomFields {
@@ -559,13 +561,16 @@ export class FieldExtractorEngine {
      * Note: In Firefox, the type attribute is "text", but in Chrome it may be "number".
      */
     const inputField = element.querySelectorAll(
-      'input[type=text], input[type=date], input[type=number]',
+      'input[type=text], input[type=number]',
     );
     let dateDom: HTMLInputElement | null = null;
     let monthDom: HTMLInputElement | null = null;
     let yearDom: HTMLInputElement | null = null;
     let hourDom: HTMLInputElement | null = null;
     let minuteDom: HTMLInputElement | null = null;
+
+    const chromeDateField: HTMLInputElement | null =
+      element.querySelector('input[type=date]');
 
     inputField.forEach((input) => {
       switch (input.getAttribute('aria-label')) {
@@ -595,6 +600,7 @@ export class FieldExtractorEngine {
       year: yearDom,
       hour: hourDom,
       minute: minuteDom,
+      chromeDateField,
     };
   }
 
@@ -639,7 +645,7 @@ export class FieldExtractorEngine {
      * Note: In Firefox, the type attribute is "text", but in Chrome it may be "number".
      */
     const inputField = element.querySelectorAll(
-      'input[type=text], input[type=date], input[type=number]',
+      'input[type=text], input[type=number]',
     );
     let dateDom: HTMLInputElement | null = null;
     let monthDom: HTMLInputElement | null = null;
@@ -666,7 +672,7 @@ export class FieldExtractorEngine {
      * Note: In Firefox, the type attribute is "text", but in Chrome it may be "number".
      */
     const inputField = element.querySelectorAll(
-      'input[type=text], input[type=date], input[type=number]',
+      'input[type=text], input[type=number]',
     );
     let dateDom: HTMLInputElement | null = null;
     let monthDom: HTMLInputElement | null = null;
@@ -716,8 +722,11 @@ export class FieldExtractorEngine {
      * Note: In Firefox, the type attribute is "text", but in Chrome it may be "number".
      */
     const inputField = element.querySelectorAll(
-      'input[type=text], input[type=date], input[type=number]',
+      'input[type=text], input[type=number]',
     );
+
+    const chromeDateField: HTMLInputElement | null =
+      element.querySelector('input[type=date]');
 
     let dateDom: HTMLInputElement | null = null;
     let monthDom: HTMLInputElement | null = null;
@@ -753,6 +762,7 @@ export class FieldExtractorEngine {
       hour: hourDom,
       minute: minuteDom,
       meridiem,
+      chromeDateField,
     };
   }
 
@@ -765,7 +775,7 @@ export class FieldExtractorEngine {
      * Note: In Firefox, the type attribute is "text", but in Chrome it may be "number".
      */
     const inputField = element.querySelectorAll(
-      'input[type=text], input[type=date], input[type=number]',
+      'input[type=text], input[type=number]',
     );
 
     let hourDom: HTMLInputElement | null = null;
@@ -797,7 +807,7 @@ export class FieldExtractorEngine {
      * Note: In Firefox, the type attribute is "text", but in Chrome it may be "number".
      */
     const inputField = element.querySelectorAll(
-      'input[type=text], input[type=date], input[type=number]',
+      'input[type=text], input[type=number]',
     );
 
     let dateDom: HTMLInputElement | null = null;
