@@ -1,6 +1,11 @@
 # Changelog
 
-## v1.5.1 [Unreleased] (as of 2025-08-03)
+## v1.6.1 [Unreleased] (as of 2025-08-10)
+
+## v1.6.0 (2025-08-10)
+
+- fix major issue with date fields not working in google chrome
+- fix issue with chrome.runtime from background worker parsing the date object as string to the receiver. (only faced in chromium)
 
 ## v1.5.0 (2025-08-03)
 
