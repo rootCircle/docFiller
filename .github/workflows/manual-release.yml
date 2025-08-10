@@ -1,0 +1,71 @@
+name: docFiller Extension Mannual Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build and Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Zip Source Code
+        run: |
+          zip -r docFiller.zip . -x '*.git*' -x '*node_modules*' -x '*build*' -x '*coverage*' -x '*web-ext-artifacts*'
+
+      - name: Extract Version from Tag
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          MINIFIED_VERSION=${VERSION#v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "MINIFIED_VERSION=$MINIFIED_VERSION" >> $GITHUB_ENV
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Installation of Dependencies 
+        run: |
+          bun install
+  
+      - name: Package extension
+        run: |
+          bun run package:firefox
+          bun run package:chromium
+
+      - name: Upload to Chrome Web Store
+        uses: mobilefirstllc/cws-publish@latest
+        with:
+          action: 'publish'  # one of: upload, publish, testers
+          extension_id: goibiampjlgcdjdfakjepniopldpijcd
+          zip_file: web-ext-artifacts/docfiller-${{ env.MINIFIED_VERSION }}-chromium.zip
+          client_id: ${{ secrets.CHROME_CLIENT_ID }}
+          client_secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+          refresh_token: ${{ secrets.CHROME_REFRESH_TOKEN }}
+        continue-on-error: true
+      
+      - uses: wdzeng/firefox-addon@v1
+        with:
+          addon-guid: "docFiller@rootcircle.github.io"
+          xpi-path: web-ext-artifacts/docfiller-${{ env.MINIFIED_VERSION }}-firefox.zip
+          self-hosted: false
+          jwt-issuer: ${{ secrets.FIREFOX_AUTH_API_ISSUER }}
+          jwt-secret: ${{ secrets.FIREFOX_AUTH_API_SECRET }}
+          approval-notes: "Available at https://github.com/rootCircle/docFiller/blob/dev/docs/FOR_ADDONS_REVIEWERS.md"      
+        continue-on-error: true
+
+      - uses: wdzeng/edge-addon@v2
+        with:
+          product-id: 4dfc1366-555a-431e-91d1-9991bc771fab
+          zip-path: web-ext-artifacts/docfiller-${{ env.MINIFIED_VERSION }}-chromium.zip
+          api-key: ${{ secrets.EDGE_API_KEY }}
+          client-id: ${{ secrets.EDGE_CLIENT_ID }}
+        continue-on-error: true
+
