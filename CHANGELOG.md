@@ -1,6 +1,10 @@
 # Changelog
 
-## v1.6.1 [Unreleased] (as of 2025-08-10)
+## v1.6.2 [Unreleased] (as of 2025-08-10)
+
+## v1.6.1 (2025-08-10)
+
+- hotfix: fix release process for extension
 
 ## v1.6.0 (2025-08-10)
 
