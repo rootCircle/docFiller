@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [22.x]
 
     steps:
     - uses: actions/checkout@v4
@@ -21,6 +21,8 @@ jobs:
         fetch-depth: 0
 
     - uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: latest
 
     - name: Install dependencies
       run: |
