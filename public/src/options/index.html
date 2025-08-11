@@ -15,451 +15,698 @@
   <body>
     <h1>Settings</h1>
     <div class="container">
-      <div class="profiles-container">
-        <div class="profile-cards"></div>
-      </div>
-      <div id="addProfileModal" class="modal hidden">
-        <div class="modal-content">
-          <span class="close-button">&times;</span>
-          <h2>Add New Profile</h2>
-          <form id="addProfileForm">
-            <div class="form-group">
-              <label for="profileName">Name</label>
-              <input type="text" id="profileName" name="profileName" required />
+      <nav class="tab-nav" role="tablist" aria-label="Settings Tabs">
+        <button
+          class="tab-link active"
+          id="tab-profiles-btn"
+          role="tab"
+          aria-selected="true"
+          aria-controls="tab-profiles"
+        >
+          Profiles & Theme
+        </button>
+        <button
+          class="tab-link"
+          id="tab-api-btn"
+          role="tab"
+          aria-selected="false"
+          aria-controls="tab-api"
+        >
+          API Keys & Consensus
+        </button>
+        <button
+          class="tab-link"
+          id="tab-metrics-btn"
+          role="tab"
+          aria-selected="false"
+          aria-controls="tab-metrics"
+        >
+          Metrics
+        </button>
+        <button
+          class="tab-link"
+          id="tab-advanced-btn"
+          role="tab"
+          aria-selected="false"
+          aria-controls="tab-advanced"
+        >
+          Advanced
+        </button>
+        <button
+          class="tab-link"
+          id="tab-about-btn"
+          role="tab"
+          aria-selected="false"
+          aria-controls="tab-about"
+        >
+          About
+        </button>
+      </nav>
+      <div class="tab-panels">
+        <!-- Tab 1: Profiles & Theme -->
+        <section
+          id="tab-profiles"
+          class="tab-panel active"
+          role="tabpanel"
+          aria-labelledby="tab-profiles-btn"
+        >
+          <div class="section">
+            <h2 class="section-heading">Profiles</h2>
+            <div class="profiles-container">
+              <div class="profile-cards" id="profileCards"></div>
             </div>
-
-            <div class="form-group">
-              <label for="profileImage">Image URL</label>
-              <input
-                type="text"
-                id="profileImage"
-                name="profileImage"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="profilePrompt">Prompt</label>
-              <textarea
-                id="profilePrompt"
-                name="profilePrompt"
-                required
-              ></textarea>
-            </div>
-
-            <div class="form-group">
-              <label for="profileShortDescription">Short Description</label>
-              <input
-                type="text"
-                id="profileShortDescription"
-                name="profileShortDescription"
-                required
-              />
-            </div>
-
-            <div class="form-actions">
-              <button type="submit" class="submit-button">Add Profile</button>
-              <button type="button" class="cancel-button">Cancel</button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <form id="optionsForm">
-        <div class="form-group">
-          <label for="sleepDuration">Sleep Duration (ms)</label>
-          <input
-            type="number"
-            id="sleepDuration"
-            name="sleepDuration"
-            min="100"
-            step="100"
-            value="2000"
-          />
-        </div>
-
-        <div class="toggleConsensusMenu">
-          <input type="checkbox" id="enableConsensus" name="enableConsensus" />
-          <label for="enableConsensus">Enable Consensus</label>
-        </div>
-
-        <div class="toggleConsensusMenu">
-          <input type="checkbox" id="enableDarkTheme" name="enableDarkTheme" />
-          <label for="enableDarkTheme">Dark Theme</label>
-        </div>
-
-        <div id="singleModelOptions" class="form-group">
-          <label for="llmModel">LLM Model</label>
-          <select id="llmModel" name="llmModel">
-            <option value="Gemini">Gemini</option>
-            <option value="ChatGPT">ChatGPT</option>
-            <option value="Ollama">Ollama</option>
-            <option value="ChromeAI">Chrome AI</option>
-            <option value="Mistral">Mistral</option>
-            <option value="Anthropic">Anthropic</option>
-          </select>
-          <div class="api-key-input">
-            <label for="singleApiKey" class="single-api-label">API Key</label>
-            <div class="password-container">
-              <input
-                type="password"
-                id="singleApiKey"
-                name="singleApiKey"
-                class="password-input"
-              />
-              <button
-                type="button"
-                class="password-toggle"
-                data-for="singleApiKey"
-              >
-                <svg
-                  class="eye-icon"
-                  viewBox="0 0 24 24"
-                  width="20"
-                  height="20"
-                >
-                  <path
-                    class="eye-open"
-                    d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
-                  />
-                  <path
-                    class="eye-closed"
-                    d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"
-                  />
-                </svg>
-              </button>
-              <div class="warning-message">
-                Ollama/Chrome AI doesn't require an API key
+          </div>
+          <div class="section">
+            <h2 class="section-heading">Theme & Behavior</h2>
+            <div class="setting-group">
+              <div class="toggle-setting">
+                <span class="setting-label">Dark Theme</span>
+                <div id="darkThemeToggleButton" class="creative-toggle">
+                  <div class="toggle-track">
+                    <div class="toggle-thumb">
+                      <svg class="check-icon" viewBox="0 0 24 24">
+                        <path
+                          d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"
+                        />
+                      </svg>
+                      <svg class="cross-icon" viewBox="0 0 24 24">
+                        <path
+                          d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <a id="singleApiKeyLink" target="_blank" class="get-api-key"
-              >Get API Key</a
-            >
-          </div>
-        </div>
-
-        <div id="consensusWeights" class="hidden">
-          <div class="form-group">
-            <div>
-              <label for="chatGptApiKey">ChatGPT API Key</label>
-              <div class="password-container">
-                <input
-                  type="text"
-                  id="chatGptApiKey"
-                  name="chatGptApiKey"
-                  class="password-input"
-                />
-                <button
-                  type="button"
-                  class="password-toggle"
-                  data-for="chatGptApiKey"
-                >
-                  <svg
-                    class="eye-icon"
-                    viewBox="0 0 24 24"
-                    width="20"
-                    height="20"
-                  >
-                    <path
-                      class="eye-open"
-                      d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
-                    />
-                    <path
-                      class="eye-closed"
-                      d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <a target="_blank" class="get-api-key">Get API Key</a>
-            </div>
-            <div>
-              <label for="weightChatGPT">Weight</label>
-              <input
-                type="number"
-                id="weightChatGPT"
-                name="weightChatGPT"
-                min="0"
-                max="1"
-                step="0.01"
-                value="0.42"
-              />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <div>
-              <label for="geminiApiKey">Gemini API Key</label>
-              <div class="password-container">
-                <input
-                  type="text"
-                  id="geminiApiKey"
-                  name="geminiApiKey"
-                  class="password-input"
-                />
-                <button
-                  type="button"
-                  class="password-toggle"
-                  data-for="geminiApiKey"
-                >
-                  <svg
-                    class="eye-icon"
-                    viewBox="0 0 24 24"
-                    width="20"
-                    height="20"
-                  >
-                    <path
-                      class="eye-open"
-                      d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
-                    />
-                    <path
-                      class="eye-closed"
-                      d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <a target="_blank" class="get-api-key">Get API Key</a>
-            </div>
-            <div>
-              <label for="weightGemini">Weight</label>
-              <input
-                type="number"
-                id="weightGemini"
-                name="weightGemini"
-                min="0"
-                max="1"
-                step="0.01"
-                value="0.42"
-              />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <div>
-              <label for="ollamaApiKey">Ollama API Key</label>
-              <div class="password-container">
-                <input
-                  type="password"
-                  id="ollamaApiKey"
-                  name="ollamaApiKey"
-                  class="password-input"
-                  disabled
-                  placeholder="No API key is required for Ollama! Ensure Ollama is installed locally on your system"
-                />
-              </div>
-            </div>
-            <div>
-              <label for="weightOllama">Weight</label>
-              <input
-                type="number"
-                id="weightOllama"
-                name="weightOllama"
-                min="0"
-                max="1"
-                step="0.01"
-                value="0.16"
-              />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <div>
-              <label for="chromeApiKey">Chrome AI API Key</label>
-              <input
-                type="text"
-                id="chromeAIApiKey"
-                name="chromeApiKey"
-                disabled
-                placeholder="No API key is required for Chrome AI! Please enable it in chrome://flags"
-              />
-            </div>
-            <div>
-              <label for="weightChromeAI">Weight</label>
-              <input
-                type="number"
-                id="weightChromeAI"
-                name="weightChromeAI"
-                min="0"
-                max="1"
-                step="0.01"
-                value="0.16"
-              />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <div>
-              <label for="mistralApiKey">Mistral API Key</label>
-              <div class="password-container">
-                <input
-                  type="password"
-                  id="mistralApiKey"
-                  name="mistralApiKey"
-                  class="password-input"
-                />
-                <button
-                  type="button"
-                  class="password-toggle"
-                  data-for="mistralApiKey"
-                >
-                  <svg
-                    class="eye-icon"
-                    viewBox="0 0 24 24"
-                    width="20"
-                    height="20"
-                  >
-                    <path
-                      class="eye-open"
-                      d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
-                    />
-                    <path
-                      class="eye-closed"
-                      d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <a target="_blank" class="get-api-key">Get API Key</a>
-            </div>
-            <div>
-              <label for="weightMistral">Weight</label>
-              <input
-                type="number"
-                id="weightMistral"
-                name="weightMistral"
-                min="0"
-                max="1"
-                step="0.01"
-                value="0.16"
-              />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <div>
-              <label for="anthropicApiKey">Anthropic API Key</label>
-              <div class="password-container">
-                <input
-                  type="password"
-                  id="anthropicApiKey"
-                  name="anthropicApiKey"
-                  class="password-input"
-                />
-                <button
-                  type="button"
-                  class="password-toggle"
-                  data-for="anthropicApiKey"
-                >
-                  <svg
-                    class="eye-icon"
-                    viewBox="0 0 24 24"
-                    width="20"
-                    height="20"
-                  >
-                    <path
-                      class="eye-open"
-                      d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
-                    />
-                    <path
-                      class="eye-closed"
-                      d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <a target="_blank" class="get-api-key">Get API Key</a>
-            </div>
-            <div>
-              <label for="weightAnthropic">Weight</label>
-              <input
-                type="number"
-                id="weightAnthropic"
-                name="weightAnthropic"
-                min="0"
-                max="1"
-                step="0.01"
-                value="0.16"
-              />
-            </div>
-          </div>
-        </div>
-        <div class="setting-group">
-          <div class="toggle-setting">
-            <span class="setting-label">Skip Already Filled Questions</span>
-            <div id="skipMarkedToggleButton" class="creative-toggle">
-              <div class="toggle-track">
-                <div class="toggle-thumb">
-                  <svg class="check-icon" viewBox="0 0 24 24">
-                    <path
-                      d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"
-                    />
-                  </svg>
-                  <svg class="cross-icon" viewBox="0 0 24 24">
-                    <path
-                      d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"
-                    />
-                  </svg>
+            <div class="setting-group">
+              <div class="toggle-setting">
+                <span class="setting-label">Skip Already Filled Questions</span>
+                <div id="skipMarkedToggleButton" class="creative-toggle">
+                  <div class="toggle-track">
+                    <div class="toggle-thumb">
+                      <svg class="check-icon" viewBox="0 0 24 24">
+                        <path
+                          d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"
+                        />
+                      </svg>
+                      <svg class="cross-icon" viewBox="0 0 24 24">
+                        <path
+                          d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+        </section>
+        <!-- Tab 2: API Keys & Consensus -->
+        <section
+          id="tab-api"
+          class="tab-panel"
+          role="tabpanel"
+          aria-labelledby="tab-api-btn"
+        >
+          <div class="section">
+            <h2 class="section-heading">AI Model Settings</h2>
+            <div class="toggleConsensusMenu">
+              <input
+                type="checkbox"
+                id="enableConsensus"
+                name="enableConsensus"
+              />
+              <label for="enableConsensus" class="setting-label"
+                >Enable Consensus</label
+              >
+            </div>
+            <div id="singleModelOptions" class="form-group">
+              <label for="llmModel">LLM Model</label>
+              <select id="llmModel" name="llmModel">
+                <option value="Gemini">Gemini</option>
+                <option value="ChatGPT">ChatGPT</option>
+                <option value="Ollama">Ollama</option>
+                <option value="ChromeAI">Chrome AI</option>
+                <option value="Mistral">Mistral</option>
+                <option value="Anthropic">Anthropic</option>
+              </select>
+              <div class="api-key-input">
+                <label for="singleApiKey" class="single-api-label"
+                  >API Key</label
+                >
+                <div class="password-container">
+                  <input
+                    type="password"
+                    id="singleApiKey"
+                    name="singleApiKey"
+                    class="password-input"
+                  />
+                  <button
+                    type="button"
+                    class="password-toggle"
+                    data-for="singleApiKey"
+                  >
+                    <svg
+                      class="eye-icon"
+                      viewBox="0 0 24 24"
+                      width="20"
+                      height="20"
+                    >
+                      <path
+                        class="eye-open"
+                        d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
+                      />
+                      <path
+                        class="eye-closed"
+                        d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <div class="warning-message">
+                  Ollama/Chrome AI doesn't require an API key
+                </div>
+                <a id="singleApiKeyLink" target="_blank" class="get-api-key"
+                  >Get API Key</a
+                >
+              </div>
+            </div>
+            <div id="consensusWeights" class="hidden">
+              <!-- Consensus model API keys and weights -->
+              <div class="form-group">
+                <div>
+                  <label for="chatGptApiKey">ChatGPT API Key</label>
+                  <div class="password-container">
+                    <input
+                      type="password"
+                      id="chatGptApiKey"
+                      name="chatGptApiKey"
+                      class="password-input"
+                    />
+                    <button
+                      type="button"
+                      class="password-toggle"
+                      data-for="chatGptApiKey"
+                    >
+                      <svg
+                        class="eye-icon"
+                        viewBox="0 0 24 24"
+                        width="20"
+                        height="20"
+                      >
+                        <path
+                          class="eye-open"
+                          d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
+                        />
+                        <path
+                          class="eye-closed"
+                          d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                  <a target="_blank" class="get-api-key">Get API Key</a>
+                </div>
+                <div>
+                  <label for="weightChatGPT">Weight</label>
+                  <input
+                    type="number"
+                    id="weightChatGPT"
+                    name="weightChatGPT"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value="0.42"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div>
+                  <label for="geminiApiKey">Gemini API Key</label>
+                  <div class="password-container">
+                    <input
+                      type="password"
+                      id="geminiApiKey"
+                      name="geminiApiKey"
+                      class="password-input"
+                    />
+                    <button
+                      type="button"
+                      class="password-toggle"
+                      data-for="geminiApiKey"
+                    >
+                      <svg
+                        class="eye-icon"
+                        viewBox="0 0 24 24"
+                        width="20"
+                        height="20"
+                      >
+                        <path
+                          class="eye-open"
+                          d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
+                        />
+                        <path
+                          class="eye-closed"
+                          d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                  <a target="_blank" class="get-api-key">Get API Key</a>
+                </div>
+                <div>
+                  <label for="weightGemini">Weight</label>
+                  <input
+                    type="number"
+                    id="weightGemini"
+                    name="weightGemini"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value="0.16"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div>
+                  <label for="ollamaApiKey">Ollama API Key</label>
+                  <div class="password-container">
+                    <input
+                      type="password"
+                      id="ollamaApiKey"
+                      name="ollamaApiKey"
+                      class="password-input"
+                      disabled
+                      placeholder="No API key is required for Ollama! Ensure Ollama is installed locally on your system"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label for="weightOllama">Weight</label>
+                  <input
+                    type="number"
+                    id="weightOllama"
+                    name="weightOllama"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value="0.16"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div>
+                  <label for="chromeAIApiKey">Chrome AI API Key</label>
+                  <input
+                    type="text"
+                    id="chromeAIApiKey"
+                    name="chromeApiKey"
+                    disabled
+                    placeholder="No API key is required for Chrome AI! Please enable it in chrome://flags"
+                  />
+                </div>
+                <div>
+                  <label for="weightChromeAI">Weight</label>
+                  <input
+                    type="number"
+                    id="weightChromeAI"
+                    name="weightChromeAI"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value="0.16"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div>
+                  <label for="mistralApiKey">Mistral API Key</label>
+                  <div class="password-container">
+                    <input
+                      type="password"
+                      id="mistralApiKey"
+                      name="mistralApiKey"
+                      class="password-input"
+                    />
+                    <button
+                      type="button"
+                      class="password-toggle"
+                      data-for="mistralApiKey"
+                    >
+                      <svg
+                        class="eye-icon"
+                        viewBox="0 0 24 24"
+                        width="20"
+                        height="20"
+                      >
+                        <path
+                          class="eye-open"
+                          d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
+                        />
+                        <path
+                          class="eye-closed"
+                          d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                  <a target="_blank" class="get-api-key">Get API Key</a>
+                </div>
+                <div>
+                  <label for="weightMistral">Weight</label>
+                  <input
+                    type="number"
+                    id="weightMistral"
+                    name="weightMistral"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value="0.16"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div>
+                  <label for="anthropicApiKey">Anthropic API Key</label>
+                  <div class="password-container">
+                    <input
+                      type="password"
+                      id="anthropicApiKey"
+                      name="anthropicApiKey"
+                      class="password-input"
+                    />
+                    <button
+                      type="button"
+                      class="password-toggle"
+                      data-for="anthropicApiKey"
+                    >
+                      <svg
+                        class="eye-icon"
+                        viewBox="0 0 24 24"
+                        width="20"
+                        height="20"
+                      >
+                        <path
+                          class="eye-open"
+                          d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"
+                        />
+                        <path
+                          class="eye-closed"
+                          d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                  <a target="_blank" class="get-api-key">Get API Key</a>
+                </div>
+                <div>
+                  <label for="weightAnthropic">Weight</label>
+                  <input
+                    type="number"
+                    id="weightAnthropic"
+                    name="weightAnthropic"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value="0.16"
+                  />
+                </div>
+              </div>
+            </div>
+            <!-- Per-tab actions -->
+            <div class="action-buttons">
+              <button type="button" id="saveApiButton">
+                Save API & Consensus
+              </button>
+            </div>
+          </div>
+        </section>
+        <!-- Tab 3: Metrics -->
+        <section
+          id="tab-metrics"
+          class="tab-panel"
+          role="tabpanel"
+          aria-labelledby="tab-metrics-btn"
+        >
+          <div class="section">
+            <h2 class="section-heading">Usage Metrics</h2>
+            <div class="metrics-container">
+              <!-- Loading State -->
+              <div id="metricsLoading" class="metrics-loading hidden">
+                <div class="spinner"></div>
+                <p>Loading metrics...</p>
+              </div>
+
+              <!-- Summary Stats -->
+              <div class="metrics-summary">
+                <div class="metric-card">
+                  <h3>Total Forms Filled</h3>
+                  <div id="totalFormsFilled">
+                    <p class="metric-value">0</p>
+                    <div class="metric-trend"></div>
+                  </div>
+                </div>
+                <div class="metric-card">
+                  <h3>Success Rate</h3>
+                  <div id="successRate">
+                    <p class="metric-value">0%</p>
+                    <div class="metric-trend"></div>
+                  </div>
+                </div>
+                <div class="metric-card">
+                  <h3>Time Saved</h3>
+                  <div id="timeSaved">
+                    <p class="metric-value">0 mins</p>
+                    <div class="metric-trend"></div>
+                  </div>
+                </div>
+                <div class="metric-card">
+                  <h3>Streaks</h3>
+                  <div id="activeStreak">
+                    <p class="metric-value">0</p>
+                    <div class="metric-trend">Current streak</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Controls -->
+              <div class="metrics-controls">
+                <div id="exportMetrics" class="btn btn-primary">
+                  <span class="icon">📊</span> Export Metrics
+                </div>
+                <div id="resetMetrics" class="btn btn-secondary">
+                  <span class="icon">🔄</span> Reset Metrics
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- Tab 4: Advanced Settings -->
+        <section
+          id="tab-advanced"
+          class="tab-panel"
+          role="tabpanel"
+          aria-labelledby="tab-advanced-btn"
+        >
+          <div class="section">
+            <h2 class="section-heading">Advanced Settings</h2>
+            <div class="advanced-panel">
+              <div class="form-group">
+                <label for="sleepDuration">Sleep Duration (ms)</label>
+                <input
+                  type="number"
+                  id="sleepDuration"
+                  name="sleepDuration"
+                  min="100"
+                  step="100"
+                  value="2000"
+                />
+              </div>
+            </div>
+            <!-- Per-tab actions -->
+            <div class="action-buttons">
+              <button type="button" id="saveAdvancedButton">
+                Save Advanced
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+      <!-- Tab 5: About -->
+      <section
+        id="tab-about"
+        class="tab-panel"
+        role="tabpanel"
+        aria-labelledby="tab-about-btn"
+      >
+        <div class="section">
+          <h2 class="section-heading">About docFiller</h2>
+          <p>
+            docFiller is an open-source web extension that helps automate
+            filling forms using GenAI. You can explore the source code, report
+            issues, and contribute via the GitHub repository.
+          </p>
+
+          <div class="form-group">
+            <label>Repository</label>
+            <p>
+              <a
+                href="https://github.com/rootCircle/docFiller"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                https://github.com/rootCircle/docFiller
+              </a>
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label>Special note to developers and contributors</label>
+            <ul>
+              <li>
+                This project is community-driven; no formal support is provided.
+              </li>
+              <li>
+                Contributions are welcome—please read the guidelines before
+                opening a PR.
+              </li>
+              <li>Be respectful and follow the Code of Conduct.</li>
+            </ul>
+            <p>
+              <a
+                href="https://github.com/rootCircle/docFiller/blob/main/CONTRIBUTING.md"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Contributing Guide</a
+              >
+              ·
+              <a
+                href="https://github.com/rootCircle/docFiller/blob/main/CODE_OF_CONDUCT.md"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Code of Conduct</a
+              >
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label>How to file a bug</label>
+            <ol>
+              <li>Search existing issues to avoid duplicates.</li>
+              <li>
+                Include clear reproduction steps and the expected vs. actual
+                behavior.
+              </li>
+              <li>
+                Provide your browser, OS, and extension version (see the
+                extension manifest).
+              </li>
+              <li>Attach screenshots or minimal examples if possible.</li>
+            </ol>
+            <p>
+              <a
+                href="https://github.com/rootCircle/docFiller/issues/new/choose"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Open a new issue</a
+              >
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label>Security and privacy</label>
+            <p>
+              For vulnerabilities, please review the security policy and report
+              responsibly. See our privacy policy for data practices.
+            </p>
+            <p>
+              <a
+                href="https://github.com/rootCircle/docFiller/blob/main/SECURITY.md"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Security Policy</a
+              >
+              ·
+              <a
+                href="https://github.com/rootCircle/docFiller/blob/main/PRIVACY_POLICY.md"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Privacy Policy</a
+              >
+              ·
+              <a
+                href="https://github.com/rootCircle/docFiller/blob/main/LICENSE"
+                target="_blank"
+                rel="noopener noreferrer"
+                >License</a
+              >
+            </p>
+          </div>
         </div>
+      </section>
+    </div>
 
-        <button type="button" id="saveButton">Save Changes</button>
-
-        <hr style="margin-top: 20px; margin-bottom: 20px" />
-
-        <div class="metrics-container">
-          <!-- Loading State -->
-          <div id="metricsLoading" class="metrics-loading hidden">
-            <div class="spinner"></div>
-            <p>Loading metrics...</p>
+    <!-- Modals and Toasts (keep outside tab panels) -->
+    <div id="addProfileModal" class="modal hidden">
+      <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2>Add New Profile</h2>
+        <form id="addProfileForm">
+          <div class="form-group">
+            <label for="profileName">Name</label>
+            <input type="text" id="profileName" name="profileName" required />
           </div>
-
-          <!-- Summary Stats -->
-          <div class="metrics-summary">
-            <div class="metric-card">
-              <h3>Total Forms Filled</h3>
-              <div id="totalFormsFilled">
-                <p class="metric-value">0</p>
-                <div class="metric-trend"></div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <h3>Success Rate</h3>
-              <div id="successRate">
-                <p class="metric-value">0%</p>
-                <div class="metric-trend"></div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <h3>Time Saved</h3>
-              <div id="timeSaved">
-                <p class="metric-value">0 mins</p>
-                <div class="metric-trend"></div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <h3>Streaks</h3>
-              <div id="activeStreak">
-                <p class="metric-value">0</p>
-                <div class="metric-trend">Current streak</div>
-              </div>
-            </div>
+          <div class="form-group">
+            <label for="profileImage">Image URL</label>
+            <input type="text" id="profileImage" name="profileImage" required />
           </div>
-
-          <!-- Controls -->
-          <div class="metrics-controls">
-            <div id="exportMetrics" class="btn btn-primary">
-              <span class="icon">📊</span> Export Metrics
-            </div>
-            <div id="resetMetrics" class="btn btn-secondary">
-              <span class="icon">🔄</span> Reset Metrics
-            </div>
+          <div class="form-group">
+            <label for="profilePrompt">Prompt</label>
+            <textarea
+              id="profilePrompt"
+              name="profilePrompt"
+              required
+            ></textarea>
           </div>
+          <div class="form-group">
+            <label for="profileShortDescription">Short Description</label>
+            <input
+              type="text"
+              id="profileShortDescription"
+              name="profileShortDescription"
+              required
+            />
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="submit-button">Add Profile</button>
+            <button type="button" class="cancel-button">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div id="resetMetricsModal" class="custom-modal hidden">
+      <div class="modal-content">
+        <div class="modal-body">
+          <p>
+            Are you sure you want to reset all metrics? This action cannot be
+            undone.
+          </p>
         </div>
-      </form>
+        <div class="modal-footer">
+          <button id="cancelResetMetrics" class="secondary-button">
+            Cancel
+          </button>
+          <button id="confirmResetMetrics" class="primary-button">
+            Reset Metrics
+          </button>
+        </div>
+      </div>
     </div>
     <div id="toast-container" class="toast-container">
       <div id="toast" class="toast">

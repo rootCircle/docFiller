@@ -51,8 +51,17 @@ export class MetricsManager {
     this.currentFormMetrics.toBeFilledQuestions++;
   }
 
-  async resetMetrics(): Promise<void> {
-    await this.saveMetrics(this.getDefaultMetrics());
+  resetMetrics(): void {
+    try {
+      chrome.storage.sync.set(
+        { [MetricsManager.STORAGE_KEY]: this.getDefaultMetrics() },
+        () => {
+          // noop: best-effort reset; consumers don't await this
+        },
+      );
+    } catch {
+      // swallow errors; UI will show toast if needed elsewhere
+    }
   }
 
   public async endFormFilling(llmModel: LLMEngineType): Promise<void> {

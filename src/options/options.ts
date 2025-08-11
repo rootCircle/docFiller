@@ -1,8 +1,15 @@
 import { LLMEngineType, getModelName } from '@utils/llmEngineTypes';
-import { safeGetElementById, ifElementExists } from '@utils/domUtils';
-import { ConsensusEngine } from '@docFillerCore/engines/consensusEngine';
+import { safeGetElementById } from '@utils/domUtils';
 import {
-  getSkipMarkedSetting,
+  updateApiKeyLink,
+  updateConsensusApiLinks,
+  updateApiKeyInputField,
+} from './optionApiHandler';
+import { initializeOptionPasswordField } from './optionPasswordField';
+import { MetricsUI } from './metrics';
+import { showToast } from '@utils/toastUtils';
+import { validateLLMConfiguration } from '@utils/missingApiKey';
+import {
   getSleepDuration,
   getLLMModel,
   getEnableConsensus,
@@ -12,9 +19,9 @@ import {
   getGeminiApiKey,
   getMistralApiKey,
   getAnthropicApiKey,
+  getSkipMarkedSetting,
 } from '@utils/storage/getProperties';
 import {
-  setToggleSkipMarkedStatus,
   setSleepDuration,
   setLLMModel,
   setEnableConsensus,
@@ -24,177 +31,379 @@ import {
   setGeminiApiKey,
   setMistralApiKey,
   setAnthropicApiKey,
+  setToggleSkipMarkedStatus,
 } from '@utils/storage/setProperties';
-import { showToast } from '@utils/toastUtils';
-
-import { MetricsUI } from './metrics';
-import {
-  updateApiKeyInputField,
-  updateApiKeyLink,
-  updateConsensusApiLinks,
-} from './optionApiHandler';
-import { initializeOptionPasswordField } from './optionPasswordField';
 import {
   createProfileCards,
   handleProfileFormSubmit,
 } from './optionProfileHandler';
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const metricsUI = new MetricsUI();
-  await metricsUI.initialize();
+  // Tabs: show one panel at a time with keyboard navigation
+  const tabLinks = Array.from(
+    document.querySelectorAll<HTMLButtonElement>('.tab-link'),
+  );
+  const tabPanels = Array.from(
+    document.querySelectorAll<HTMLElement>('.tab-panel'),
+  );
 
-  window.addEventListener('unload', () => {
-    metricsUI.cleanup();
-    ConsensusEngine.dispose();
+  const activateTab = (tab: HTMLButtonElement) => {
+    tabLinks.forEach((t) => {
+      t.classList.remove('active');
+      t.setAttribute('aria-selected', 'false');
+    });
+    tab.classList.add('active');
+    tab.setAttribute('aria-selected', 'true');
+    const controls = tab.getAttribute('aria-controls');
+    tabPanels.forEach((p) => p.classList.remove('active'));
+    if (controls) {
+      const panel = document.getElementById(controls);
+      panel?.classList.add('active');
+    }
+  };
+
+  tabLinks.forEach((tab, idx) => {
+    tab.addEventListener('click', () => activateTab(tab));
+    tab.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        const dir = e.key === 'ArrowRight' ? 1 : -1;
+        const nextIdx = (idx + dir + tabLinks.length) % tabLinks.length;
+        tabLinks[nextIdx]?.focus();
+      }
+    });
   });
+  // Ensure one tab is active on load
+  const initiallyActive = tabLinks.find((t) => t.classList.contains('active'));
+  if (!initiallyActive && tabLinks[0]) activateTab(tabLinks[0]);
 
-  const skipMarkedToggleButton = document.getElementById(
+  // DOM references (nullable and guarded)
+  const sleepDurationInput =
+    safeGetElementById<HTMLInputElement>('sleepDuration');
+  const llmModelSelect = safeGetElementById<HTMLSelectElement>('llmModel');
+  const enableConsensusCheckbox =
+    safeGetElementById<HTMLInputElement>('enableConsensus');
+  const darkThemeToggleButton = safeGetElementById<HTMLButtonElement>(
+    'darkThemeToggleButton',
+  );
+  const skipMarkedToggleButton = safeGetElementById<HTMLDivElement>(
     'skipMarkedToggleButton',
   );
-  if (!skipMarkedToggleButton) {
-    return;
-  }
-  const initialState = await getSkipMarkedSetting();
-  skipMarkedToggleButton.classList.toggle('active', initialState);
-
-  skipMarkedToggleButton.addEventListener('click', async () => {
-    await setToggleSkipMarkedStatus().catch((error) => {
-      // biome-ignore lint/suspicious/noConsole: debugging options functionality
-      console.error('Error toggling state:', error);
-    });
-    const currentState = await getSkipMarkedSetting();
-    skipMarkedToggleButton.classList.toggle('active', currentState);
-  });
-  const modalHTML = `
-    <div id="addProfileModal" class="modal hidden">
-      <div class="modal-content">
-        <span class="close-button">&times;</span>
-        <h2>Add New Profile</h2>
-        <form id="addProfileForm" autocomplete="off">
-          <div class="form-group">
-            <label for="profileName">Name</label>
-            <input type="text" id="profileName" required>
-          </div>
-          <div class="form-group">
-            <label for="profileImage">Image URL</label>
-            <input type="url" id="profileImage" type="url" autocomplete="off" placeholder="https://w.wallhaven.cc/full/5g/wallhaven-5gxvv3.png" value="https://w.wallhaven.cc/full/5g/wallhaven-5gxvv3.png" >
-          </div>
-          <div class="form-group">
-            <label for="profilePrompt">Prompt</label>
-            <textarea id="profilePrompt" required></textarea>
-          </div>
-          <div class="form-group">
-            <label for="profileShortDescription">Short Description</label>
-            <input type="text" id="profileShortDescription" required>
-          </div>
-          <div class="form-actions">
-            <button type="submit">Save Profile</button>
-            <button type="button" class="cancel-button">Cancel</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  `;
-
-  document.body.insertAdjacentHTML('beforeend', modalHTML);
-
-  try {
-    await createProfileCards();
-    const modal = document.getElementById('addProfileModal');
-    const closeButton = modal?.querySelector('.close-button');
-    const cancelButton = modal?.querySelector('.cancel-button');
-    const addProfileForm = document.getElementById('addProfileForm');
-
-    closeButton?.addEventListener('click', () => {
-      if (modal) {
-        modal.classList.add('hidden');
-      }
-    });
-
-    cancelButton?.addEventListener('click', () => {
-      if (modal) {
-        modal.classList.add('hidden');
-      }
-    });
-
-    addProfileForm?.addEventListener('submit', handleProfileFormSubmit);
-
-    modal?.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.classList.add('hidden');
-      }
-    });
-  } catch (error) {
-    // biome-ignore lint/suspicious/noConsole: debugging options functionality
-    console.error('Error initializing options:', error);
-  }
-
-  const sleepDurationInput = document.getElementById(
-    'sleepDuration',
-  ) as HTMLInputElement;
-  const llmModelSelect = document.getElementById(
-    'llmModel',
-  ) as HTMLSelectElement;
-  const enableConsensusCheckbox = document.getElementById(
-    'enableConsensus',
-  ) as HTMLInputElement;
-  const enableDarkThemeCheckbox = document.getElementById(
-    'enableDarkTheme',
-  ) as HTMLInputElement;
-  const consensusWeightsDiv = document.getElementById(
-    'consensusWeights',
-  ) as HTMLDivElement;
-  const weightChatGPTInput = document.getElementById(
-    'weightChatGPT',
-  ) as HTMLInputElement;
-  const weightGeminiInput = document.getElementById(
-    'weightGemini',
-  ) as HTMLInputElement;
-  const weightOllamaInput = document.getElementById(
-    'weightOllama',
-  ) as HTMLInputElement;
-  const weightChromeAIInput = document.getElementById(
-    'weightChromeAI',
-  ) as HTMLInputElement;
-  const weightMistralInput = document.getElementById(
-    'weightMistral',
-  ) as HTMLInputElement;
-  const weightAnthropicInput = document.getElementById(
-    'weightAnthropic',
-  ) as HTMLInputElement;
-  const chatGptApiKeyInput = document.getElementById(
-    'chatGptApiKey',
-  ) as HTMLInputElement;
-  const geminiApiKeyInput = document.getElementById(
-    'geminiApiKey',
-  ) as HTMLInputElement;
-  const mistralApiKeyInput = document.getElementById(
-    'mistralApiKey',
-  ) as HTMLInputElement;
-  const anthropicApiKeyInput = document.getElementById(
-    'anthropicApiKey',
-  ) as HTMLInputElement;
-  const saveButton = safeGetElementById<HTMLButtonElement>('saveButton');
+  const consensusWeightsDiv =
+    safeGetElementById<HTMLDivElement>('consensusWeights');
+  const weightChatGPTInput =
+    safeGetElementById<HTMLInputElement>('weightChatGPT');
+  const weightGeminiInput =
+    safeGetElementById<HTMLInputElement>('weightGemini');
+  const weightOllamaInput =
+    safeGetElementById<HTMLInputElement>('weightOllama');
+  const weightChromeAIInput =
+    safeGetElementById<HTMLInputElement>('weightChromeAI');
+  const weightMistralInput =
+    safeGetElementById<HTMLInputElement>('weightMistral');
+  const weightAnthropicInput =
+    safeGetElementById<HTMLInputElement>('weightAnthropic');
+  const chatGptApiKeyInput =
+    safeGetElementById<HTMLInputElement>('chatGptApiKey');
+  const geminiApiKeyInput =
+    safeGetElementById<HTMLInputElement>('geminiApiKey');
+  const mistralApiKeyInput =
+    safeGetElementById<HTMLInputElement>('mistralApiKey');
+  const anthropicApiKeyInput =
+    safeGetElementById<HTMLInputElement>('anthropicApiKey');
   const singleApiKeyInput =
     safeGetElementById<HTMLInputElement>('singleApiKey');
-  const modelSelect = safeGetElementById<HTMLSelectElement>('llmModel');
   const apiKeyInputLink =
     safeGetElementById<HTMLAnchorElement>('singleApiKeyLink');
+  const saveApiButton = safeGetElementById<HTMLButtonElement>('saveApiButton');
+  const saveAdvancedButton =
+    safeGetElementById<HTMLButtonElement>('saveAdvancedButton');
+  const apiTabButton = safeGetElementById<HTMLButtonElement>('tab-api-btn');
 
+  // Debounce helper
+  const debounce = <F extends (...args: unknown[]) => void>(
+    fn: F,
+    delay = 250,
+  ) => {
+    let t: number | undefined;
+    return (...args: Parameters<F>) => {
+      if (t) window.clearTimeout(t);
+      t = window.setTimeout(() => fn(...args), delay);
+    };
+  };
+
+  // Mark API tab if configuration is invalid
+  type ValidationResult = {
+    invalidEngines: string[];
+    isConsensusEnabled: boolean;
+  };
+  const updateApiTabIndicator = async () => {
+    try {
+      const result = (await validateLLMConfiguration()) as ValidationResult;
+      const hasIssues = result.invalidEngines.length > 0;
+      apiTabButton?.classList.toggle('api-warning', hasIssues);
+      if (apiTabButton) {
+        apiTabButton.title = hasIssues
+          ? `Missing/invalid API keys: ${result.invalidEngines.join(', ')}`
+          : '';
+      }
+    } catch {
+      // On unexpected failure, do not block UI; clear indicator
+      apiTabButton?.classList.remove('api-warning');
+    }
+  };
+  const updateApiTabIndicatorDebounced = debounce(updateApiTabIndicator, 300);
+
+  // Utilities
+  const toggleDarkTheme = (enable: boolean) => {
+    darkThemeToggleButton?.classList.toggle('active', enable);
+    document.documentElement.classList.toggle('dark-theme', enable);
+  };
+
+  const setSkipMarkedUI = (enable: boolean) => {
+    skipMarkedToggleButton?.classList.toggle('active', enable);
+  };
+
+  const toggleConsensusOptions = (enable: boolean) => {
+    if (enable) {
+      consensusWeightsDiv?.classList.remove('hidden');
+      document.querySelector('label[for="llmModel"]')?.classList.add('hidden');
+      document
+        .querySelector('label[for="singleApiKey"]')
+        ?.classList.add('hidden');
+      llmModelSelect?.parentElement?.classList.add('hidden');
+      singleApiKeyInput?.parentElement?.classList.add('hidden');
+    } else {
+      consensusWeightsDiv?.classList.add('hidden');
+      document
+        .querySelector('label[for="llmModel"]')
+        ?.classList.remove('hidden');
+      document
+        .querySelector('label[for="singleApiKey"]')
+        ?.classList.remove('hidden');
+      llmModelSelect?.parentElement?.classList.remove('hidden');
+      singleApiKeyInput?.parentElement?.classList.remove('hidden');
+    }
+  };
+
+  const updateSingleApiKeyFromModel = (selectedModel: string) => {
+    let apiKeyValue = '';
+    switch (selectedModel) {
+      case getModelName(LLMEngineType.ChatGPT):
+        apiKeyValue = chatGptApiKeyInput?.value ?? '';
+        break;
+      case getModelName(LLMEngineType.Gemini):
+        apiKeyValue = geminiApiKeyInput?.value ?? '';
+        break;
+      case getModelName(LLMEngineType.Mistral):
+        apiKeyValue = mistralApiKeyInput?.value ?? '';
+        break;
+      case getModelName(LLMEngineType.Anthropic):
+        apiKeyValue = anthropicApiKeyInput?.value ?? '';
+        break;
+      case getModelName(LLMEngineType.Ollama):
+      case getModelName(LLMEngineType.ChromeAI):
+        apiKeyValue = '';
+        break;
+      default:
+        break;
+    }
+    if (singleApiKeyInput) singleApiKeyInput.value = apiKeyValue;
+  };
+
+  // Initialize password field toggles
   initializeOptionPasswordField();
 
-  // Safe event listener setup for model select
-  if (modelSelect && apiKeyInputLink) {
-    modelSelect.addEventListener('change', () => {
-      updateApiKeyLink(modelSelect, apiKeyInputLink);
+  // Event wiring
+  if (llmModelSelect && apiKeyInputLink && singleApiKeyInput) {
+    llmModelSelect.addEventListener('change', () => {
+      updateApiKeyLink(llmModelSelect, apiKeyInputLink);
+      updateApiKeyInputField(singleApiKeyInput, llmModelSelect);
+      updateSingleApiKeyFromModel(llmModelSelect.value);
+      void updateApiTabIndicatorDebounced();
     });
   }
 
-  enableConsensusCheckbox.addEventListener('change', () => {
-    updateConsensusApiLinks(enableConsensusCheckbox);
-  });
+  if (singleApiKeyInput && llmModelSelect) {
+    singleApiKeyInput.addEventListener('input', () => {
+      const selectedModel = llmModelSelect.value;
+      const val = singleApiKeyInput.value;
+      switch (selectedModel) {
+        case getModelName(LLMEngineType.ChatGPT):
+          if (chatGptApiKeyInput) chatGptApiKeyInput.value = val;
+          break;
+        case getModelName(LLMEngineType.Gemini):
+          if (geminiApiKeyInput) geminiApiKeyInput.value = val;
+          break;
+        case getModelName(LLMEngineType.Mistral):
+          if (mistralApiKeyInput) mistralApiKeyInput.value = val;
+          break;
+        case getModelName(LLMEngineType.Anthropic):
+          if (anthropicApiKeyInput) anthropicApiKeyInput.value = val;
+          break;
+        default:
+          break;
+      }
+      void updateApiTabIndicatorDebounced();
+    });
+  }
 
-  // Load settings using centralized getter functions
+  if (enableConsensusCheckbox) {
+    enableConsensusCheckbox.addEventListener('change', () => {
+      updateConsensusApiLinks(enableConsensusCheckbox);
+      toggleConsensusOptions(enableConsensusCheckbox.checked);
+      void updateApiTabIndicatorDebounced();
+    });
+  }
+
+  if (darkThemeToggleButton) {
+    darkThemeToggleButton.addEventListener('click', () => {
+      const next = !document.documentElement.classList.contains('dark-theme');
+      toggleDarkTheme(next);
+    });
+  }
+
+  if (skipMarkedToggleButton) {
+    skipMarkedToggleButton.addEventListener('click', async () => {
+      try {
+        await setToggleSkipMarkedStatus();
+        const current = await getSkipMarkedSetting();
+        setSkipMarkedUI(current);
+        showToast(`Skip already filled: ${current ? 'On' : 'Off'}`, 'success');
+      } catch {
+        showToast('Failed to update skip-filled setting.', 'error');
+      }
+    });
+  }
+
+  // When any individual API key or weight changes, re-validate
+  chatGptApiKeyInput?.addEventListener(
+    'input',
+    () => void updateApiTabIndicatorDebounced(),
+  );
+  geminiApiKeyInput?.addEventListener(
+    'input',
+    () => void updateApiTabIndicatorDebounced(),
+  );
+  mistralApiKeyInput?.addEventListener(
+    'input',
+    () => void updateApiTabIndicatorDebounced(),
+  );
+  anthropicApiKeyInput?.addEventListener(
+    'input',
+    () => void updateApiTabIndicatorDebounced(),
+  );
+  weightChatGPTInput?.addEventListener(
+    'input',
+    () => void updateApiTabIndicatorDebounced(),
+  );
+  weightGeminiInput?.addEventListener(
+    'input',
+    () => void updateApiTabIndicatorDebounced(),
+  );
+  weightOllamaInput?.addEventListener(
+    'input',
+    () => void updateApiTabIndicatorDebounced(),
+  );
+  weightChromeAIInput?.addEventListener(
+    'input',
+    () => void updateApiTabIndicatorDebounced(),
+  );
+  weightMistralInput?.addEventListener(
+    'input',
+    () => void updateApiTabIndicatorDebounced(),
+  );
+  weightAnthropicInput?.addEventListener(
+    'input',
+    () => void updateApiTabIndicatorDebounced(),
+  );
+
+  const saveApiAndConsensus = async () => {
+    const llmModel = llmModelSelect ? llmModelSelect.value : '';
+    const enableConsensus = enableConsensusCheckbox
+      ? enableConsensusCheckbox.checked
+      : false;
+    const chatGptApiKey = chatGptApiKeyInput?.value ?? '';
+    const geminiApiKey = geminiApiKeyInput?.value ?? '';
+    const mistralApiKey = mistralApiKeyInput?.value ?? '';
+    const anthropicApiKey = anthropicApiKeyInput?.value ?? '';
+
+    const llmWeights: Record<LLMEngineType, number> = {
+      [LLMEngineType.ChatGPT]: Number.parseFloat(
+        weightChatGPTInput?.value ?? '0',
+      ),
+      [LLMEngineType.Gemini]: Number.parseFloat(
+        weightGeminiInput?.value ?? '0',
+      ),
+      [LLMEngineType.Ollama]: Number.parseFloat(
+        weightOllamaInput?.value ?? '0',
+      ),
+      [LLMEngineType.ChromeAI]: Number.parseFloat(
+        weightChromeAIInput?.value ?? '0',
+      ),
+      [LLMEngineType.Mistral]: Number.parseFloat(
+        weightMistralInput?.value ?? '0',
+      ),
+      [LLMEngineType.Anthropic]: Number.parseFloat(
+        weightAnthropicInput?.value ?? '0',
+      ),
+    };
+
+    await Promise.all([
+      setLLMModel(llmModel),
+      setEnableConsensus(enableConsensus),
+      setLLMWeights(llmWeights),
+      setChatGptApiKey(chatGptApiKey),
+      setGeminiApiKey(geminiApiKey),
+      setMistralApiKey(mistralApiKey),
+      setAnthropicApiKey(anthropicApiKey),
+    ]);
+  };
+
+  const saveAdvanced = async () => {
+    const sleepDuration = sleepDurationInput
+      ? Number.parseInt(sleepDurationInput.value, 10)
+      : 0;
+    const enableDarkTheme =
+      document.documentElement.classList.contains('dark-theme');
+    await Promise.all([
+      setSleepDuration(sleepDuration),
+      setEnableDarkTheme(enableDarkTheme),
+    ]);
+  };
+
+  if (saveApiButton) {
+    saveApiButton.addEventListener('click', async () => {
+      try {
+        await saveApiAndConsensus();
+        showToast('API & Consensus saved.', 'success');
+        void updateApiTabIndicator();
+      } catch (error) {
+        showToast(
+          `Error saving API/Consensus. ${error instanceof Error ? error.message : String(error)}`,
+          'error',
+        );
+      }
+    });
+  }
+
+  if (saveAdvancedButton) {
+    saveAdvancedButton.addEventListener('click', async () => {
+      try {
+        await saveAdvanced();
+        showToast('Advanced settings saved.', 'success');
+      } catch (error) {
+        showToast(
+          `Error saving advanced settings. ${error instanceof Error ? error.message : String(error)}`,
+          'error',
+        );
+      }
+    });
+  }
+
+  // Global save button removed from UI; keep a no-op guard if referenced.
+
+  // Load settings and initialize UI
   const loadSettings = async () => {
     try {
       const [
@@ -207,6 +416,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         geminiApiKey,
         mistralApiKey,
         anthropicApiKey,
+        skipMarked,
       ] = await Promise.all([
         getSleepDuration(),
         getLLMModel(),
@@ -217,231 +427,89 @@ document.addEventListener('DOMContentLoaded', async () => {
         getGeminiApiKey(),
         getMistralApiKey(),
         getAnthropicApiKey(),
+        getSkipMarkedSetting(),
       ]);
 
-      sleepDurationInput.value = String(sleepDuration);
-      llmModelSelect.value = llmModel;
-
-      if (singleApiKeyInput) {
+      if (sleepDurationInput) sleepDurationInput.value = String(sleepDuration);
+      if (llmModelSelect) llmModelSelect.value = llmModel;
+      if (singleApiKeyInput && llmModelSelect) {
         updateApiKeyInputField(singleApiKeyInput, llmModelSelect);
+        if (apiKeyInputLink) {
+          updateApiKeyLink(llmModelSelect, apiKeyInputLink);
+        }
+        updateSingleApiKeyFromModel(llmModelSelect.value);
       }
-      enableConsensusCheckbox.checked = enableConsensus;
-      enableDarkThemeCheckbox.checked = enableDarkTheme;
+      if (enableConsensusCheckbox)
+        enableConsensusCheckbox.checked = enableConsensus;
+      if (weightChatGPTInput)
+        weightChatGPTInput.value = String(
+          llmWeights[LLMEngineType.ChatGPT] ?? 0,
+        );
+      if (weightGeminiInput)
+        weightGeminiInput.value = String(llmWeights[LLMEngineType.Gemini] ?? 0);
+      if (weightOllamaInput)
+        weightOllamaInput.value = String(llmWeights[LLMEngineType.Ollama] ?? 0);
+      if (weightChromeAIInput)
+        weightChromeAIInput.value = String(
+          llmWeights[LLMEngineType.ChromeAI] ?? 0,
+        );
+      if (weightMistralInput)
+        weightMistralInput.value = String(
+          llmWeights[LLMEngineType.Mistral] ?? 0,
+        );
+      if (weightAnthropicInput)
+        weightAnthropicInput.value = String(
+          llmWeights[LLMEngineType.Anthropic] ?? 0,
+        );
+      if (chatGptApiKeyInput) chatGptApiKeyInput.value = chatGptApiKey;
+      if (geminiApiKeyInput) geminiApiKeyInput.value = geminiApiKey;
+      if (mistralApiKeyInput) mistralApiKeyInput.value = mistralApiKey;
+      if (anthropicApiKeyInput) anthropicApiKeyInput.value = anthropicApiKey;
 
-      weightChatGPTInput.value = String(llmWeights[LLMEngineType.ChatGPT]);
-      weightGeminiInput.value = String(llmWeights[LLMEngineType.Gemini]);
-      weightOllamaInput.value = String(llmWeights[LLMEngineType.Ollama]);
-      weightChromeAIInput.value = String(llmWeights[LLMEngineType.ChromeAI]);
-      weightMistralInput.value = String(llmWeights[LLMEngineType.Mistral]);
-      weightAnthropicInput.value = String(llmWeights[LLMEngineType.Anthropic]);
-
-      chatGptApiKeyInput.value = chatGptApiKey;
-      geminiApiKeyInput.value = geminiApiKey;
-      mistralApiKeyInput.value = mistralApiKey;
-      anthropicApiKeyInput.value = anthropicApiKey;
-
-      toggleConsensusOptions(enableConsensusCheckbox.checked);
-      toggleDarkTheme(enableDarkThemeCheckbox.checked);
-
-      // Initial call to set up the form when it loads
-      if (modelSelect && apiKeyInputLink) {
-        updateApiKeyLink(modelSelect, apiKeyInputLink);
-      }
-      updateConsensusApiLinks(enableConsensusCheckbox);
-      updateSingleApiKeyInput(llmModelSelect.value);
+      toggleConsensusOptions(enableConsensus);
+      toggleDarkTheme(enableDarkTheme);
+      setSkipMarkedUI(skipMarked);
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: debugging options functionality
+      // biome-ignore lint/suspicious/noConsole: helpful during options load
       console.error('Error loading settings:', error);
       showToast('Error loading settings. Using defaults.', 'error');
     }
   };
 
-  // Load settings on page load
-  void loadSettings();
+  await loadSettings();
+  // Initial validation indicator
+  await updateApiTabIndicator();
 
-  llmModelSelect.addEventListener('change', () => {
-    const apiKeyInput = document.getElementById(
-      'singleApiKey',
-    ) as HTMLInputElement;
-
-    updateApiKeyInputField(apiKeyInput, llmModelSelect);
-
-    updateSingleApiKeyInput(llmModelSelect.value);
-  });
-
-  const toggleDarkTheme = (enableDarkTheme: boolean) => {
-    if (enableDarkTheme) {
-      document.documentElement.classList.add('dark-theme');
-    } else {
-      document.documentElement.classList.remove('dark-theme');
-    }
-  };
-
-  const toggleConsensusOptions = (enableConsensus: boolean) => {
-    if (enableConsensus) {
-      consensusWeightsDiv.classList.remove('hidden');
-      document.querySelector('label[for="llmModel"]')?.classList.add('hidden');
-      document
-        .querySelector('label[for="singleApiKey"]')
-        ?.classList.add('hidden');
-      llmModelSelect.parentElement?.classList.add('hidden');
-      singleApiKeyInput?.parentElement?.classList.add('hidden');
-    } else {
-      consensusWeightsDiv.classList.add('hidden');
-      document
-        .querySelector('label[for="llmModel"]')
-        ?.classList.remove('hidden');
-      document
-        .querySelector('label[for="singleApiKey"]')
-        ?.classList.remove('hidden');
-      llmModelSelect.parentElement?.classList.remove('hidden');
-      singleApiKeyInput?.parentElement?.classList.remove('hidden');
-    }
-  };
-
-  const updateSingleApiKeyInput = (selectedModel: string) => {
-    let apiKeyValue = '';
-
-    switch (selectedModel) {
-      case getModelName(LLMEngineType.ChatGPT):
-        apiKeyValue = chatGptApiKeyInput.value;
-        break;
-      case getModelName(LLMEngineType.Gemini):
-        apiKeyValue = geminiApiKeyInput.value;
-        break;
-      case getModelName(LLMEngineType.Ollama):
-      case getModelName(LLMEngineType.ChromeAI):
-        apiKeyValue = '';
-        break;
-      case getModelName(LLMEngineType.Mistral):
-        apiKeyValue = mistralApiKeyInput.value;
-        break;
-      case getModelName(LLMEngineType.Anthropic):
-        apiKeyValue = anthropicApiKeyInput.value;
-        break;
-      default:
-        // biome-ignore lint/suspicious/noConsole: debugging options functionality
-        console.warn('Unknown model selected:', selectedModel);
-        break;
-    }
-
-    if (singleApiKeyInput) {
-      singleApiKeyInput.value = apiKeyValue;
-    }
-  };
-
-  if (singleApiKeyInput) {
-    singleApiKeyInput.addEventListener('input', () => {
-      const selectedModel = llmModelSelect.value;
-      const apiKeyValue = singleApiKeyInput.value;
-
-      switch (selectedModel) {
-        case getModelName(LLMEngineType.ChatGPT):
-          chatGptApiKeyInput.value = apiKeyValue;
-          break;
-        case getModelName(LLMEngineType.Gemini):
-          geminiApiKeyInput.value = apiKeyValue;
-          break;
-        case getModelName(LLMEngineType.Ollama):
-        case getModelName(LLMEngineType.ChromeAI):
-          break;
-        case getModelName(LLMEngineType.Mistral):
-          mistralApiKeyInput.value = apiKeyValue;
-          break;
-        case getModelName(LLMEngineType.Anthropic):
-          anthropicApiKeyInput.value = apiKeyValue;
-          break;
-        default:
-          // biome-ignore lint/suspicious/noConsole: debugging options functionality
-          console.warn('Unknown model selected:', selectedModel);
-          break;
-      }
-    });
+  // Initialize Metrics UI
+  try {
+    const metrics = new MetricsUI();
+    await metrics.initialize();
+  } catch (e) {
+    // biome-ignore lint/suspicious/noConsole: optional metrics init
+    console.warn('Metrics UI init skipped/failed:', e);
   }
 
-  enableConsensusCheckbox.addEventListener('change', (e: Event) => {
-    const target = e.target as HTMLInputElement;
-    toggleConsensusOptions(target.checked);
-  });
+  // Profiles: cards and form handler (if present)
+  try {
+    await createProfileCards();
+    // Add Profile button removed from UI; modal opens from card edit/add flows only.
 
-  llmModelSelect.addEventListener('change', () => {
-    updateSingleApiKeyInput(llmModelSelect.value);
-  });
+    const addProfileForm = document.getElementById('addProfileForm');
+    if (addProfileForm) {
+      addProfileForm.addEventListener('submit', (ev) => {
+        void handleProfileFormSubmit(ev);
+      });
+    }
 
-  if (saveButton) {
-    saveButton.addEventListener('click', () => {
-      const saveOptions = async () => {
-        const sleepDuration = Number.parseInt(sleepDurationInput.value, 10);
-        const llmModel = llmModelSelect.value;
-        const enableConsensus = enableConsensusCheckbox.checked;
-        const enableDarkTheme = enableDarkThemeCheckbox.checked;
-        const chatGptApiKey = chatGptApiKeyInput.value;
-        const geminiApiKey = geminiApiKeyInput.value;
-        const mistralApiKey = mistralApiKeyInput.value;
-        const anthropicApiKey = anthropicApiKeyInput.value;
-
-        const llmWeights = {
-          [LLMEngineType.ChatGPT]: Number.parseFloat(weightChatGPTInput.value),
-          [LLMEngineType.Gemini]: Number.parseFloat(weightGeminiInput.value),
-          [LLMEngineType.Ollama]: Number.parseFloat(weightOllamaInput.value),
-          [LLMEngineType.ChromeAI]: Number.parseFloat(
-            weightChromeAIInput.value,
-          ),
-          [LLMEngineType.Mistral]: Number.parseFloat(weightMistralInput.value),
-          [LLMEngineType.Anthropic]: Number.parseFloat(
-            weightAnthropicInput.value,
-          ),
-        };
-
-        try {
-          // Save all settings using centralized setter functions
-          await Promise.all([
-            setSleepDuration(sleepDuration),
-            setLLMModel(llmModel),
-            setEnableConsensus(enableConsensus),
-            setEnableDarkTheme(enableDarkTheme),
-            setLLMWeights(llmWeights),
-            setChatGptApiKey(chatGptApiKey),
-            setGeminiApiKey(geminiApiKey),
-            setMistralApiKey(mistralApiKey),
-            setAnthropicApiKey(anthropicApiKey),
-          ]);
-
-          showToast('Settings saved successfully!', 'success');
-        } catch (error) {
-          showToast(
-            `Error saving options. Please try again. ${error instanceof Error ? error.message : String(error)}`,
-            'error',
-          );
-        }
-      };
-
-      void saveOptions();
-    });
+    // Modal close/cancel handlers
+    const addProfileModal = document.getElementById('addProfileModal');
+    const modalClose = addProfileModal?.querySelector('.close-button');
+    const modalCancel = addProfileModal?.querySelector('.cancel-button');
+    const hideModal = () => addProfileModal?.classList.add('hidden');
+    if (modalClose) modalClose.addEventListener('click', hideModal);
+    if (modalCancel) modalCancel.addEventListener('click', hideModal);
+  } catch (e) {
+    // biome-ignore lint/suspicious/noConsole: optional profiles init
+    console.warn('Profiles init skipped/failed:', e);
   }
-});
-
-// Settings related event listeners - Using safe DOM access
-ifElementExists<HTMLInputElement>('enableConsensus', (enableConsensusEl) => {
-  enableConsensusEl.addEventListener('change', function () {
-    const consensusWeights = safeGetElementById('consensusWeights');
-    const singleModelOptions = safeGetElementById('singleModelOptions');
-    if (this.checked) {
-      consensusWeights?.classList.remove('hidden');
-      singleModelOptions?.classList.add('hidden');
-    } else {
-      consensusWeights?.classList.add('hidden');
-      singleModelOptions?.classList.remove('hidden');
-    }
-  });
-});
-
-ifElementExists<HTMLInputElement>('enableDarkTheme', (enableDarkThemeEl) => {
-  enableDarkThemeEl.addEventListener('change', function () {
-    if (this.checked) {
-      document.documentElement.classList.add('dark-theme');
-    } else {
-      document.documentElement.classList.remove('dark-theme');
-    }
-  });
 });

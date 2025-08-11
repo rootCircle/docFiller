@@ -1,6 +1,7 @@
 import { DEFAULT_PROPERTIES } from '@utils/defaultProperties';
 import { safeQuerySelector } from '@utils/domUtils';
 import { EMPTY_STRING } from '@utils/settings';
+import { showToast } from '@utils/toastUtils';
 import {
   deleteProfile,
   getSelectedProfileKey,
@@ -10,25 +11,20 @@ import {
 } from '@utils/storage/profiles/profileManager';
 
 async function createProfileCards() {
-  const container = document.querySelector('.container');
+  // Render profile cards inside the existing Profiles tab container
+  const cardsHost = (document.getElementById('profileCards') ||
+    document.querySelector(
+      '#tab-profiles .profile-cards',
+    )) as HTMLDivElement | null;
 
-  if (!container) {
+  if (!cardsHost) {
     return;
   }
 
-  const existingProfilesContainer = container.querySelector(
-    '.profiles-container',
-  );
-  if (existingProfilesContainer) {
-    existingProfilesContainer.remove();
-  }
+  // Reset existing cards
+  cardsHost.innerHTML = '';
 
   const profiles = await loadProfiles();
-  const cardsContainer = document.createElement('div');
-  cardsContainer.className = 'profile-cards';
-
-  const profilesContainer = document.createElement('div');
-  profilesContainer.className = 'profiles-container';
 
   const selectedProfileKey = await getSelectedProfileKey();
 
@@ -137,7 +133,7 @@ async function createProfileCards() {
               form.reset();
               await createProfileCards();
             } catch {
-              alert('Failed to update profile. Please try again.');
+              showToast('Failed to update profile. Please try again.', 'error');
             }
           };
         }
@@ -196,8 +192,9 @@ async function createProfileCards() {
         });
       });
     }
-    cardsContainer.appendChild(card);
+    cardsHost.appendChild(card);
   });
+  // Add Profile card (click to open modal)
   const addCard = document.createElement('div');
   addCard.className = 'profile-card add-profile';
   addCard.innerHTML = `
@@ -207,14 +204,11 @@ async function createProfileCards() {
       </div>
     `;
   addCard.addEventListener('click', showAddProfileModal);
-  cardsContainer.appendChild(addCard);
-  profilesContainer.appendChild(cardsContainer);
-  container.insertBefore(profilesContainer, container.firstChild);
+  cardsHost.appendChild(addCard);
 }
 
 function showAddProfileModal() {
   const modal = document.getElementById('addProfileModal');
-
   if (modal) {
     modal.classList.remove('hidden');
   }
@@ -263,13 +257,13 @@ async function handleProfileFormSubmit(submitEvent: Event) {
     form.reset();
     await createProfileCards();
   } catch (_error) {
-    alert('Failed to save profile. Please try again.');
+    showToast('Failed to save profile. Please try again.', 'error');
   }
 }
 
 function handleError(message: string, error: unknown) {
   // Custom error handling logic
-  alert(`${message} ${String(error)}`);
+  showToast(`${message} ${String(error)}`, 'error');
 }
 
-export { createProfileCards, showAddProfileModal, handleProfileFormSubmit };
+export { createProfileCards, handleProfileFormSubmit };
