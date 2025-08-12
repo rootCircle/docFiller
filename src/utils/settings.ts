@@ -1,7 +1,7 @@
 import { DEFAULT_PROPERTIES } from '@utils/defaultProperties';
 import {
-  type LLMEngineType,
   getModelTypeFromName,
+  type LLMEngineType,
 } from '@utils/llmEngineTypes';
 import {
   getEnableConsensus,

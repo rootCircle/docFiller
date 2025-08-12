@@ -1,8 +1,8 @@
 import {
-  LLMEngineType,
   getAPIPlatformSourceLink,
   getModelName,
   getModelTypeFromName,
+  LLMEngineType,
 } from '@utils/llmEngineTypes';
 
 function updateApiKeyLink(

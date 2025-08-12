@@ -1,7 +1,6 @@
 import { DEFAULT_PROPERTIES } from '@utils/defaultProperties';
 import { safeQuerySelector } from '@utils/domUtils';
 import { EMPTY_STRING } from '@utils/settings';
-import { showToast } from '@utils/toastUtils';
 import {
   deleteProfile,
   getSelectedProfileKey,
@@ -9,6 +8,7 @@ import {
   saveCustomProfile,
   saveSelectedProfileKey,
 } from '@utils/storage/profiles/profileManager';
+import { showToast } from '@utils/toastUtils';
 
 async function createProfileCards() {
   // Render profile cards inside the existing Profiles tab container

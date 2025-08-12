@@ -1,5 +1,5 @@
-import { EMPTY_STRING } from '@utils/settings';
 import { safeGetElementById } from '@utils/domUtils';
+import { EMPTY_STRING } from '@utils/settings';
 
 export const initializeOptionPasswordField = () => {
   const passwordToggles = document.querySelectorAll('.password-toggle');

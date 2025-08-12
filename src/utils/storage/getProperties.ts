@@ -1,5 +1,5 @@
 import { DEFAULT_PROPERTIES } from '@utils/defaultProperties';
-import { type LLMEngineType, getModelName } from '@utils/llmEngineTypes';
+import { getModelName, type LLMEngineType } from '@utils/llmEngineTypes';
 import { EMPTY_STRING } from '@utils/settings';
 import { getStorageItem } from '@utils/storage/storageHelper';
 

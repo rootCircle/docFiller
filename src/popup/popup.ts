@@ -1,13 +1,13 @@
+import { ConsensusEngine } from '@docFillerCore/engines/consensusEngine';
 import { DEFAULT_PROPERTIES } from '@utils/defaultProperties';
 import { safeQuerySelector } from '@utils/domUtils';
-import { ConsensusEngine } from '@docFillerCore/engines/consensusEngine';
 import { validateLLMConfiguration } from '@utils/missingApiKey';
 import { getEnableDarkTheme, getIsEnabled } from '@utils/storage/getProperties';
-import { setIsEnabled } from '@utils/storage/setProperties';
 import {
   getSelectedProfileKey,
   loadProfiles,
 } from '@utils/storage/profiles/profileManager';
+import { setIsEnabled } from '@utils/storage/setProperties';
 import { showToast } from '@utils/toastUtils';
 
 document.addEventListener('DOMContentLoaded', async () => {

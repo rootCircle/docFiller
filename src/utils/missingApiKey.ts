@@ -1,4 +1,4 @@
-import { LLMEngineType, LLM_REQUIREMENTS } from '@utils/llmEngineTypes';
+import { LLM_REQUIREMENTS, LLMEngineType } from '@utils/llmEngineTypes';
 import { Settings } from '@utils/settings';
 import {
   getAnthropicApiKey,

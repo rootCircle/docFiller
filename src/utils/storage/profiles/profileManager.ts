@@ -1,12 +1,11 @@
 import { DEFAULT_PROPERTIES } from '@utils/defaultProperties';
-import { v4 } from 'uuid';
-
 import { profilesData } from '@utils/storage/profiles/profilesData';
 import {
+  getMultipleStorageItems,
   getStorageItem,
   setStorageItems,
-  getMultipleStorageItems,
 } from '@utils/storage/storageHelper';
+import { v4 } from 'uuid';
 
 async function loadProfiles(): Promise<Profiles> {
   const customProfiles =

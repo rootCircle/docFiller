@@ -1,6 +1,6 @@
-import { runDocFillerEngine } from '@docFillerCore/index';
 import { ConsensusEngine } from '@docFillerCore/engines/consensusEngine';
-import { type MessageResponse, isFillFormMessage } from '@utils/messageTypes';
+import { runDocFillerEngine } from '@docFillerCore/index';
+import { isFillFormMessage, type MessageResponse } from '@utils/messageTypes';
 import { getIsEnabled } from '@utils/storage/getProperties';
 
 chrome.runtime.onMessage.addListener(
