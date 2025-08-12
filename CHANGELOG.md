@@ -1,6 +1,12 @@
 # Changelog
 
-## v1.6.2 [Unreleased] (as of 2025-08-10)
+## v1.7.1 [Unreleased] (as of 2025-08-12)
+
+## v1.7.0 (2025-08-10)
+
+- options page UI overhaul
+- popup page now respects dark theme settings.
+- new human profile (aka brain), that will give more human like responses. it is now the default! Give it a try.
 
 ## v1.6.1 (2025-08-10)
 
