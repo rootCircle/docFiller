@@ -35,12 +35,6 @@ async function createProfileCards() {
     if (b[1].is_magic) {
       return 1;
     }
-    if (a[0] === 'all-rounder' && !a[1].is_custom) {
-      return -1;
-    }
-    if (b[0] === 'all-rounder' && !b[1].is_custom) {
-      return 1;
-    }
     return 0;
   });
 

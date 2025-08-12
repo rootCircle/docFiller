@@ -1,4 +1,5 @@
 // https://github.com/oven-sh/bun/issues/358#issuecomment-1715648224
+/** biome-ignore-all lint/correctness/noUnusedVariables: false positive */
 
 /// <reference lib="dom" />
 

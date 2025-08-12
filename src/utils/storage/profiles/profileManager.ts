@@ -8,8 +8,37 @@ import {
 import { v4 } from 'uuid';
 
 async function loadProfiles(): Promise<Profiles> {
-  const customProfiles =
+  const rawCustomProfiles =
     (await getStorageItem<Profiles>('customProfiles')) || {};
+
+  /*
+    Hotfix: older builds saved built-ins into customProfiles, causing duplicate "All Rounder"
+    and missing "Human". We now filter built-in keys (from defaults + profilesData) out of
+    customProfiles on load and write back the cleaned map. No legacy normalization; customs untouched.
+  */
+  const builtInKeys = new Set<string>([
+    DEFAULT_PROPERTIES.defaultProfileKey,
+    ...Object.keys(profilesData),
+  ]);
+
+  const customProfiles: Profiles = {};
+  let changed = false;
+  for (const [k, v] of Object.entries(rawCustomProfiles)) {
+    if (builtInKeys.has(k)) {
+      const p = v as Profile;
+      if (p?.is_magic || p?.is_custom) {
+        customProfiles[k] = p;
+      } else {
+        changed = true;
+      }
+      continue;
+    }
+    customProfiles[k] = v as Profile;
+  }
+
+  if (changed) {
+    await setStorageItems({ customProfiles });
+  }
 
   return {
     [DEFAULT_PROPERTIES.defaultProfileKey]: DEFAULT_PROPERTIES.defaultProfile,

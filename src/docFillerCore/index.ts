@@ -18,7 +18,7 @@ import {
   getSelectedProfileKey,
   loadProfiles,
 } from '@utils/storage/profiles/profileManager';
-import { setStorageItem } from '@utils/storage/storageHelper';
+import { getStorageItem, setStorageItem } from '@utils/storage/storageHelper';
 
 async function runDocFillerEngine() {
   const questions = new QuestionExtractorEngine().getValidQuestions();
@@ -88,8 +88,10 @@ async function runDocFillerEngine() {
       profiles[selectedProfile].system_prompt = response.value.system_prompt;
     }
     try {
+      const existingCustom =
+        (await getStorageItem<Profiles>('customProfiles')) || {};
       await setStorageItem('customProfiles', {
-        ...profiles,
+        ...existingCustom,
         [selectedProfile]: {
           ...profiles[selectedProfile],
           system_prompt: response.value?.system_prompt,
