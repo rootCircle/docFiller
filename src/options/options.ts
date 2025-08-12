@@ -1,38 +1,38 @@
-import { LLMEngineType, getModelName } from '@utils/llmEngineTypes';
 import { safeGetElementById } from '@utils/domUtils';
-import {
-  updateApiKeyLink,
-  updateConsensusApiLinks,
-  updateApiKeyInputField,
-} from './optionApiHandler';
-import { initializeOptionPasswordField } from './optionPasswordField';
-import { MetricsUI } from './metrics';
-import { showToast } from '@utils/toastUtils';
+import { getModelName, LLMEngineType } from '@utils/llmEngineTypes';
 import { validateLLMConfiguration } from '@utils/missingApiKey';
 import {
-  getSleepDuration,
-  getLLMModel,
+  getAnthropicApiKey,
+  getChatGptApiKey,
   getEnableConsensus,
   getEnableDarkTheme,
-  getLLMWeights,
-  getChatGptApiKey,
   getGeminiApiKey,
+  getLLMModel,
+  getLLMWeights,
   getMistralApiKey,
-  getAnthropicApiKey,
   getSkipMarkedSetting,
+  getSleepDuration,
 } from '@utils/storage/getProperties';
 import {
-  setSleepDuration,
-  setLLMModel,
+  setAnthropicApiKey,
+  setChatGptApiKey,
   setEnableConsensus,
   setEnableDarkTheme,
-  setLLMWeights,
-  setChatGptApiKey,
   setGeminiApiKey,
+  setLLMModel,
+  setLLMWeights,
   setMistralApiKey,
-  setAnthropicApiKey,
+  setSleepDuration,
   setToggleSkipMarkedStatus,
 } from '@utils/storage/setProperties';
+import { showToast } from '@utils/toastUtils';
+import { MetricsUI } from './metrics';
+import {
+  updateApiKeyInputField,
+  updateApiKeyLink,
+  updateConsensusApiLinks,
+} from './optionApiHandler';
+import { initializeOptionPasswordField } from './optionPasswordField';
 import {
   createProfileCards,
   handleProfileFormSubmit,
@@ -257,9 +257,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   if (darkThemeToggleButton) {
-    darkThemeToggleButton.addEventListener('click', () => {
+    darkThemeToggleButton.addEventListener('click', async () => {
       const next = !document.documentElement.classList.contains('dark-theme');
       toggleDarkTheme(next);
+      try {
+        await setEnableDarkTheme(next);
+      } catch (error) {
+        showToast(
+          `Failed to save theme. ${error instanceof Error ? error.message : String(error)}`,
+          'error',
+        );
+      }
     });
   }
 
