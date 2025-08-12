@@ -1,4 +1,4 @@
-name: docFiller Extension Mannual Release
+name: docFiller Extension Manual Release
 
 on:
   workflow_dispatch:
