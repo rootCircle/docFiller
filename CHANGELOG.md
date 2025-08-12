@@ -1,8 +1,14 @@
 # Changelog
 
-## v1.7.1 [Unreleased] (as of 2025-08-12)
+## v1.7.2 [Unreleased] (as of 2025-08-12)
 
-## v1.7.0 (2025-08-10)
+## v1.7.1 (2025-08-12)
+
+- hotfix: prevent duplicate built-in profiles and missing Human on upgrade by filtering built-ins from customProfiles at load time
+- fix: Codon (magic) only saves updated prompt for selected profile; no full profile map dump
+- refactor: programmatic built-in key detection and self-heal storage without install/update hooks
+
+## v1.7.0 (2025-08-11)
 
 - options page UI overhaul
 - popup page now respects dark theme settings.
