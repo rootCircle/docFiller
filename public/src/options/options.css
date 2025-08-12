@@ -144,11 +144,18 @@ body .btn-primary {
 }
 
 body {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Noto Sans", Helvetica, Arial,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   background-color: var(--background);
   color: var(--text-primary);
   padding: 1rem;
   line-height: 1.5;
+  font-size: 1rem;
 }
 
 .container {
@@ -200,7 +207,7 @@ label {
   padding: 10px;
   padding-right: 35px !important; /* Space for the eye icon */
   box-sizing: border-box;
-  font-size: 16px;
+  font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
@@ -317,7 +324,7 @@ input[disabled] {
   color: var(--warning-text) !important;
   cursor: not-allowed !important;
   padding-right: 10px !important;
-  font-size: 15px !important;
+  font-size: 0.9375rem !important;
 }
 
 .warning-message {
@@ -343,7 +350,7 @@ input[disabled] {
   margin-left: 8px;
   margin-top: 2px;
   color: #007bff;
-  font-size: 13px;
+  font-size: 0.8125rem;
   text-decoration: none;
   line-height: 1.2;
   white-space: nowrap;
@@ -422,7 +429,7 @@ input[disabled] {
 }
 
 .add-icon {
-  font-size: 40px;
+  font-size: 2.5rem;
   color: #666;
   margin-bottom: 1px;
 }
@@ -445,7 +452,7 @@ input[disabled] {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 0.875rem;
   z-index: 1;
 }
 
@@ -485,7 +492,7 @@ input[disabled] {
   position: absolute;
   top: 10px;
   right: 10px;
-  font-size: 24px;
+  font-size: 1.5rem;
   cursor: pointer;
   color: var(--text-secondary);
 }
@@ -516,7 +523,7 @@ close-button:hover {
   border: 1px solid var(--border-color);
   border-radius: 6px;
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 #addProfileForm textarea {
@@ -537,7 +544,7 @@ close-button:hover {
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
@@ -581,7 +588,7 @@ close-button:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 1.125rem;
   cursor: pointer;
   opacity: 0;
   transition: opacity 0.2s ease;
@@ -620,7 +627,7 @@ close-button:hover {
 }
 
 .add-icon {
-  font-size: 32px;
+  font-size: 2rem;
   color: #4caf50;
   line-height: 1;
   margin-bottom: 40px;
@@ -630,7 +637,7 @@ close-button:hover {
 .add-profile p {
   color: #666;
   margin: 0;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 @media (max-width: 768px) {
@@ -727,7 +734,7 @@ close-button:hover {
   border-radius: 50%;
   background-color: #007bff;
   display: flex;
-  font-size: 14px;
+  font-size: 0.875rem;
   z-index: 1;
   align-items: center;
   justify-content: center;
@@ -748,7 +755,7 @@ close-button:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 0.875rem;
   z-index: 1;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -775,7 +782,7 @@ close-button:hover {
 
 .delete-mark {
   cursor: pointer;
-  font-size: 16px;
+  font-size: 1rem;
   opacity: 0;
   transition: all 0.2s ease;
 }
@@ -805,7 +812,7 @@ close-button:hover {
   display: block;
   font-weight: 500;
   margin-bottom: 0.5rem;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text-primary);
 }
 
@@ -952,13 +959,13 @@ close-button:hover {
   gap: 0.5rem;
   min-height: 40px;
   padding: 0.75rem 1.5rem;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
   line-height: 1; /* Ensures consistent line height */
 }
 
 .metrics-controls .icon {
-  font-size: 16px;
+  font-size: 1rem;
   line-height: 1;
   display: inline-flex;
   align-items: center;
@@ -1580,7 +1587,7 @@ body .btn-primary:hover {
 }
 
 .close-modal {
-  font-size: 28px;
+  font-size: 1.75rem;
   cursor: pointer;
   color: var(--text-primary);
   line-height: 1;

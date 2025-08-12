@@ -20,6 +20,7 @@ LICENSE text eol=crlf
 .prettierrc text eol=crlf
 
 # Specify binary files
+*.woff2 binary
 *.jpg binary
 *.png binary
 *.pdf binary
