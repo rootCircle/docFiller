@@ -2,6 +2,22 @@ name: docFiller Extension Manual Release
 
 on:
   workflow_dispatch:
+    inputs:
+      upload_chrome:
+        description: "Upload to Chrome Web Store"
+        required: false
+        type: boolean
+        default: true
+      upload_firefox:
+        description: "Upload to Firefox Add-ons"
+        required: false
+        type: boolean
+        default: true
+      upload_edge:
+        description: "Upload to Microsoft Edge Add-ons"
+        required: false
+        type: boolean
+        default: true
 
 permissions:
   contents: write
@@ -20,27 +36,30 @@ jobs:
         run: |
           zip -r docFiller.zip . -x '*.git*' -x '*node_modules*' -x '*build*' -x '*coverage*' -x '*web-ext-artifacts*'
 
-      - name: Extract Version from Tag
-        run: |
-          VERSION=${GITHUB_REF#refs/tags/}
-          MINIFIED_VERSION=${VERSION#v}
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "MINIFIED_VERSION=$MINIFIED_VERSION" >> $GITHUB_ENV
-
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+
+      - name: Determine version
+        run: |
+          bun -e 'const v=require("./package.json").version; if(!v){console.error("Failed to read version from package.json"); process.exit(1);} const fs=require("fs"); const lines="VERSION=v"+v+"\nMINIFIED_VERSION="+v+"\n"; const envFile=process.env.GITHUB_ENV; if(envFile){fs.appendFileSync(envFile, lines);} else {process.stdout.write(lines);} '
 
       - name: Installation of Dependencies 
         run: |
           bun install
   
-      - name: Package extension
+      - name: Package extension (Firefox)
+        if: ${{ inputs.upload_firefox }}
         run: |
           bun run package:firefox
+
+      - name: Package extension (Chromium)
+        if: ${{ inputs.upload_chrome || inputs.upload_edge }}
+        run: |
           bun run package:chromium
 
       - name: Upload to Chrome Web Store
+        if: ${{ inputs.upload_chrome }}
         uses: mobilefirstllc/cws-publish@latest
         with:
           action: 'publish'  # one of: upload, publish, testers
@@ -52,6 +71,7 @@ jobs:
         continue-on-error: true
       
       - uses: wdzeng/firefox-addon@v1
+        if: ${{ inputs.upload_firefox }}
         with:
           addon-guid: "docFiller@rootcircle.github.io"
           xpi-path: web-ext-artifacts/docfiller-${{ env.MINIFIED_VERSION }}-firefox.zip
@@ -62,6 +82,7 @@ jobs:
         continue-on-error: true
 
       - uses: wdzeng/edge-addon@v2
+        if: ${{ inputs.upload_edge }}
         with:
           product-id: 4dfc1366-555a-431e-91d1-9991bc771fab
           zip-path: web-ext-artifacts/docfiller-${{ env.MINIFIED_VERSION }}-chromium.zip
