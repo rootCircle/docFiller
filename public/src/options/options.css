@@ -1688,3 +1688,26 @@ body .btn-primary:hover {
 .dark-theme #tab-about a:visited {
   color: #93c5fd;
 }
+
+/* About tab logo */
+#tab-about .about-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: -0.25rem;
+  margin-bottom: 0.5rem;
+}
+#tab-about .about-logo img {
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Align About tab content with labels (fix left offset under Tooling & Languages) */
+#tab-about .form-group > p,
+#tab-about .form-group > ul,
+#tab-about .form-group > ol {
+  margin-left: 0.3rem; /* match label's left margin */
+}
+#tab-about .form-group ul {
+  padding-left: 1.25rem; /* keep bullets readable while aligned */
+}

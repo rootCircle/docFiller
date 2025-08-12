@@ -535,24 +535,34 @@
             </div>
           </div>
         </section>
-      </div>
-      <!-- Tab 5: About -->
-      <section
-        id="tab-about"
-        class="tab-panel"
-        role="tabpanel"
-        aria-labelledby="tab-about-btn"
-      >
-        <div class="section">
-          <h2 class="section-heading">About docFiller</h2>
-          <p>
-            docFiller is an open-source web extension that helps automate
-            filling forms using GenAI. You can explore the source code, report
-            issues, and contribute via the GitHub repository.
-          </p>
+        <!-- Tab 5: About -->
+        <section
+          id="tab-about"
+          class="tab-panel"
+          role="tabpanel"
+          aria-labelledby="tab-about-btn"
+        >
+          <div class="about-logo">
+            <img
+              src="../../assets/icons/icon-form-96.png"
+              alt="docFiller logo"
+              width="72"
+              height="72"
+              loading="lazy"
+            />
+          </div>
+          <div class="section">
+            <h2 class="section-heading">About docFiller</h2>
+            <p>
+              docFiller is an open-source browser extension that automates
+              filling repetitive forms using GenAI. It supports multiple LLM
+              providers, optional consensus across models, and a profiles system
+              to tailor prompts and behavior to your workflow.
+            </p>
+          </div>
 
-          <div class="form-group">
-            <label>Repository</label>
+          <div class="section">
+            <h2 class="section-heading">Repository</h2>
             <p>
               <a
                 href="https://github.com/rootCircle/docFiller"
@@ -564,8 +574,8 @@
             </p>
           </div>
 
-          <div class="form-group">
-            <label>Special note to developers and contributors</label>
+          <div class="section">
+            <h2 class="section-heading">Contributing</h2>
             <ul>
               <li>
                 This project is community-driven; no formal support is provided.
@@ -578,32 +588,39 @@
             </ul>
             <p>
               <a
-                href="https://github.com/rootCircle/docFiller/blob/main/CONTRIBUTING.md"
+                href="https://github.com/rootCircle/docFiller/blob/dev/docs/CONTRIBUTING.md"
                 target="_blank"
                 rel="noopener noreferrer"
                 >Contributing Guide</a
               >
               ·
               <a
-                href="https://github.com/rootCircle/docFiller/blob/main/CODE_OF_CONDUCT.md"
+                href="https://github.com/rootCircle/docFiller/blob/dev/docs/CODE_OF_CONDUCT.md"
                 target="_blank"
                 rel="noopener noreferrer"
                 >Code of Conduct</a
               >
+              ·
+              <a
+                href="https://github.com/rootCircle/docFiller/graphs/contributors"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Contributors</a
+              >
             </p>
           </div>
 
-          <div class="form-group">
-            <label>How to file a bug</label>
+          <div class="section">
+            <h2 class="section-heading">Report bugs</h2>
             <ol>
               <li>Search existing issues to avoid duplicates.</li>
               <li>
-                Include clear reproduction steps and the expected vs. actual
+                Include clear reproduction steps and expected vs. actual
                 behavior.
               </li>
               <li>
                 Provide your browser, OS, and extension version (see the
-                extension manifest).
+                manifest).
               </li>
               <li>Attach screenshots or minimal examples if possible.</li>
             </ol>
@@ -617,37 +634,198 @@
             </p>
           </div>
 
-          <div class="form-group">
-            <label>Security and privacy</label>
+          <div class="section">
+            <h2 class="section-heading">Security & privacy</h2>
             <p>
               For vulnerabilities, please review the security policy and report
               responsibly. See our privacy policy for data practices.
             </p>
             <p>
               <a
-                href="https://github.com/rootCircle/docFiller/blob/main/SECURITY.md"
+                href="https://github.com/rootCircle/docFiller/blob/dev/docs/SECURITY.md"
                 target="_blank"
                 rel="noopener noreferrer"
                 >Security Policy</a
               >
               ·
               <a
-                href="https://github.com/rootCircle/docFiller/blob/main/PRIVACY_POLICY.md"
+                href="https://github.com/rootCircle/docFiller/blob/dev/docs/PRIVACY_POLICY.md"
                 target="_blank"
                 rel="noopener noreferrer"
                 >Privacy Policy</a
               >
               ·
               <a
-                href="https://github.com/rootCircle/docFiller/blob/main/LICENSE"
+                href="https://github.com/rootCircle/docFiller/blob/dev/docs/TERMS_OF_USE.md"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Terms of Use</a
+              >
+              ·
+              <a
+                href="https://github.com/rootCircle/docFiller/blob/dev/LICENSE"
                 target="_blank"
                 rel="noopener noreferrer"
                 >License</a
               >
             </p>
           </div>
-        </div>
-      </section>
+
+          <div class="section">
+            <h2 class="section-heading">Credits</h2>
+            <div class="form-group">
+              <label>Libraries & SDKs</label>
+              <ul>
+                <li>
+                  <a
+                    href="https://js.langchain.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >LangChain</a
+                  >
+                  and integrations for LLM orchestration:
+                  <a
+                    href="https://openai.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >OpenAI</a
+                  >,
+                  <a
+                    href="https://ai.google.dev/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Google Generative AI (Gemini)</a
+                  >,
+                  <a
+                    href="https://www.anthropic.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Anthropic</a
+                  >,
+                  <a
+                    href="https://mistral.ai/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Mistral</a
+                  >,
+                  <a
+                    href="https://ollama.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Ollama</a
+                  >.
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/mozilla/webextension-polyfill"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >webextension‑polyfill</a
+                  >
+                  for a cross‑browser WebExtensions API.
+                </li>
+              </ul>
+            </div>
+            <div class="form-group">
+              <label>Tooling</label>
+              <p>
+                <a
+                  href="https://esbuild.github.io/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >esbuild</a
+                >,
+                <a
+                  href="https://github.com/mozilla/web-ext"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >web‑ext</a
+                >,
+                <a
+                  href="https://bun.sh/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Bun</a
+                >,
+                <a
+                  href="https://biomejs.dev/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Biome</a
+                >,
+                <a
+                  href="https://prettier.io/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Prettier</a
+                >,
+                <a
+                  href="https://cspell.org/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >cspell</a
+                >,
+                <a
+                  href="https://typicode.github.io/husky/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Husky</a
+                >,
+                <a
+                  href="https://github.com/open-cli-tools/concurrently"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >concurrently</a
+                >,
+                <a
+                  href="https://github.com/paulmillr/chokidar"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >chokidar</a
+                >
+              </p>
+            </div>
+            <div class="form-group">
+              <label>Languages & utilities</label>
+              <p>
+                <a
+                  href="https://www.typescriptlang.org/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >TypeScript</a
+                >,
+                <a
+                  href="https://github.com/uuidjs/uuid"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >uuid</a
+                >
+              </p>
+            </div>
+          </div>
+
+          <div class="section">
+            <h2 class="section-heading">Icons & assets</h2>
+            <p>
+              Icons adapted from
+              <a
+                href="https://icons8.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Icons8</a
+              >
+              -> the
+              <a
+                href="https://icons8.com/icon/ezUTJdV6xvqx/google-sheets"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Google Sheets</a
+              >
+              icon.
+            </p>
+          </div>
+        </section>
+      </div>
     </div>
 
     <!-- Modals and Toasts (keep outside tab panels) -->
