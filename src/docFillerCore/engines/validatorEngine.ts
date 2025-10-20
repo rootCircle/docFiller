@@ -13,11 +13,11 @@ export class ValidatorEngine {
 
     // In Chromium-based browsers, the response from background service worker after invoking LLM
     // is somehow a string, not a Date object. This happens because when the extension communicates
-    // with the background service worker via `chrome.runtime.onMessage`, Date objects get converted
+    // with the background service worker via `browser.runtime.onMessage`, Date objects get converted
     // to strings during the message passing process.
     //
     // Flow: extension -> background service worker -> LLM API ->
-    // Date object as response in background worker -> chrome.runtime.onMessage ->
+    // Date object as response in background worker -> browser.runtime.onMessage ->
     // extension caller -> Date becomes string automatically
     if (response?.date && !(response.date instanceof Date)) {
       // If the date is not a Date object, assume it's a string and try to convert it

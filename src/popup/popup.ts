@@ -1,6 +1,7 @@
 import { ConsensusEngine } from '@docFillerCore/engines/consensusEngine';
 import { DEFAULT_PROPERTIES } from '@utils/defaultProperties';
 import { safeQuerySelector } from '@utils/domUtils';
+import type { MessageResponse } from '@utils/messageTypes';
 import { validateLLMConfiguration } from '@utils/missingApiKey';
 import { getEnableDarkTheme, getIsEnabled } from '@utils/storage/getProperties';
 import {
@@ -9,6 +10,7 @@ import {
 } from '@utils/storage/profiles/profileManager';
 import { setIsEnabled } from '@utils/storage/setProperties';
 import { showToast } from '@utils/toastUtils';
+import browser from 'webextension-polyfill';
 
 document.addEventListener('DOMContentLoaded', async () => {
   let previousState = false;
@@ -135,9 +137,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     void saveState();
   });
 
-  fillSection.addEventListener('click', () => {
+  fillSection.addEventListener('click', async () => {
     showToast('Starting auto-fill process...', 'info');
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    try {
+      const tabs = await browser.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
       const tab = tabs[0];
       if (!tab?.url?.includes('docs.google.com/forms')) {
         showToast('Please open a Google Form to use auto-fill', 'error');
@@ -149,28 +155,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
       }
 
-      chrome.tabs.sendMessage(tab.id, { action: 'fillForm' }, (response) => {
-        if (chrome.runtime.lastError) {
-          showToast('Error: Could not communicate with page', 'error');
-          return;
-        }
-        if (response?.success) {
-          showToast('Auto-fill completed successfully!', 'success');
-        } else {
-          showToast(
-            `Auto-fill failed: ${response?.error || 'Unknown error'}`,
-            'error',
-          );
-        }
-      });
-    });
+      const response = (await browser.tabs.sendMessage(tab.id, {
+        action: 'fillForm',
+      })) as MessageResponse;
+      if (response?.success) {
+        showToast('Auto-fill completed successfully!', 'success');
+      } else {
+        showToast(
+          `Auto-fill failed: ${response?.error || 'Unknown error'}`,
+          'error',
+        );
+      }
+    } catch (_error) {
+      showToast('Error: Could not communicate with page', 'error');
+    }
   });
 
-  refreshButton.addEventListener('click', () => {
-    chrome.tabs.reload().catch((error) => {
+  refreshButton.addEventListener('click', async () => {
+    try {
+      await browser.tabs.reload();
+    } catch (error) {
       // biome-ignore lint/suspicious/noConsole: debugging popup functionality
       console.error('Failed to reload tab:', error);
-    });
+    }
   });
 
   async function setTheme() {

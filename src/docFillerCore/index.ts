@@ -19,6 +19,7 @@ import {
   loadProfiles,
 } from '@utils/storage/profiles/profileManager';
 import { getStorageItem, setStorageItem } from '@utils/storage/storageHelper';
+import browser from 'webextension-polyfill';
 
 async function runDocFillerEngine() {
   const questions = new QuestionExtractorEngine().getValidQuestions();
@@ -79,7 +80,7 @@ async function runDocFillerEngine() {
       }
     }
     const response: { value?: { system_prompt: string } } =
-      await chrome.runtime.sendMessage({
+      await browser.runtime.sendMessage({
         type: 'MAGIC_PROMPT_GEN',
         questions: questionsToSend,
         model: await settings.getCurrentLLMModel(),

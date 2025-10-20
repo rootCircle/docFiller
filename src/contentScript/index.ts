@@ -1,37 +1,33 @@
 import { ConsensusEngine } from '@docFillerCore/engines/consensusEngine';
 import { runDocFillerEngine } from '@docFillerCore/index';
-import { isFillFormMessage, type MessageResponse } from '@utils/messageTypes';
+import { isFillFormMessage } from '@utils/messageTypes';
 import { getIsEnabled } from '@utils/storage/getProperties';
+import browser from 'webextension-polyfill';
 
-chrome.runtime.onMessage.addListener(
-  (
+browser.runtime.onMessage.addListener(
+  async (
     message: unknown,
 
-    _sender: chrome.runtime.MessageSender,
-
-    sendResponse: (response: MessageResponse) => void,
+    _sender: browser.Runtime.MessageSender,
   ) => {
     if (isFillFormMessage(message)) {
-      void runDocFillerEngine()
-        .then(() => {
-          sendResponse({ success: true });
-        })
+      try {
+        await runDocFillerEngine();
+        return { success: true };
+      } catch (error: unknown) {
+        // biome-ignore lint/suspicious/noConsole: debugging error in content script
+        console.error('Error running doc filler:', error);
 
-        .catch((error: Error) => {
-          // biome-ignore lint/suspicious/noConsole: debugging error in content script
-          console.error('Error running doc filler:', error);
+        return {
+          success: false,
 
-          sendResponse({
-            success: false,
-
-            error: error.message || 'Failed to fill document',
-          });
-        });
-
-      return true;
+          error:
+            error instanceof Error ? error.message : 'Failed to fill document',
+        };
+      }
     }
 
-    return false;
+    return undefined;
   },
 );
 
