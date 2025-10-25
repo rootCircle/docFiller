@@ -26,6 +26,7 @@ import {
 } from '@utils/storage/profiles/profileManager';
 import { DatetimeOutputParser } from 'langchain/output_parsers';
 import { z } from 'zod';
+import browser from 'webextension-polyfill';
 
 type LLMInstance =
   | ChatOpenAI
@@ -154,10 +155,15 @@ export class LLMEngine {
     };
 
     try {
-      const response = await chrome.runtime.sendMessage(item);
+      const response = (await browser.runtime.sendMessage(item)) as {
+        value?: LLMResponse | null;
+        error?: string | object;
+      };
 
       if (!response) {
-        throw new Error('No response received from chrome.runtime.sendMessage');
+        throw new Error(
+          'No response received from browser.runtime.sendMessage',
+        );
       }
 
       if (typeof response !== 'object') {

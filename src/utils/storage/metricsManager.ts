@@ -1,6 +1,7 @@
 import type { LLMEngineType } from '@utils/llmEngineTypes';
 import { MetricsCalculator } from '@utils/metricsCalculator';
 import { getStorageItem, setStorageItem } from '@utils/storage/storageHelper';
+import browser from 'webextension-polyfill';
 
 export class MetricsManager {
   private static instance: MetricsManager;
@@ -53,12 +54,11 @@ export class MetricsManager {
 
   resetMetrics(): void {
     try {
-      chrome.storage.sync.set(
-        { [MetricsManager.STORAGE_KEY]: this.getDefaultMetrics() },
-        () => {
-          // noop: best-effort reset; consumers don't await this
-        },
-      );
+      browser.storage.sync
+        .set({ [MetricsManager.STORAGE_KEY]: this.getDefaultMetrics() })
+        .catch(() => {
+          // swallow errors; UI will show toast if needed elsewhere
+        });
     } catch {
       // swallow errors; UI will show toast if needed elsewhere
     }

@@ -55,7 +55,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     tab.classList.add('active');
     tab.setAttribute('aria-selected', 'true');
     const controls = tab.getAttribute('aria-controls');
-    tabPanels.forEach((p) => p.classList.remove('active'));
+    tabPanels.forEach((p) => {
+      p.classList.remove('active');
+    });
     if (controls) {
       const panel = document.getElementById(controls);
       panel?.classList.add('active');

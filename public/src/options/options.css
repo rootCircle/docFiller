@@ -852,7 +852,11 @@ close-button:hover {
 }
 
 .creative-toggle.active .toggle-thumb {
-  left: calc(var(--toggle-width) - var(--toggle-height) + var(--toggle-padding));
+  left: calc(
+    var(--toggle-width) -
+    var(--toggle-height) +
+    var(--toggle-padding)
+  );
 }
 
 .check-icon,
