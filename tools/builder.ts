@@ -25,6 +25,8 @@ const build = async (watch: boolean) => {
       bundle: true,
       // minify: true,
       outdir: './build/src',
+      platform: 'browser',
+      external: ['node:*'],
     });
     await buildContext.watch();
   } else {
@@ -33,6 +35,8 @@ const build = async (watch: boolean) => {
       bundle: true,
       // minify: true,
       outdir: './build/src',
+      platform: 'browser',
+      external: ['node:*'],
     });
 
     if (buildStatus.errors.length > 0) {

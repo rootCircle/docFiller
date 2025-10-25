@@ -1,4 +1,5 @@
 import { ChatAnthropic } from '@langchain/anthropic';
+import { DatetimeOutputParser } from '@langchain/classic/output_parsers';
 import { ChromeAI } from '@langchain/community/experimental/llms/chrome_ai';
 import {
   StringOutputParser,
@@ -24,7 +25,6 @@ import {
   getSelectedProfileKey,
   loadProfiles,
 } from '@utils/storage/profiles/profileManager';
-import { DatetimeOutputParser } from 'langchain/output_parsers';
 import { z } from 'zod';
 import browser from 'webextension-polyfill';
 
