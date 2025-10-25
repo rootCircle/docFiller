@@ -4,12 +4,12 @@ import { extname, join } from 'node:path';
 const sourceDir = [
   {
     path: './src/',
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
   },
 ];
 
 /**
- * Recursively get all .ts and .js entrypoints from the directory
+ * Recursively get all .ts, .tsx, .js and .jsx entrypoints from the directory
  *
  * @param dir Directory path to scan
  * @returns {Promise<string[]>} The entrypoints
@@ -29,7 +29,7 @@ async function getFiles(
     }),
   );
 
-  // Flatten the array and filter only .ts and .js files
+  // Flatten the array and filter only .ts, .tsx, .js and .jsx files
   const filteredFiles: string[] = (
     Array.prototype.concat(...files) as string[]
   ).filter((file) => validFileExtensions.includes(extname(file)));
