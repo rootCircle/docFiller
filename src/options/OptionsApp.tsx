@@ -105,7 +105,7 @@ const OptionsApp: React.FC = () => {
       setSkipMarked(skipMarkedSetting);
 
       if (darkTheme) {
-        document.body.classList.add('dark-theme');
+        document.documentElement.classList.add('dark-theme');
       }
 
       // Load profiles
@@ -220,19 +220,31 @@ const OptionsApp: React.FC = () => {
   // Theme handlers
   const handleDarkThemeToggle = async () => {
     const newValue = !isDarkTheme;
-    await setEnableDarkTheme(newValue);
-    setIsDarkTheme(newValue);
-    if (newValue) {
-      document.body.classList.add('dark-theme');
-    } else {
-      document.body.classList.remove('dark-theme');
+    try {
+      await setEnableDarkTheme(newValue);
+      setIsDarkTheme(newValue);
+      if (newValue) {
+        document.documentElement.classList.add('dark-theme');
+      } else {
+        document.documentElement.classList.remove('dark-theme');
+      }
+    } catch (error) {
+      showToast(
+        `Failed to save theme. ${error instanceof Error ? error.message : String(error)}`,
+        'error',
+      );
     }
   };
 
   const handleSkipMarkedToggle = async () => {
-    await setToggleSkipMarkedStatus();
-    const newValue = await getSkipMarkedSetting();
-    setSkipMarked(newValue);
+    try {
+      await setToggleSkipMarkedStatus();
+      const newValue = await getSkipMarkedSetting();
+      setSkipMarked(newValue);
+      showToast(`Skip already filled: ${newValue ? 'On' : 'Off'}`, 'success');
+    } catch (error) {
+      showToast('Failed to update skip-filled setting.', 'error');
+    }
   };
 
   // API handlers
@@ -449,7 +461,7 @@ const OptionsApp: React.FC = () => {
                 <div className="toggle-setting">
                   <span className="setting-label">Dark Theme</span>
                   <div
-                    className={`creative-toggle ${isDarkTheme ? 'enabled' : ''}`}
+                    className={`creative-toggle ${isDarkTheme ? 'active' : ''}`}
                     onClick={handleDarkThemeToggle}
                   >
                     <div className="toggle-track">
@@ -471,7 +483,7 @@ const OptionsApp: React.FC = () => {
                     Skip Already Filled Questions
                   </span>
                   <div
-                    className={`creative-toggle ${skipMarked ? 'enabled' : ''}`}
+                    className={`creative-toggle ${skipMarked ? 'active' : ''}`}
                     onClick={handleSkipMarkedToggle}
                   >
                     <div className="toggle-track">
