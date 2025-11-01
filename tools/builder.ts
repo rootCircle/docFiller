@@ -4,6 +4,28 @@ import copyContents from './copier';
 import entryPoints from './entrypoints';
 import { writeManifest } from './manifestWriter';
 
+// Plugin to stub Node.js built-in modules for browser builds
+const nodeBuiltinsPlugin: esbuild.Plugin = {
+  name: 'node-builtins',
+  setup(build) {
+    // Stub out node:* imports
+    build.onResolve({ filter: /^node:/ }, (args) => {
+      return {
+        path: args.path,
+        namespace: 'node-builtins-stub',
+      };
+    });
+
+    build.onLoad({ filter: /.*/, namespace: 'node-builtins-stub' }, () => {
+      return {
+        contents:
+          'export default {}; export const createRequire = () => () => {};',
+        loader: 'js',
+      };
+    });
+  },
+};
+
 const cleanBuildFolder = async () => {
   try {
     await fs.remove('./build');
@@ -26,7 +48,7 @@ const build = async (watch: boolean) => {
       // minify: true,
       outdir: './build/src',
       platform: 'browser',
-      external: ['node:*'],
+      plugins: [nodeBuiltinsPlugin],
     });
     await buildContext.watch();
   } else {
@@ -36,7 +58,7 @@ const build = async (watch: boolean) => {
       // minify: true,
       outdir: './build/src',
       platform: 'browser',
-      external: ['node:*'],
+      plugins: [nodeBuiltinsPlugin],
     });
 
     if (buildStatus.errors.length > 0) {
