@@ -16,9 +16,30 @@ interface MagicPromptMessage {
   model: LLMEngineType;
 }
 
+// Helper function to store extension ID for testing
+async function storeExtensionIdForTesting() {
+  try {
+    await browser.storage.local.set({
+      __test_extension_id: browser.runtime.id
+    });
+  } catch (e) {
+    // Silently fail if storage isn't available
+  }
+}
+
 browser.runtime.onInstalled.addListener(async () => {
   await MetricsManager.getInstance().getMetrics();
+  await storeExtensionIdForTesting();
 });
+
+// Also store ID when service worker starts (not just on install)
+// This ensures tests can always find the ID
+browser.runtime.onStartup.addListener(async () => {
+  await storeExtensionIdForTesting();
+});
+
+// Store immediately on load for first-time testing
+storeExtensionIdForTesting();
 
 browser.runtime.onMessage.addListener(
   async (message: unknown, _sender: browser.Runtime.MessageSender) => {

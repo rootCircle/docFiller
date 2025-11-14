@@ -1,0 +1,19 @@
+# Extension ID Placeholder
+# 
+# To run e2e tests, you need to get the Chrome extension ID for the locally loaded extension.
+#
+# Steps to get the extension ID:
+# 1. Build the extension: npm run build:chromium
+# 2. Open Chrome and navigate to: chrome://extensions
+# 3. Enable "Developer mode" (toggle in top right corner)
+# 4. Click "Load unpacked" and select the /build directory
+# 5. Find "docFiller" in the list of extensions
+# 6. Copy the ID (it's a 32-character string of lowercase letters, like: abcdefghijklmnopqrstuvwxyzabcdef)
+# 7. Create a file named .extension-id (without .example) in this directory
+# 8. Paste the ID into that file (just the ID, nothing else)
+#
+# Example content of .extension-id file:
+# abcdefghijklmnopqrstuvwxyzabcdef
+#
+# Once you have the .extension-id file, the tests will automatically use it.
+

@@ -180,6 +180,14 @@ dist
 # web-ext build
 /web-ext-artifacts/
 
+# Test artifacts
+test-results/
+playwright-report/
+.vitest/
+.test-user-data/
+.test-user-data-firefox/
+tests/e2e/.extension-id
+
 # Ignore other package managers
 package-lock.json
 yarn.lock
