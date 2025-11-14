@@ -44,7 +44,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@langchain/anthropic": "^0.3.25",
+    "@langchain/anthropic": "^1.0.1",
     "@langchain/community": "^0.3.49",
     "@langchain/google-genai": "^0.2.16",
     "@langchain/mistralai": "^0.2.1",
