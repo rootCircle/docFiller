@@ -47,7 +47,7 @@
     "@langchain/anthropic": "^0.3.25",
     "@langchain/community": "^0.3.49",
     "@langchain/google-genai": "^0.2.16",
-    "@langchain/mistralai": "^0.2.1",
+    "@langchain/mistralai": "^1.0.0",
     "@langchain/ollama": "^0.2.3",
     "@langchain/openai": "^0.6.3",
     "langchain": "^0.3.30",
