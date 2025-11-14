@@ -1,6 +1,14 @@
 # Changelog
 
-## v1.7.2 [Unreleased] (as of 2025-08-12)
+## v1.8.1 [Unreleased] (as of 2025-11-14)
+
+- Pending changes
+
+## v1.8.0 (2025-11-14)
+
+- refactor: migrate from `chrome.*` to `browser.*` APIs using webextension-polyfill for improved cross-browser compatibility
+- ux: populate a single API key on options load even when consensus is disabled
+- docs: refine Human profile instructions for clarity and conciseness
 
 ## v1.7.1 (2025-08-12)
 
