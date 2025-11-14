@@ -442,13 +442,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       if (sleepDurationInput) sleepDurationInput.value = String(sleepDuration);
       if (llmModelSelect) llmModelSelect.value = llmModel;
-      if (singleApiKeyInput && llmModelSelect) {
-        updateApiKeyInputField(singleApiKeyInput, llmModelSelect);
-        if (apiKeyInputLink) {
-          updateApiKeyLink(llmModelSelect, apiKeyInputLink);
-        }
-        updateSingleApiKeyFromModel(llmModelSelect.value);
-      }
       if (enableConsensusCheckbox)
         enableConsensusCheckbox.checked = enableConsensus;
       if (weightChatGPTInput)
@@ -475,6 +468,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (geminiApiKeyInput) geminiApiKeyInput.value = geminiApiKey;
       if (mistralApiKeyInput) mistralApiKeyInput.value = mistralApiKey;
       if (anthropicApiKeyInput) anthropicApiKeyInput.value = anthropicApiKey;
+
+      if (singleApiKeyInput && llmModelSelect) {
+        updateApiKeyInputField(singleApiKeyInput, llmModelSelect);
+        if (apiKeyInputLink) {
+          updateApiKeyLink(llmModelSelect, apiKeyInputLink);
+        }
+        updateSingleApiKeyFromModel(llmModelSelect.value);
+      }
 
       toggleConsensusOptions(enableConsensus);
       toggleDarkTheme(enableDarkTheme);
