@@ -4,6 +4,7 @@ apipresent
 apirequired
 Barkha
 Brooooo
+burstiness
 Cacher
 camelcase
 cfworker
