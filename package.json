@@ -50,7 +50,7 @@
     "@langchain/mistralai": "^0.2.1",
     "@langchain/ollama": "^0.2.3",
     "@langchain/openai": "^0.6.3",
-    "langchain": "^0.3.30",
+    "langchain": "^1.0.4",
     "uuid": "^13.0.0"
   },
   "peerDependencies": {
