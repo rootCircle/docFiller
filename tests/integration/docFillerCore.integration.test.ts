@@ -22,18 +22,13 @@ describe('DocFillerCore Engine Integration Tests', () => {
   let fillerEngine: FillerEngine;
   let llmEngine: LLMEngine;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     promptEngine = new PromptEngine();
     validatorEngine = new ValidatorEngine();
     fillerEngine = new FillerEngine();
     
-    // Use dependency injection to provide API key from environment
-    const apiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || '';
+    const apiKey = process.env['GOOGLE_API_KEY'] || process.env['GEMINI_API_KEY'] || '';
     llmEngine = new LLMEngine(LLMEngineType.Gemini, { geminiApiKey: apiKey });
-    
-    if (!apiKey) {
-      console.warn('⚠️  No API key found. Set GOOGLE_API_KEY or GEMINI_API_KEY environment variable.');
-    }
   });
 
   describe('Prompt → LLM → Validate → Fill Integration', () => {
@@ -49,10 +44,12 @@ describe('DocFillerCore Engine Integration Tests', () => {
       expect(response).toBeTruthy();
       expect(response?.text).toBeTruthy();
 
-      const valid = validatorEngine.validate(QType.TEXT, field, response!);
+      if (!response) return;
+
+      const valid = validatorEngine.validate(QType.TEXT, field, response);
       expect(valid).toBe(true);
 
-      await fillerEngine.fill(QType.TEXT, field, response!);
+      await fillerEngine.fill(QType.TEXT, field, response);
       expect(input.value).toBe(response?.text);
       expect(input.value.toLowerCase()).toContain('paris');
     }, 30000); // 30 second timeout for API call
@@ -77,10 +74,12 @@ describe('DocFillerCore Engine Integration Tests', () => {
       expect(response?.date).toBeTruthy();
       expect(response?.date).toBeInstanceOf(Date);
 
-      const valid = validatorEngine.validate(QType.DATE, field, response!);
+      if (!response) return;
+
+      const valid = validatorEngine.validate(QType.DATE, field, response);
       expect(valid).toBe(true);
 
-      await fillerEngine.fill(QType.DATE, field, response!);
+      await fillerEngine.fill(QType.DATE, field, response);
       // Apollo 11 landed on July 20, 1969
       expect(year.value).toBe('1969');
       expect(month.value).toBe('07');
@@ -109,10 +108,12 @@ describe('DocFillerCore Engine Integration Tests', () => {
       expect(response?.linearScale?.answer).toBeGreaterThanOrEqual(1);
       expect(response?.linearScale?.answer).toBeLessThanOrEqual(5);
 
+      if (!response) return;
+
       const valid = validatorEngine.validate(
         QType.LINEAR_SCALE_OR_STAR,
         field,
-        response!,
+        response,
       );
       expect(valid).toBe(true);
     }, 30000);
@@ -135,10 +136,12 @@ describe('DocFillerCore Engine Integration Tests', () => {
       expect(response?.text).toBeTruthy();
       expect(response?.text).toMatch(/@/);
 
-      const valid = validatorEngine.validate(QType.TEXT, field, response!);
+      if (!response) return;
+
+      const valid = validatorEngine.validate(QType.TEXT, field, response);
       expect(valid).toBe(true);
 
-      await fillerEngine.fill(QType.TEXT, field, response!);
+      await fillerEngine.fill(QType.TEXT, field, response);
       expect(input.value).toBe(response?.text);
       expect(input.value).toMatch(/@/);
     }, 30000);
@@ -159,10 +162,12 @@ describe('DocFillerCore Engine Integration Tests', () => {
       expect(response).toBeTruthy();
       expect(response?.text).toBeTruthy();
 
-      const valid = validatorEngine.validate(QType.TEXT, field, response!);
+      if (!response) return;
+
+      const valid = validatorEngine.validate(QType.TEXT, field, response);
       expect(valid).toBe(true);
 
-      await fillerEngine.fill(QType.TEXT, field, response!);
+      await fillerEngine.fill(QType.TEXT, field, response);
       expect(input.value).toContain('1912-04-');
     }, 30000);
 
@@ -185,10 +190,12 @@ describe('DocFillerCore Engine Integration Tests', () => {
       expect(response).toBeTruthy();
       expect(response?.text).toBeTruthy();
 
-      const valid = validatorEngine.validate(QType.TEXT, field, response!);
+      if (!response) return;
+
+      const valid = validatorEngine.validate(QType.TEXT, field, response);
       expect(valid).toBe(true);
 
-      await fillerEngine.fill(QType.TEXT, field, response!);
+      await fillerEngine.fill(QType.TEXT, field, response);
       expect(input.value).toContain('12');
     }, 30000);
 
@@ -211,10 +218,12 @@ describe('DocFillerCore Engine Integration Tests', () => {
       expect(response).toBeTruthy();
       expect(response?.text).toBeTruthy();
 
-      const valid = validatorEngine.validate(QType.TEXT, field, response!);
+      if (!response) return;
+
+      const valid = validatorEngine.validate(QType.TEXT, field, response);
       expect(valid).toBe(true);
 
-      await fillerEngine.fill(QType.TEXT, field, response!);
+      await fillerEngine.fill(QType.TEXT, field, response);
       expect(input.value).toContain('30');
     }, 30000);
 
@@ -260,7 +269,9 @@ describe('DocFillerCore Engine Integration Tests', () => {
       expect(response?.genericResponse).toBeTruthy();
       expect(response?.genericResponse?.answer).toBeTruthy();
 
-      const valid = validatorEngine.validate(QType.DROPDOWN, field, response!);
+      if (!response) return;
+
+      const valid = validatorEngine.validate(QType.DROPDOWN, field, response);
       expect(valid).toBe(true);
       
       // Gemini should choose Charles Babbage as the correct answer
@@ -282,12 +293,14 @@ describe('DocFillerCore Engine Integration Tests', () => {
       const response = await llmEngine.invokeLLM(prompt, QType.PARAGRAPH);
       expect(response).toBeTruthy();
       expect(response?.text).toBeTruthy();
-      expect(response?.text.length).toBeGreaterThan(10);
+      expect(response?.text ? response.text.length : 0).toBeGreaterThan(10);
 
-      const valid = validatorEngine.validate(QType.PARAGRAPH, field, response!);
+      if (!response) return;
+
+      const valid = validatorEngine.validate(QType.PARAGRAPH, field, response);
       expect(valid).toBe(true);
 
-      await fillerEngine.fill(QType.PARAGRAPH, field, response!);
+      await fillerEngine.fill(QType.PARAGRAPH, field, response);
       expect(textarea.value).toBe(response?.text);
     }, 30000);
 
@@ -333,10 +346,12 @@ describe('DocFillerCore Engine Integration Tests', () => {
       expect(response?.multipleChoice).toBeTruthy();
       expect(response?.multipleChoice?.optionText).toBeTruthy();
 
-      const valid = validatorEngine.validate(QType.MULTIPLE_CHOICE, field, response!);
+      if (!response) return;
+
+      const valid = validatorEngine.validate(QType.MULTIPLE_CHOICE, field, response);
       expect(valid).toBe(true);
       
-      expect(response?.multipleChoice?.optionText.toLowerCase()).toContain('blue');
+      expect(response?.multipleChoice?.optionText?.toLowerCase()).toContain('blue');
     }, 30000);
 
     it('should handle MULTIPLE_CHOICE_WITH_OTHER field flow with real Gemini API', async () => {
@@ -370,7 +385,7 @@ describe('DocFillerCore Engine Integration Tests', () => {
           { dom: radio2, data: 'Cat' },
           { dom: radioOther, data: '__other_option__' },
         ],
-        otherField: otherInput,
+        other: { inputBoxDom: otherInput, data: '' },
       };
 
       const prompt = promptEngine.getPrompt(QType.MULTIPLE_CHOICE_WITH_OTHER, field);
@@ -380,7 +395,9 @@ describe('DocFillerCore Engine Integration Tests', () => {
       expect(response).toBeTruthy();
       expect(response?.multipleChoice).toBeTruthy();
 
-      const valid = validatorEngine.validate(QType.MULTIPLE_CHOICE_WITH_OTHER, field, response!);
+      if (!response) return;
+
+      const valid = validatorEngine.validate(QType.MULTIPLE_CHOICE_WITH_OTHER, field, response);
       expect(valid).toBe(true);
     }, 30000);
 
@@ -419,8 +436,9 @@ describe('DocFillerCore Engine Integration Tests', () => {
       expect(response).toBeTruthy();
       expect(response?.multiCorrect).toBeTruthy();
       expect(Array.isArray(response?.multiCorrect)).toBe(true);
+      if (!response) return;
 
-      const valid = validatorEngine.validate(QType.MULTI_CORRECT, field, response!);
+      const valid = validatorEngine.validate(QType.MULTI_CORRECT, field, response);
       expect(valid).toBe(true);
     }, 30000);
 
@@ -452,10 +470,12 @@ describe('DocFillerCore Engine Integration Tests', () => {
       expect(response).toBeTruthy();
       expect(response?.date).toBeInstanceOf(Date);
 
-      const valid = validatorEngine.validate(QType.TIME, field, response!);
+      if (!response) return;
+
+      const valid = validatorEngine.validate(QType.TIME, field, response);
       expect(valid).toBe(true);
 
-      await fillerEngine.fill(QType.TIME, field, response!);
+      await fillerEngine.fill(QType.TIME, field, response);
       expect(hourInput.value).toBeTruthy();
       expect(minuteInput.value).toBeTruthy();
     }, 30000);
@@ -483,10 +503,12 @@ describe('DocFillerCore Engine Integration Tests', () => {
       expect(response).toBeTruthy();
       expect(response?.date).toBeInstanceOf(Date);
 
-      const valid = validatorEngine.validate(QType.DATE_AND_TIME, field, response!);
+      if (!response) return;
+
+      const valid = validatorEngine.validate(QType.DATE_AND_TIME, field, response);
       expect(valid).toBe(true);
 
-      await fillerEngine.fill(QType.DATE_AND_TIME, field, response!);
+      await fillerEngine.fill(QType.DATE_AND_TIME, field, response);
       expect(yearInput.value).toBe('2007');
     }, 30000);
 
@@ -512,10 +534,12 @@ describe('DocFillerCore Engine Integration Tests', () => {
       expect(response).toBeTruthy();
       expect(response?.date).toBeInstanceOf(Date);
 
-      const valid = validatorEngine.validate(QType.DURATION, field, response!);
+      if (!response) return;
+
+      const valid = validatorEngine.validate(QType.DURATION, field, response);
       expect(valid).toBe(true);
 
-      await fillerEngine.fill(QType.DURATION, field, response!);
+      await fillerEngine.fill(QType.DURATION, field, response);
       expect(minuteInput.value).toBeTruthy();
     }, 30000);
 
@@ -534,10 +558,12 @@ describe('DocFillerCore Engine Integration Tests', () => {
       expect(response?.genericResponse?.answer).toBeTruthy();
       expect(response?.genericResponse?.answer).toMatch(/@/);
 
-      const valid = validatorEngine.validate(QType.TEXT_EMAIL, field, response!);
+      if (!response) return;
+
+      const valid = validatorEngine.validate(QType.TEXT_EMAIL, field, response);
       expect(valid).toBe(true);
 
-      await fillerEngine.fill(QType.TEXT_EMAIL, field, response!);
+      await fillerEngine.fill(QType.TEXT_EMAIL, field, response);
       expect(input.value).toMatch(/@/);
     }, 30000);
 
@@ -556,10 +582,12 @@ describe('DocFillerCore Engine Integration Tests', () => {
       expect(response?.genericResponse?.answer).toBeTruthy();
       expect(response?.genericResponse?.answer).toMatch(/^https?:\/\//);
 
-      const valid = validatorEngine.validate(QType.TEXT_URL, field, response!);
+      if (!response) return;
+
+      const valid = validatorEngine.validate(QType.TEXT_URL, field, response);
       expect(valid).toBe(true);
 
-      await fillerEngine.fill(QType.TEXT_URL, field, response!);
+      await fillerEngine.fill(QType.TEXT_URL, field, response);
       expect(input.value).toMatch(/^https?:\/\//);
     }, 30000);
 
@@ -580,10 +608,12 @@ describe('DocFillerCore Engine Integration Tests', () => {
       expect(response).toBeTruthy();
       expect(response?.date).toBeInstanceOf(Date);
 
-      const valid = validatorEngine.validate(QType.DATE_WITHOUT_YEAR, field, response!);
+      if (!response) return;
+
+      const valid = validatorEngine.validate(QType.DATE_WITHOUT_YEAR, field, response);
       expect(valid).toBe(true);
 
-      await fillerEngine.fill(QType.DATE_WITHOUT_YEAR, field, response!);
+      await fillerEngine.fill(QType.DATE_WITHOUT_YEAR, field, response);
       expect(monthInput.value).toBe('07');
       expect(dayInput.value).toBe('04');
     }, 30000);
@@ -630,10 +660,12 @@ describe('DocFillerCore Engine Integration Tests', () => {
       expect(response).toBeTruthy();
       expect(response?.date).toBeInstanceOf(Date);
 
-      const valid = validatorEngine.validate(QType.TIME_WITH_MERIDIEM, field, response!);
+      if (!response) return;
+
+      const valid = validatorEngine.validate(QType.TIME_WITH_MERIDIEM, field, response);
       expect(valid).toBe(true);
 
-      await fillerEngine.fill(QType.TIME_WITH_MERIDIEM, field, response!);
+      await fillerEngine.fill(QType.TIME_WITH_MERIDIEM, field, response);
       expect(hourInput.value).toBeTruthy();
       expect(minuteInput.value).toBeTruthy();
     }, 30000);
@@ -700,12 +732,12 @@ describe('DocFillerCore Table-Driven Integration Tests', () => {
   let fillerEngine: FillerEngine;
   let llmEngine: LLMEngine;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     promptEngine = new PromptEngine();
     validatorEngine = new ValidatorEngine();
     fillerEngine = new FillerEngine();
     
-    const apiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || '';
+    const apiKey = process.env['GOOGLE_API_KEY'] || process.env['GEMINI_API_KEY'] || '';
     llmEngine = new LLMEngine(LLMEngineType.Gemini, { geminiApiKey: apiKey });
   });
 
@@ -718,7 +750,7 @@ describe('DocFillerCore Table-Driven Integration Tests', () => {
         dom: document.createElement('input'),
         title: 'What is the capital of France?',
       }),
-      validate: (response: any, field: ExtractedValue) => {
+      validate: (response: LLMResponse | null) => {
         expect(response?.text).toBeTruthy();
         expect(response?.text.toLowerCase()).toContain('paris');
       },
@@ -735,7 +767,7 @@ describe('DocFillerCore Table-Driven Integration Tests', () => {
         })),
         bounds: { lowerBound: 'Very Unsatisfied', upperBound: 'Very Satisfied' },
       }),
-      validate: (response: any) => {
+      validate: (response: LLMResponse | null) => {
         expect(response?.linearScale?.answer).toBeGreaterThanOrEqual(1);
         expect(response?.linearScale?.answer).toBeLessThanOrEqual(5);
       },
@@ -752,7 +784,7 @@ describe('DocFillerCore Table-Driven Integration Tests', () => {
           { dom: document.createElement('div'), data: 'Green' },
         ],
       }),
-      validate: (response: any) => {
+      validate: (response: LLMResponse | null) => {
         expect(response?.multipleChoice?.optionText.toLowerCase()).toContain('blue');
       },
     },
@@ -768,7 +800,7 @@ describe('DocFillerCore Table-Driven Integration Tests', () => {
           { dom: document.createElement('div'), data: 'Charles Babbage' },
         ],
       }),
-      validate: (response: any) => {
+      validate: (response: LLMResponse | null) => {
         expect(response?.genericResponse?.answer.toLowerCase()).toContain('babbage');
       },
     },
@@ -780,7 +812,7 @@ describe('DocFillerCore Table-Driven Integration Tests', () => {
         dom: document.createElement('textarea'),
         title: 'Write one sentence about the internet',
       }),
-      validate: (response: any) => {
+      validate: (response: LLMResponse | null) => {
         expect(response?.text).toBeTruthy();
         expect(response?.text.length).toBeGreaterThan(10);
       },
@@ -795,7 +827,7 @@ describe('DocFillerCore Table-Driven Integration Tests', () => {
         month: document.createElement('input'),
         year: document.createElement('input'),
       }),
-      validate: (response: any) => {
+      validate: (response: LLMResponse | null) => {
         expect(response?.date).toBeInstanceOf(Date);
         const year = response?.date.getFullYear();
         expect(year).toBe(1969);
@@ -814,12 +846,14 @@ describe('DocFillerCore Table-Driven Integration Tests', () => {
         const response = await llmEngine.invokeLLM(prompt, testCase.qType);
         expect(response).toBeTruthy();
         
-        const valid = validatorEngine.validate(testCase.qType, field, response!);
+        if (!response) return;
+
+        const valid = validatorEngine.validate(testCase.qType, field, response);
         expect(valid).toBe(true);
         
-        testCase.validate(response, field);
+        testCase.validate(response);
         
-        await fillerEngine.fill(testCase.qType, field, response!);
+        await fillerEngine.fill(testCase.qType, field, response);
       }, 30000);
     }
   });

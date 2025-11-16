@@ -61,10 +61,10 @@ export class LLMEngine {
     };
 
     this.apiKeys = {
-      chatGptApiKey: providedApiKeys?.chatGptApiKey,
-      geminiApiKey: providedApiKeys?.geminiApiKey,
-      mistralApiKey: providedApiKeys?.mistralApiKey,
-      anthropicApiKey: providedApiKeys?.anthropicApiKey,
+      chatGptApiKey: providedApiKeys?.['chatGptApiKey'],
+      geminiApiKey: providedApiKeys?.['geminiApiKey'],
+      mistralApiKey: providedApiKeys?.['mistralApiKey'],
+      anthropicApiKey: providedApiKeys?.['anthropicApiKey'],
     };
 
     this.fetchApiKeys()
