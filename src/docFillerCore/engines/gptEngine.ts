@@ -48,7 +48,7 @@ export class LLMEngine {
 
   private metricsManager = MetricsManager.getInstance();
 
-  constructor(engine: LLMEngineType) {
+  constructor(engine: LLMEngineType, providedApiKeys?: Partial<Record<string, string>>) {
     this.engine = engine;
 
     this.instances = {
@@ -61,10 +61,10 @@ export class LLMEngine {
     };
 
     this.apiKeys = {
-      chatGptApiKey: undefined,
-      geminiApiKey: undefined,
-      mistralApiKey: undefined,
-      anthropicApiKey: undefined,
+      chatGptApiKey: providedApiKeys?.chatGptApiKey,
+      geminiApiKey: providedApiKeys?.geminiApiKey,
+      mistralApiKey: providedApiKeys?.mistralApiKey,
+      anthropicApiKey: providedApiKeys?.anthropicApiKey,
     };
 
     this.fetchApiKeys()
@@ -83,10 +83,19 @@ export class LLMEngine {
   }
 
   private async fetchApiKeys(): Promise<void> {
-    this.apiKeys['chatGptApiKey'] = await getChatGptApiKey();
-    this.apiKeys['geminiApiKey'] = await getGeminiApiKey();
-    this.apiKeys['mistralApiKey'] = await getMistralApiKey();
-    this.apiKeys['anthropicApiKey'] = await getAnthropicApiKey();
+    // Only fetch from storage if not provided via constructor
+    if (!this.apiKeys['chatGptApiKey']) {
+      this.apiKeys['chatGptApiKey'] = await getChatGptApiKey();
+    }
+    if (!this.apiKeys['geminiApiKey']) {
+      this.apiKeys['geminiApiKey'] = await getGeminiApiKey();
+    }
+    if (!this.apiKeys['mistralApiKey']) {
+      this.apiKeys['mistralApiKey'] = await getMistralApiKey();
+    }
+    if (!this.apiKeys['anthropicApiKey']) {
+      this.apiKeys['anthropicApiKey'] = await getAnthropicApiKey();
+    }
   }
   public instantiateEngine(engine: LLMEngineType): LLMInstance {
     switch (engine) {
