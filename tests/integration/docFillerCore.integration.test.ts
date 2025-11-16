@@ -26,15 +26,19 @@ describe('DocFillerCore Engine Integration Tests', () => {
     promptEngine = new PromptEngine();
     validatorEngine = new ValidatorEngine();
     fillerEngine = new FillerEngine();
-    
-    const apiKey = process.env['GOOGLE_API_KEY'] || process.env['GEMINI_API_KEY'] || '';
+
+    const apiKey =
+      process.env['GOOGLE_API_KEY'] || process.env['GEMINI_API_KEY'] || '';
     llmEngine = new LLMEngine(LLMEngineType.Gemini, { geminiApiKey: apiKey });
   });
 
   describe('Prompt → LLM → Validate → Fill Integration', () => {
     it('should handle TEXT field flow with real Gemini API', async () => {
       const input = document.createElement('input');
-      const field: ExtractedValue = { dom: input, title: 'What is the capital of France?' };
+      const field: ExtractedValue = {
+        dom: input,
+        title: 'What is the capital of France?',
+      };
 
       const prompt = promptEngine.getPrompt(QType.TEXT, field);
       expect(prompt).toContain('What is the capital of France?');
@@ -87,14 +91,17 @@ describe('DocFillerCore Engine Integration Tests', () => {
     }, 30000);
 
     it('should handle LINEAR_SCALE flow with real Gemini API', async () => {
-      const opts = [1, 2, 3, 4, 5].map(n => ({
+      const opts = [1, 2, 3, 4, 5].map((n) => ({
         dom: document.createElement('div'),
         data: String(n),
       }));
       const field: ExtractedValue = {
         title: 'How satisfied are you with this product?',
         options: opts,
-        bounds: { lowerBound: 'Very Unsatisfied', upperBound: 'Very Satisfied' },
+        bounds: {
+          lowerBound: 'Very Unsatisfied',
+          upperBound: 'Very Satisfied',
+        },
       };
 
       const prompt = promptEngine.getPrompt(QType.LINEAR_SCALE_OR_STAR, field);
@@ -102,7 +109,10 @@ describe('DocFillerCore Engine Integration Tests', () => {
       expect(prompt).toContain('Very Unsatisfied');
 
       // Call real Gemini API
-      const response = await llmEngine.invokeLLM(prompt, QType.LINEAR_SCALE_OR_STAR);
+      const response = await llmEngine.invokeLLM(
+        prompt,
+        QType.LINEAR_SCALE_OR_STAR,
+      );
       expect(response).toBeTruthy();
       expect(response?.linearScale).toBeTruthy();
       expect(response?.linearScale?.answer).toBeGreaterThanOrEqual(1);
@@ -126,7 +136,10 @@ describe('DocFillerCore Engine Integration Tests', () => {
       input.setAttribute('aria-label', 'Your email');
       input.required = true;
 
-      const field: ExtractedValue = { dom: input, title: 'Your professional email address' };
+      const field: ExtractedValue = {
+        dom: input,
+        title: 'Your professional email address',
+      };
 
       const prompt = promptEngine.getPrompt(QType.TEXT, field);
       expect(prompt).toContain('email');
@@ -153,7 +166,10 @@ describe('DocFillerCore Engine Integration Tests', () => {
       input.setAttribute('autocomplete', 'off');
       input.setAttribute('max', '2075-01-01');
 
-      const field: ExtractedValue = { dom: input, title: 'When did the Titanic sink? (exact date)' };
+      const field: ExtractedValue = {
+        dom: input,
+        title: 'When did the Titanic sink? (exact date)',
+      };
 
       const prompt = promptEngine.getPrompt(QType.TEXT, field);
       expect(prompt).toContain('Titanic');
@@ -181,7 +197,11 @@ describe('DocFillerCore Engine Integration Tests', () => {
       input.setAttribute('max', '12');
       input.setAttribute('role', 'combobox');
 
-      const field: ExtractedValue = { dom: input, title: 'Enter a number: What hour does noon occur? (Answer with just the number 12)' };
+      const field: ExtractedValue = {
+        dom: input,
+        title:
+          'Enter a number: What hour does noon occur? (Answer with just the number 12)',
+      };
 
       const prompt = promptEngine.getPrompt(QType.TEXT, field);
       expect(prompt).toContain('noon');
@@ -209,7 +229,11 @@ describe('DocFillerCore Engine Integration Tests', () => {
       input.setAttribute('max', '59');
       input.setAttribute('role', 'combobox');
 
-      const field: ExtractedValue = { dom: input, title: 'Enter a number: How many minutes in half an hour? (Answer with just the number 30)' };
+      const field: ExtractedValue = {
+        dom: input,
+        title:
+          'Enter a number: How many minutes in half an hour? (Answer with just the number 30)',
+      };
 
       const prompt = promptEngine.getPrompt(QType.TEXT, field);
       expect(prompt).toContain('minutes');
@@ -273,9 +297,11 @@ describe('DocFillerCore Engine Integration Tests', () => {
 
       const valid = validatorEngine.validate(QType.DROPDOWN, field, response);
       expect(valid).toBe(true);
-      
+
       // Gemini should choose Charles Babbage as the correct answer
-      expect(response?.genericResponse?.answer.toLowerCase()).toContain('babbage');
+      expect(response?.genericResponse?.answer.toLowerCase()).toContain(
+        'babbage',
+      );
     }, 30000);
 
     it('should handle PARAGRAPH field flow with real Gemini API', async () => {
@@ -285,7 +311,10 @@ describe('DocFillerCore Engine Integration Tests', () => {
       textarea.setAttribute('data-rows', '1');
       textarea.style.height = '24px';
 
-      const field: ExtractedValue = { dom: textarea, title: 'Write one sentence about the internet' };
+      const field: ExtractedValue = {
+        dom: textarea,
+        title: 'Write one sentence about the internet',
+      };
 
       const prompt = promptEngine.getPrompt(QType.PARAGRAPH, field);
       expect(prompt).toContain('internet');
@@ -348,10 +377,16 @@ describe('DocFillerCore Engine Integration Tests', () => {
 
       if (!response) return;
 
-      const valid = validatorEngine.validate(QType.MULTIPLE_CHOICE, field, response);
+      const valid = validatorEngine.validate(
+        QType.MULTIPLE_CHOICE,
+        field,
+        response,
+      );
       expect(valid).toBe(true);
-      
-      expect(response?.multipleChoice?.optionText?.toLowerCase()).toContain('blue');
+
+      expect(response?.multipleChoice?.optionText?.toLowerCase()).toContain(
+        'blue',
+      );
     }, 30000);
 
     it('should handle MULTIPLE_CHOICE_WITH_OTHER field flow with real Gemini API', async () => {
@@ -388,16 +423,26 @@ describe('DocFillerCore Engine Integration Tests', () => {
         other: { inputBoxDom: otherInput, data: '' },
       };
 
-      const prompt = promptEngine.getPrompt(QType.MULTIPLE_CHOICE_WITH_OTHER, field);
+      const prompt = promptEngine.getPrompt(
+        QType.MULTIPLE_CHOICE_WITH_OTHER,
+        field,
+      );
       expect(prompt).toContain('pet');
 
-      const response = await llmEngine.invokeLLM(prompt, QType.MULTIPLE_CHOICE_WITH_OTHER);
+      const response = await llmEngine.invokeLLM(
+        prompt,
+        QType.MULTIPLE_CHOICE_WITH_OTHER,
+      );
       expect(response).toBeTruthy();
       expect(response?.multipleChoice).toBeTruthy();
 
       if (!response) return;
 
-      const valid = validatorEngine.validate(QType.MULTIPLE_CHOICE_WITH_OTHER, field, response);
+      const valid = validatorEngine.validate(
+        QType.MULTIPLE_CHOICE_WITH_OTHER,
+        field,
+        response,
+      );
       expect(valid).toBe(true);
     }, 30000);
 
@@ -421,7 +466,8 @@ describe('DocFillerCore Engine Integration Tests', () => {
       checkbox3.setAttribute('aria-label', 'Java');
 
       const field: ExtractedValue = {
-        title: 'Which programming languages are used for web development? (Select all)',
+        title:
+          'Which programming languages are used for web development? (Select all)',
         options: [
           { dom: checkbox1, data: 'JavaScript' },
           { dom: checkbox2, data: 'Python' },
@@ -438,7 +484,11 @@ describe('DocFillerCore Engine Integration Tests', () => {
       expect(Array.isArray(response?.multiCorrect)).toBe(true);
       if (!response) return;
 
-      const valid = validatorEngine.validate(QType.MULTI_CORRECT, field, response);
+      const valid = validatorEngine.validate(
+        QType.MULTI_CORRECT,
+        field,
+        response,
+      );
       expect(valid).toBe(true);
     }, 30000);
 
@@ -488,7 +538,8 @@ describe('DocFillerCore Engine Integration Tests', () => {
       const minuteInput = document.createElement('input');
 
       const field: ExtractedValue = {
-        title: 'When did the first iPhone launch? (Date and Time of announcement)',
+        title:
+          'When did the first iPhone launch? (Date and Time of announcement)',
         date: dayInput,
         month: monthInput,
         year: yearInput,
@@ -505,7 +556,11 @@ describe('DocFillerCore Engine Integration Tests', () => {
 
       if (!response) return;
 
-      const valid = validatorEngine.validate(QType.DATE_AND_TIME, field, response);
+      const valid = validatorEngine.validate(
+        QType.DATE_AND_TIME,
+        field,
+        response,
+      );
       expect(valid).toBe(true);
 
       await fillerEngine.fill(QType.DATE_AND_TIME, field, response);
@@ -548,7 +603,10 @@ describe('DocFillerCore Engine Integration Tests', () => {
       input.type = 'email';
       input.className = 'whsOnd zHQkBf';
 
-      const field: ExtractedValue = { dom: input, title: 'Your professional work email address' };
+      const field: ExtractedValue = {
+        dom: input,
+        title: 'Your professional work email address',
+      };
 
       const prompt = promptEngine.getPrompt(QType.TEXT_EMAIL, field);
       expect(prompt).toContain('email');
@@ -604,13 +662,20 @@ describe('DocFillerCore Engine Integration Tests', () => {
       const prompt = promptEngine.getPrompt(QType.DATE_WITHOUT_YEAR, field);
       expect(prompt).toContain('Independence Day');
 
-      const response = await llmEngine.invokeLLM(prompt, QType.DATE_WITHOUT_YEAR);
+      const response = await llmEngine.invokeLLM(
+        prompt,
+        QType.DATE_WITHOUT_YEAR,
+      );
       expect(response).toBeTruthy();
       expect(response?.date).toBeInstanceOf(Date);
 
       if (!response) return;
 
-      const valid = validatorEngine.validate(QType.DATE_WITHOUT_YEAR, field, response);
+      const valid = validatorEngine.validate(
+        QType.DATE_WITHOUT_YEAR,
+        field,
+        response,
+      );
       expect(valid).toBe(true);
 
       await fillerEngine.fill(QType.DATE_WITHOUT_YEAR, field, response);
@@ -623,24 +688,24 @@ describe('DocFillerCore Engine Integration Tests', () => {
       hourInput.type = 'number';
       const minuteInput = document.createElement('input');
       minuteInput.type = 'number';
-      
+
       const meridiemDropdown = document.createElement('div');
       meridiemDropdown.setAttribute('role', 'listbox');
       meridiemDropdown.setAttribute('aria-expanded', 'false');
 
       const parent = document.createElement('div');
       const optionContainer = document.createElement('div');
-      
+
       const amSpan = document.createElement('span');
       amSpan.textContent = 'AM';
       const amOption = document.createElement('div');
       amOption.appendChild(amSpan);
-      
+
       const pmSpan = document.createElement('span');
       pmSpan.textContent = 'PM';
       const pmOption = document.createElement('div');
       pmOption.appendChild(pmSpan);
-      
+
       optionContainer.appendChild(amOption);
       optionContainer.appendChild(pmOption);
       parent.appendChild(meridiemDropdown);
@@ -656,13 +721,20 @@ describe('DocFillerCore Engine Integration Tests', () => {
       const prompt = promptEngine.getPrompt(QType.TIME_WITH_MERIDIEM, field);
       expect(prompt).toContain('business meetings');
 
-      const response = await llmEngine.invokeLLM(prompt, QType.TIME_WITH_MERIDIEM);
+      const response = await llmEngine.invokeLLM(
+        prompt,
+        QType.TIME_WITH_MERIDIEM,
+      );
       expect(response).toBeTruthy();
       expect(response?.date).toBeInstanceOf(Date);
 
       if (!response) return;
 
-      const valid = validatorEngine.validate(QType.TIME_WITH_MERIDIEM, field, response);
+      const valid = validatorEngine.validate(
+        QType.TIME_WITH_MERIDIEM,
+        field,
+        response,
+      );
       expect(valid).toBe(true);
 
       await fillerEngine.fill(QType.TIME_WITH_MERIDIEM, field, response);
@@ -673,7 +745,10 @@ describe('DocFillerCore Engine Integration Tests', () => {
 
   describe('Validation Error Handling', () => {
     it('should reject invalid TEXT', () => {
-      const field: ExtractedValue = { dom: document.createElement('input'), title: 'Name' };
+      const field: ExtractedValue = {
+        dom: document.createElement('input'),
+        title: 'Name',
+      };
       const invalid = {};
       const valid = validatorEngine.validate(QType.TEXT, field, invalid);
       expect(valid).toBe(false);
@@ -690,7 +765,7 @@ describe('DocFillerCore Engine Integration Tests', () => {
     });
 
     it('should reject out-of-range LINEAR_SCALE', () => {
-      const opts = [1, 2, 3].map(n => ({
+      const opts = [1, 2, 3].map((n) => ({
         dom: document.createElement('div'),
         data: String(n),
       }));
@@ -736,8 +811,9 @@ describe('DocFillerCore Table-Driven Integration Tests', () => {
     promptEngine = new PromptEngine();
     validatorEngine = new ValidatorEngine();
     fillerEngine = new FillerEngine();
-    
-    const apiKey = process.env['GOOGLE_API_KEY'] || process.env['GEMINI_API_KEY'] || '';
+
+    const apiKey =
+      process.env['GOOGLE_API_KEY'] || process.env['GEMINI_API_KEY'] || '';
     llmEngine = new LLMEngine(LLMEngineType.Gemini, { geminiApiKey: apiKey });
   });
 
@@ -761,11 +837,14 @@ describe('DocFillerCore Table-Driven Integration Tests', () => {
       question: 'How satisfied are you with this product? (1-5)',
       setupField: () => ({
         title: 'How satisfied are you with this product?',
-        options: [1, 2, 3, 4, 5].map(n => ({
+        options: [1, 2, 3, 4, 5].map((n) => ({
           dom: document.createElement('div'),
           data: String(n),
         })),
-        bounds: { lowerBound: 'Very Unsatisfied', upperBound: 'Very Satisfied' },
+        bounds: {
+          lowerBound: 'Very Unsatisfied',
+          upperBound: 'Very Satisfied',
+        },
       }),
       validate: (response: LLMResponse | null) => {
         expect(response?.linearScale?.answer).toBeGreaterThanOrEqual(1);
@@ -785,7 +864,9 @@ describe('DocFillerCore Table-Driven Integration Tests', () => {
         ],
       }),
       validate: (response: LLMResponse | null) => {
-        expect(response?.multipleChoice?.optionText.toLowerCase()).toContain('blue');
+        expect(response?.multipleChoice?.optionText.toLowerCase()).toContain(
+          'blue',
+        );
       },
     },
     {
@@ -801,7 +882,9 @@ describe('DocFillerCore Table-Driven Integration Tests', () => {
         ],
       }),
       validate: (response: LLMResponse | null) => {
-        expect(response?.genericResponse?.answer.toLowerCase()).toContain('babbage');
+        expect(response?.genericResponse?.answer.toLowerCase()).toContain(
+          'babbage',
+        );
       },
     },
     {
@@ -839,20 +922,20 @@ describe('DocFillerCore Table-Driven Integration Tests', () => {
     for (const testCase of testCases) {
       it(`${testCase.name}`, async () => {
         const field = testCase.setupField();
-        
+
         const prompt = promptEngine.getPrompt(testCase.qType, field);
         expect(prompt).toBeTruthy();
-        
+
         const response = await llmEngine.invokeLLM(prompt, testCase.qType);
         expect(response).toBeTruthy();
-        
+
         if (!response) return;
 
         const valid = validatorEngine.validate(testCase.qType, field, response);
         expect(valid).toBe(true);
-        
+
         testCase.validate(response);
-        
+
         await fillerEngine.fill(testCase.qType, field, response);
       }, 30000);
     }

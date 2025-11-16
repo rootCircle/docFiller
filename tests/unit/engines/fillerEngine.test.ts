@@ -24,11 +24,7 @@ describe('FillerEngine', () => {
 
   describe('fill() - Main routing method', () => {
     it('should return false for null fieldType', async () => {
-      const result = await fillerEngine.fill(
-        null as any,
-        {} as any,
-        {} as any,
-      );
+      const result = await fillerEngine.fill(null as any, {} as any, {} as any);
       expect(result).toBe(false);
     });
 
@@ -36,7 +32,7 @@ describe('FillerEngine', () => {
       const dom = document.createElement('input');
       const fieldValue = { dom };
       const value = { text: 'Test' };
-      
+
       const result = await fillerEngine.fill(QType.TEXT, fieldValue, value);
       expect(result).toBe(true);
       expect((dom as HTMLInputElement).value).toBe('Test');
@@ -46,8 +42,12 @@ describe('FillerEngine', () => {
       const dom = document.createElement('input');
       const fieldValue = { dom };
       const value = { text: 'Long paragraph text' };
-      
-      const result = await fillerEngine.fill(QType.PARAGRAPH, fieldValue, value);
+
+      const result = await fillerEngine.fill(
+        QType.PARAGRAPH,
+        fieldValue,
+        value,
+      );
       expect(result).toBe(true);
       expect((dom as HTMLInputElement).value).toBe('Long paragraph text');
     });
@@ -69,7 +69,7 @@ describe('FillerEngine', () => {
       const inputElement = document.createElement('input');
       const fieldValue = { dom: inputElement };
       const value = { text: 'Test' };
-      
+
       let eventFired = false;
       inputElement.addEventListener('input', () => {
         eventFired = true;
@@ -141,7 +141,11 @@ describe('FillerEngine', () => {
       const fieldValue = { dom: inputElement };
       const value = { genericResponse: { answer: 'test@example.com' } };
 
-      const result = await fillerEngine.fill(QType.TEXT_EMAIL, fieldValue, value);
+      const result = await fillerEngine.fill(
+        QType.TEXT_EMAIL,
+        fieldValue,
+        value,
+      );
 
       expect(result).toBe(true);
       expect(inputElement.value).toBe('test@example.com');
@@ -152,7 +156,11 @@ describe('FillerEngine', () => {
       const fieldValue = { dom: inputElement };
       const value = { genericResponse: null } as any;
 
-      const result = await fillerEngine.fill(QType.TEXT_EMAIL, fieldValue, value);
+      const result = await fillerEngine.fill(
+        QType.TEXT_EMAIL,
+        fieldValue,
+        value,
+      );
 
       expect(result).toBe(false);
     });
@@ -173,10 +181,10 @@ describe('FillerEngine', () => {
     it('should handle complex URLs', async () => {
       const inputElement = document.createElement('input');
       const fieldValue = { dom: inputElement };
-      const value = { 
-        genericResponse: { 
-          answer: 'https://example.com/path?query=value&param=123#fragment' 
-        } 
+      const value = {
+        genericResponse: {
+          answer: 'https://example.com/path?query=value&param=123#fragment',
+        },
       };
 
       const result = await fillerEngine.fill(QType.TEXT_URL, fieldValue, value);
@@ -190,11 +198,15 @@ describe('FillerEngine', () => {
     it('should fill paragraph text', async () => {
       const inputElement = document.createElement('input');
       const fieldValue = { dom: inputElement };
-      const value = { 
-        text: 'This is a long paragraph with multiple sentences. It contains detailed information.' 
+      const value = {
+        text: 'This is a long paragraph with multiple sentences. It contains detailed information.',
       };
 
-      const result = await fillerEngine.fill(QType.PARAGRAPH, fieldValue, value);
+      const result = await fillerEngine.fill(
+        QType.PARAGRAPH,
+        fieldValue,
+        value,
+      );
 
       expect(result).toBe(true);
       expect(inputElement.value).toContain('multiple sentences');
@@ -206,7 +218,11 @@ describe('FillerEngine', () => {
       const longText = 'A'.repeat(5000);
       const value = { text: longText };
 
-      const result = await fillerEngine.fill(QType.PARAGRAPH, fieldValue, value);
+      const result = await fillerEngine.fill(
+        QType.PARAGRAPH,
+        fieldValue,
+        value,
+      );
 
       expect(result).toBe(true);
       expect(inputElement.value.length).toBe(5000);
@@ -218,13 +234,13 @@ describe('FillerEngine', () => {
       const dateInput = document.createElement('input');
       const monthInput = document.createElement('input');
       const yearInput = document.createElement('input');
-      
+
       const fieldValue = {
         date: dateInput,
         month: monthInput,
         year: yearInput,
       };
-      
+
       const date = new Date('2024-03-15T00:00:00Z');
       const value = { date };
 
@@ -239,11 +255,11 @@ describe('FillerEngine', () => {
     it('should fill Chrome date field when present', async () => {
       const chromeDateInput = document.createElement('input');
       chromeDateInput.type = 'date';
-      
+
       const fieldValue = {
         chromeDateField: chromeDateInput,
       };
-      
+
       const date = new Date('2024-12-25T00:00:00Z');
       const value = { date };
 
@@ -257,13 +273,13 @@ describe('FillerEngine', () => {
       const dateInput = document.createElement('input');
       const monthInput = document.createElement('input');
       const yearInput = document.createElement('input');
-      
+
       const fieldValue = {
         date: dateInput,
         month: monthInput,
         year: yearInput,
       };
-      
+
       const date = new Date('2024-01-01T00:00:00Z');
       const value = { date };
 
@@ -287,12 +303,12 @@ describe('FillerEngine', () => {
     it('should pad single digit days and months', async () => {
       const dateInput = document.createElement('input');
       const monthInput = document.createElement('input');
-      
+
       const fieldValue = {
         date: dateInput,
         month: monthInput,
       };
-      
+
       const date = new Date('2024-05-07T00:00:00Z');
       const value = { date };
 
@@ -337,12 +353,12 @@ describe('FillerEngine', () => {
     it('should fill time fields correctly', async () => {
       const hourInput = document.createElement('input');
       const minuteInput = document.createElement('input');
-      
+
       const fieldValue = {
         hour: hourInput,
         minute: minuteInput,
       };
-      
+
       const date = new Date('1970-01-01T14:30:00Z');
       const value = { date };
 
@@ -356,12 +372,12 @@ describe('FillerEngine', () => {
     it('should pad single digit hours and minutes', async () => {
       const hourInput = document.createElement('input');
       const minuteInput = document.createElement('input');
-      
+
       const fieldValue = {
         hour: hourInput,
         minute: minuteInput,
       };
-      
+
       const date = new Date('1970-01-01T09:05:00Z');
       const value = { date };
 
@@ -374,12 +390,12 @@ describe('FillerEngine', () => {
     it('should handle midnight (00:00)', async () => {
       const hourInput = document.createElement('input');
       const minuteInput = document.createElement('input');
-      
+
       const fieldValue = {
         hour: hourInput,
         minute: minuteInput,
       };
-      
+
       const date = new Date('1970-01-01T00:00:00Z');
       const value = { date };
 
@@ -392,12 +408,12 @@ describe('FillerEngine', () => {
     it('should handle 23:59', async () => {
       const hourInput = document.createElement('input');
       const minuteInput = document.createElement('input');
-      
+
       const fieldValue = {
         hour: hourInput,
         minute: minuteInput,
       };
-      
+
       const date = new Date('1970-01-01T23:59:00Z');
       const value = { date };
 
@@ -413,13 +429,13 @@ describe('FillerEngine', () => {
       const hourInput = document.createElement('input');
       const minuteInput = document.createElement('input');
       const secondInput = document.createElement('input');
-      
+
       const fieldValue = {
         hour: hourInput,
         minute: minuteInput,
         second: secondInput,
       };
-      
+
       // 2 hours, 15 minutes, 30 seconds
       const date = new Date('1970-01-01T02:15:30Z');
       const value = { date };
@@ -452,7 +468,7 @@ describe('FillerEngine', () => {
       const yearInput = document.createElement('input');
       const hourInput = document.createElement('input');
       const minuteInput = document.createElement('input');
-      
+
       const fieldValue = {
         date: dateInput,
         month: monthInput,
@@ -460,11 +476,15 @@ describe('FillerEngine', () => {
         hour: hourInput,
         minute: minuteInput,
       };
-      
+
       const date = new Date('2024-06-15T14:30:00Z');
       const value = { date };
 
-      const result = await fillerEngine.fill(QType.DATE_AND_TIME, fieldValue, value);
+      const result = await fillerEngine.fill(
+        QType.DATE_AND_TIME,
+        fieldValue,
+        value,
+      );
 
       expect(result).toBe(true);
       expect(dateInput.value).toBe('15');
@@ -479,16 +499,20 @@ describe('FillerEngine', () => {
     it('should fill date without year', async () => {
       const dateInput = document.createElement('input');
       const monthInput = document.createElement('input');
-      
+
       const fieldValue = {
         date: dateInput,
         month: monthInput,
       };
-      
+
       const date = new Date('2000-08-25T00:00:00Z');
       const value = { date };
 
-      const result = await fillerEngine.fill(QType.DATE_WITHOUT_YEAR, fieldValue, value);
+      const result = await fillerEngine.fill(
+        QType.DATE_WITHOUT_YEAR,
+        fieldValue,
+        value,
+      );
 
       expect(result).toBe(true);
       expect(dateInput.value).toBe('25');
@@ -502,18 +526,22 @@ describe('FillerEngine', () => {
       const monthInput = document.createElement('input');
       const hourInput = document.createElement('input');
       const minuteInput = document.createElement('input');
-      
+
       const fieldValue = {
         date: dateInput,
         month: monthInput,
         hour: hourInput,
         minute: minuteInput,
       };
-      
+
       const date = new Date('2000-03-20T11:45:00Z');
       const value = { date };
 
-      const result = await fillerEngine.fill(QType.DATE_TIME_WITHOUT_YEAR, fieldValue, value);
+      const result = await fillerEngine.fill(
+        QType.DATE_TIME_WITHOUT_YEAR,
+        fieldValue,
+        value,
+      );
 
       expect(result).toBe(true);
       expect(dateInput.value).toBe('20');
@@ -528,7 +556,7 @@ describe('FillerEngine', () => {
       const inputElement = document.createElement('input');
       const fieldValue = { dom: inputElement };
       const value = { text: 'Test' };
-      
+
       let eventBubbled = false;
       inputElement.addEventListener('input', (e) => {
         eventBubbled = (e as Event).bubbles;
@@ -543,7 +571,7 @@ describe('FillerEngine', () => {
       const inputElement = document.createElement('input');
       const fieldValue = { dom: inputElement };
       const value = { text: 'New Value' };
-      
+
       let capturedValue = '';
       inputElement.addEventListener('input', () => {
         capturedValue = inputElement.value;
@@ -614,12 +642,12 @@ describe('FillerEngine', () => {
       const chromeDateInput = document.createElement('input');
       chromeDateInput.type = 'date';
       const dateInput = document.createElement('input');
-      
+
       const fieldValue = {
         chromeDateField: chromeDateInput,
         date: dateInput, // Should be ignored
       };
-      
+
       const date = new Date('2024-07-04T00:00:00Z');
       const value = { date };
 
@@ -633,13 +661,13 @@ describe('FillerEngine', () => {
       const chromeDateInput = document.createElement('input');
       const hourInput = document.createElement('input');
       const minuteInput = document.createElement('input');
-      
+
       const fieldValue = {
         chromeDateField: chromeDateInput,
         hour: hourInput,
         minute: minuteInput,
       };
-      
+
       const date = new Date('2024-11-11T10:30:00Z');
       const value = { date };
 
@@ -1114,14 +1142,14 @@ describe('FillerEngine', () => {
 
       expect(result).toBe(true);
       expect(
-        row1col2.querySelector('div[role=\"checkbox\"]')?.getAttribute(
-          'aria-checked',
-        ),
+        row1col2
+          .querySelector('div[role="checkbox"]')
+          ?.getAttribute('aria-checked'),
       ).toBe('true');
       expect(
-        row1col1.querySelector('div[role=\"checkbox\"]')?.getAttribute(
-          'aria-checked',
-        ),
+        row1col1
+          .querySelector('div[role="checkbox"]')
+          ?.getAttribute('aria-checked'),
       ).toBe('false');
     });
 
@@ -1213,10 +1241,7 @@ describe('FillerEngine', () => {
       const { dropdown, optionTwo } = setupDropdown();
       const fieldValue = {
         dom: dropdown,
-        options: [
-          { data: 'Choice 1' },
-          { data: 'Choice 2' },
-        ],
+        options: [{ data: 'Choice 1' }, { data: 'Choice 2' }],
       };
 
       const result = await fillerEngine.fill(
@@ -1246,10 +1271,11 @@ describe('FillerEngine', () => {
       expect(result).toBe(false);
       expect(
         Array.from(document.body.children).some(
-          (child) => child instanceof HTMLDivElement && child.style.cursor === 'not-allowed',
+          (child) =>
+            child instanceof HTMLDivElement &&
+            child.style.cursor === 'not-allowed',
         ),
       ).toBe(false);
     });
   });
 });
-

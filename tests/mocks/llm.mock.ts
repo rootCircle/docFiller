@@ -39,21 +39,21 @@ export const mockLLMResponseScenarios = {
     lastName: 'Doe',
     fullName: 'John Doe',
   },
-  
+
   // Contact information
   contact: {
     email: 'test@example.com',
     phone: '+1-555-0123',
     address: '123 Main Street, Anytown, CA 12345',
   },
-  
+
   // Professional information
   professional: {
     occupation: 'Software Engineer',
     company: 'Tech Corp',
     experience: '5 years',
   },
-  
+
   // Educational information
   education: {
     degree: 'Bachelor of Science',
@@ -61,7 +61,7 @@ export const mockLLMResponseScenarios = {
     university: 'State University',
     year: '2019',
   },
-  
+
   // Invalid/edge case responses
   invalid: {
     empty: '',
@@ -100,7 +100,7 @@ export class MockLLMEngine {
     if (this.responses.has(prompt)) {
       return this.responses.get(prompt)!;
     }
-    
+
     // Return default mock response for question type
     return mockLLMResponses[questionType];
   }
@@ -124,6 +124,3 @@ export class MockLLMEngine {
     this.responses.clear();
   }
 }
-
-
-

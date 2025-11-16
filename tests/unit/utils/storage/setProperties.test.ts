@@ -23,7 +23,8 @@ vi.mock('@utils/storage/storageHelper', () => ({
 }));
 
 vi.mock('@utils/storage/getProperties', () => ({
-  getSkipMarkedSetting: (...args: unknown[]) => getSkipMarkedSettingMock(...args),
+  getSkipMarkedSetting: (...args: unknown[]) =>
+    getSkipMarkedSettingMock(...args),
 }));
 
 describe('storage/setProperties', () => {
@@ -57,9 +58,9 @@ describe('storage/setProperties', () => {
   it('toggles skip marked status using current value', async () => {
     getSkipMarkedSettingMock.mockResolvedValueOnce(false);
     await setToggleSkipMarkedStatus();
-    expect(setStorageItemMock).toHaveBeenCalledWith('skipMarkedQuestions', true);
+    expect(setStorageItemMock).toHaveBeenCalledWith(
+      'skipMarkedQuestions',
+      true,
+    );
   });
 });
-
-
-

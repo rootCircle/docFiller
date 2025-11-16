@@ -40,7 +40,8 @@ vi.mock('@docFillerCore/engines/consensusEngine', () => ({
 
 describe('popup/popup', () => {
   const originalAddEventListener = document.addEventListener;
-  let messageHandlers: Record<string, EventListenerOrEventListenerObject[]> = {};
+  let messageHandlers: Record<string, EventListenerOrEventListenerObject[]> =
+    {};
 
   beforeEach(() => {
     vi.resetModules();
@@ -125,10 +126,7 @@ describe('popup/popup', () => {
       action: 'fillForm',
     });
     const lastCall = showToastMock.mock.calls.at(-1);
-    expect(lastCall).toEqual([
-      'Auto-fill completed successfully!',
-      'success',
-    ]);
+    expect(lastCall).toEqual(['Auto-fill completed successfully!', 'success']);
   });
 
   it('disposes consensus engine on unload', async () => {
@@ -142,4 +140,3 @@ describe('popup/popup', () => {
     expect(disposeMock).toHaveBeenCalled();
   });
 });
-

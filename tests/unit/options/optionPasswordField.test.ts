@@ -14,7 +14,9 @@ describe('initializeOptionPasswordField', () => {
     initializeOptionPasswordField();
 
     const input = document.getElementById('apiKey') as HTMLInputElement;
-    const button = document.querySelector('.password-toggle') as HTMLButtonElement;
+    const button = document.querySelector(
+      '.password-toggle',
+    ) as HTMLButtonElement;
 
     expect(input.type).toBe('password');
     expect(button.getAttribute('data-visible')).toBe('false');
@@ -24,6 +26,3 @@ describe('initializeOptionPasswordField', () => {
     expect(button.getAttribute('data-visible')).toBe('true');
   });
 });
-
-
-

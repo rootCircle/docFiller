@@ -121,4 +121,3 @@ export function resetBrowserMocks() {
   mockTabs.reload.mockClear();
   mockTabs.create.mockClear();
 }
-

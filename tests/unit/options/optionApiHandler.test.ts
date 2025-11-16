@@ -12,7 +12,8 @@ const getModelNameMock = vi.fn();
 const getSourceLinkMock = vi.fn();
 
 vi.mock('@utils/llmEngineTypes', () => ({
-  getModelTypeFromName: (...args: unknown[]) => getModelTypeFromNameMock(...args),
+  getModelTypeFromName: (...args: unknown[]) =>
+    getModelTypeFromNameMock(...args),
   getModelName: (...args: unknown[]) => getModelNameMock(...args),
   getAPIPlatformSourceLink: (...args: unknown[]) => getSourceLinkMock(...args),
   LLMEngineType: {
@@ -81,8 +82,12 @@ describe('optionApiHandler', () => {
   });
 
   beforeEach(() => {
-    getModelNameMock.mockImplementation((type: string) => modelNameMap[type] ?? type);
-    getModelTypeFromNameMock.mockImplementation((name: string) => typeMap[name] ?? null);
+    getModelNameMock.mockImplementation(
+      (type: string) => modelNameMap[type] ?? type,
+    );
+    getModelTypeFromNameMock.mockImplementation(
+      (name: string) => typeMap[name] ?? null,
+    );
     getSourceLinkMock.mockReturnValue('https://example.com/key');
   });
 
@@ -179,4 +184,3 @@ describe('optionApiHandler', () => {
     expect(toggle.classList.contains('hidden')).toBe(true);
   });
 });
-

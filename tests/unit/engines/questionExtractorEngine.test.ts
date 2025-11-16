@@ -95,4 +95,3 @@ describe('QuestionExtractorEngine', () => {
     expect(results).toEqual([validQuestion]);
   });
 });
-

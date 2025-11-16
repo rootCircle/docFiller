@@ -34,7 +34,6 @@ export default defineConfig({
       },
     },
   ],
-  
+
   // No web server needed for extension tests
 });
-

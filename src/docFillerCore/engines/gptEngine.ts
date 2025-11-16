@@ -48,7 +48,10 @@ export class LLMEngine {
 
   private metricsManager = MetricsManager.getInstance();
 
-  constructor(engine: LLMEngineType, providedApiKeys?: Partial<Record<string, string>>) {
+  constructor(
+    engine: LLMEngineType,
+    providedApiKeys?: Partial<Record<string, string>>,
+  ) {
     this.engine = engine;
 
     this.instances = {

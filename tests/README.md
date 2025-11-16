@@ -40,6 +40,7 @@ npm run test:all
 We have three types of tests, each serving a different purpose:
 
 ### 1. Unit Tests (374 tests)
+
 **What they do:** Test individual functions in isolation  
 **Why they matter:** Catch bugs early, run super fast  
 **Example:** "Does the date validator correctly reject February 30th?"
@@ -47,6 +48,7 @@ We have three types of tests, each serving a different purpose:
 Think of these as testing individual LEGO bricks before building the castle.
 
 ### 2. Integration Tests (7 tests)
+
 **What they do:** Test how different parts work together  
 **Why they matter:** Make sure components don't break when combined  
 **Example:** "Does the prompt engine → validator → filler chain work end-to-end?"
@@ -54,6 +56,7 @@ Think of these as testing individual LEGO bricks before building the castle.
 These test how the LEGO bricks connect and work as a structure.
 
 ### 3. End-to-End Tests (E2E)
+
 **What they do:** Test the entire extension in a real browser with real Google Forms  
 **Why they matter:** Verify the actual user experience  
 **Example:** "Can the extension detect and fill a complete Google Form?"
@@ -99,23 +102,27 @@ tests/
 These are the heart of the extension - the code that actually fills out forms.
 
 **fillerEngine** (61 tests)
+
 - Takes answers and puts them in the right fields
 - Handles all 23 question types Google Forms supports
 - Deals with tricky stuff like time pickers, grids, and "Other" options
 - Example: "Can it fill a date field with the correct month/day/year?"
 
 **promptEngine** (53 tests)
+
 - Generates the questions we send to ChatGPT/Gemini
 - Makes sure the AI understands what we're asking
 - Example: "Does it format multiple-choice options correctly?"
 
 **validatorEngine** (61 tests)
+
 - Checks if AI responses actually make sense
 - Converts dates to the right format
 - Catches invalid answers before we try to fill them
 - Example: "Does it reject '32/14/2024' as an invalid date?"
 
 **detectBoxType** (62 tests)
+
 - Figures out what type each question is (text, date, checkbox, etc.)
 - This is critical - if we get it wrong, everything breaks!
 - Example: "Can it tell the difference between a checkbox and a radio button?"
@@ -154,6 +161,7 @@ Tests for the parts users interact with.
 ### Challenge #1: Testing Without Real AI Calls
 
 **Problem:** We can't call ChatGPT/Gemini in tests because:
+
 - Tests would be slow
 - Responses aren't predictable
 - It would cost money on every test run
@@ -166,7 +174,7 @@ Tests for the parts users interact with.
 const response = await chatGPT.ask("What's your favorite color?");
 
 // We return a pre-made answer
-const response = { text: "Blue" }; // From our mock
+const response = { text: 'Blue' }; // From our mock
 ```
 
 This means tests run in 2.5 seconds instead of 2.5 minutes, and we never get surprise bills!
@@ -225,7 +233,7 @@ const meridiemButton = document.createElement('div');
 meridiemButton.setAttribute('role', 'listbox');
 
 // Add AM and PM options just like Google does
-['AM', 'PM'].forEach(value => {
+['AM', 'PM'].forEach((value) => {
   const span = document.createElement('span');
   span.setAttribute('data-value', value);
   span.textContent = value;
@@ -252,12 +260,12 @@ We aim for **70% coverage** as a minimum. Here's what that means:
 
 ### Our Current Coverage
 
-| What | Coverage | Target | Status |
-|------|----------|--------|--------|
-| Statements | 81.3% | 70% | ✅ Exceeding! |
-| Branches | 67.3% | 60% | ✅ Good |
-| Functions | 90.9% | 70% | ✅ Excellent! |
-| Lines | 81.3% | 70% | ✅ Exceeding! |
+| What       | Coverage | Target | Status        |
+| ---------- | -------- | ------ | ------------- |
+| Statements | 81.3%    | 70%    | ✅ Exceeding! |
+| Branches   | 67.3%    | 60%    | ✅ Good       |
+| Functions  | 90.9%    | 70%    | ✅ Excellent! |
+| Lines      | 81.3%    | 70%    | ✅ Exceeding! |
 
 ### What's NOT Covered (And Why That's Okay)
 
@@ -281,25 +289,26 @@ describe('Date Validation', () => {
   it('accepts valid dates', () => {
     // Arrange - set up test data
     const validDate = '2024-12-25';
-    
+
     // Act - run the code we're testing
     const result = validateDate(validDate);
-    
+
     // Assert - check if it worked
     expect(result).toBe(true);
   });
 
   it('rejects impossible dates', () => {
     const impossibleDate = '2024-02-30'; // February doesn't have 30 days
-    
+
     const result = validateDate(impossibleDate);
-    
+
     expect(result).toBe(false);
   });
 });
 ```
 
 This follows the **Arrange-Act-Assert** pattern:
+
 1. **Arrange** - Set up what you need for the test
 2. **Act** - Run the code you're testing
 3. **Assert** - Check if it did what you expected
@@ -324,7 +333,7 @@ vi.mock('./toastUtils', () => ({
 
 it('shows success message after saving', async () => {
   await saveSettings({ theme: 'dark' });
-  
+
   // Check if the toast was shown
   expect(showToast).toHaveBeenCalledWith('Saved!', 'success');
 });
@@ -338,10 +347,10 @@ Many extension operations are asynchronous:
 it('loads settings from storage', async () => {
   // Setup mock storage with some data
   await browser.storage.local.set({ theme: 'dark' });
-  
+
   // Load settings
   const settings = await loadSettings();
-  
+
   // Verify we got the right data
   expect(settings.theme).toBe('dark');
 });
@@ -357,10 +366,10 @@ Good code handles errors gracefully:
 it('handles invalid API responses', async () => {
   // Make the API return garbage
   mockAPI.mockResolvedValue({ invalid: 'data' });
-  
+
   // Our code should handle this without crashing
   const result = await processResponse();
-  
+
   expect(result).toBeNull();
   expect(errorWasLogged).toBe(true);
 });
@@ -403,10 +412,10 @@ Sometimes you need to see what's happening:
 it('processes data correctly', () => {
   const input = { value: 42 };
   const result = processData(input);
-  
+
   console.log('Input:', input);
   console.log('Result:', result);
-  
+
   expect(result.value).toBe(42);
 });
 ```
@@ -420,6 +429,7 @@ npm run test:ui
 ```
 
 This opens a browser with a visual test runner where you can:
+
 - See which tests are failing
 - Click to run individual tests
 - View console logs
@@ -452,6 +462,7 @@ it('loads data', async () => {
 
 **Cause:** Either the mock isn't set up right, or the code path doesn't call it  
 **Solution:** Check that:
+
 1. The mock is created before the import
 2. The code actually reaches the line that should call the mock
 3. The mock is from the right module
@@ -465,7 +476,7 @@ it('loads data', async () => {
 beforeEach(() => {
   // Create the DOM elements tests need
   document.body.innerHTML = '<button id="saveButton">Save</button>';
-  
+
   // Reset mocks
   vi.clearAllMocks();
 });
@@ -475,6 +486,7 @@ beforeEach(() => {
 
 **Cause:** Different timing, missing environment variables, or test pollution  
 **Solution:**
+
 - Use `vi.resetModules()` to ensure clean state
 - Don't rely on specific timing (use proper async/await)
 - Make sure tests don't depend on each other
@@ -486,11 +498,13 @@ beforeEach(() => {
 ### ✅ Do This
 
 **Write descriptive test names**
+
 ```typescript
 it('rejects API keys shorter than 20 characters', () => { ... });
 ```
 
 **Test one thing per test**
+
 ```typescript
 // Each test should verify one specific behavior
 it('validates email format', () => { ... });
@@ -499,6 +513,7 @@ it('normalizes email to lowercase', () => { ... });
 ```
 
 **Test edge cases**
+
 ```typescript
 it('handles empty input', () => { ... });
 it('handles very long input', () => { ... });
@@ -506,6 +521,7 @@ it('handles special characters', () => { ... });
 ```
 
 **Clean up after tests**
+
 ```typescript
 afterEach(() => {
   vi.clearAllMocks();
@@ -516,19 +532,26 @@ afterEach(() => {
 ### ❌ Don't Do This
 
 **Vague test names**
+
 ```typescript
 it('test1', () => { ... }); // What does this test?
 it('works', () => { ... }); // Too generic
 ```
 
 **Tests that depend on order**
+
 ```typescript
 // Bad - test2 depends on test1 running first
-it('test1: saves data', () => { saveData(); });
-it('test2: loads data', () => { loadData(); }); // Assumes test1 ran
+it('test1: saves data', () => {
+  saveData();
+});
+it('test2: loads data', () => {
+  loadData();
+}); // Assumes test1 ran
 ```
 
 **Testing implementation details**
+
 ```typescript
 // Bad - testing how it works internally
 expect(internalState.cacheHit).toBe(true);
@@ -538,9 +561,10 @@ expect(result).toBe(expectedValue);
 ```
 
 **Slow tests**
+
 ```typescript
 // Bad - waits for real timeout
-await new Promise(resolve => setTimeout(resolve, 5000));
+await new Promise((resolve) => setTimeout(resolve, 5000));
 
 // Good - uses fake timers
 vi.useFakeTimers();
@@ -552,6 +576,7 @@ vi.advanceTimersByTime(5000);
 ## Continuous Integration
 
 Tests run automatically on every pull request and commit to main. This ensures:
+
 - No broken code gets merged
 - Coverage stays above our thresholds
 - Code style is consistent
@@ -564,6 +589,7 @@ npm run precommit
 ```
 
 This runs:
+
 1. All tests
 2. Linting (code style checks)
 3. Type checking
@@ -605,6 +631,7 @@ If anything fails, the commit is blocked. Fix the issues and try again!
 ### When Reviewing Code
 
 Look for:
+
 - ✅ Tests are included for new code
 - ✅ Tests are clear and understandable
 - ✅ Edge cases are covered
@@ -626,6 +653,7 @@ Look for:
 ### Questions?
 
 If something isn't clear:
+
 1. Check the test files - they're often the best documentation
 2. Ask in pull request comments
 3. Open an issue if documentation is unclear
@@ -637,6 +665,7 @@ Remember: **There are no stupid questions!** Testing can be confusing, and if yo
 ## Final Thoughts
 
 Testing might seem like extra work, but it actually **saves** time:
+
 - Catch bugs before they reach users
 - Refactor confidently knowing tests will catch breaks
 - Understand code better by seeing how it's used
@@ -648,6 +677,6 @@ Our test suite is one of the best investments we've made in the project. Every t
 
 **Happy Testing! 🧪**
 
-*Last updated: November 14, 2025*  
-*Test count: 414 and growing*  
-*Coverage: 81.3% (and proud of it!)*
+_Last updated: November 14, 2025_  
+_Test count: 414 and growing_  
+_Coverage: 81.3% (and proud of it!)_

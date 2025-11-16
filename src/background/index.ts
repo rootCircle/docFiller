@@ -20,7 +20,7 @@ interface MagicPromptMessage {
 async function storeExtensionIdForTesting() {
   try {
     await browser.storage.local.set({
-      __test_extension_id: browser.runtime.id
+      __test_extension_id: browser.runtime.id,
     });
   } catch (e) {
     // Silently fail if storage isn't available

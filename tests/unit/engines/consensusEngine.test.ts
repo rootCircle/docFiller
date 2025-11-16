@@ -28,7 +28,11 @@ const validateMock = vi.fn();
 
 vi.mock('@docFillerCore/engines/validatorEngine', () => ({
   ValidatorEngine: class {
-    validate(fieldType: QType, extractedValue: ExtractedValue, response: LLMResponse) {
+    validate(
+      fieldType: QType,
+      extractedValue: ExtractedValue,
+      response: LLMResponse,
+    ) {
       return validateMock(fieldType, extractedValue, response);
     }
   },
@@ -126,10 +130,18 @@ describe('ConsensusEngine', () => {
     const engine = await ConsensusEngine.getInstance();
     expect(engine.getPoolSize()).toBe(0);
 
-    await engine.generateAndValidate('prompt', { title: '' } as any, QType.TEXT);
+    await engine.generateAndValidate(
+      'prompt',
+      { title: '' } as any,
+      QType.TEXT,
+    );
     expect(engine.getPoolSize()).toBeGreaterThan(0);
     const poolSizeAfterFirstCall = engine.getPoolSize();
-    await engine.generateAndValidate('prompt2', { title: '' } as any, QType.TEXT);
+    await engine.generateAndValidate(
+      'prompt2',
+      { title: '' } as any,
+      QType.TEXT,
+    );
     expect(engine.getPoolSize()).toBe(poolSizeAfterFirstCall);
 
     expect(llmConstructorMock).toHaveBeenCalledTimes(poolSizeAfterFirstCall);
@@ -163,11 +175,14 @@ describe('ConsensusEngine', () => {
     validateMock.mockReturnValue(true);
     const engine = await ConsensusEngine.getInstance();
 
-    await engine.generateAndValidate('prompt', { title: '' } as any, QType.TEXT);
+    await engine.generateAndValidate(
+      'prompt',
+      { title: '' } as any,
+      QType.TEXT,
+    );
     expect(engine.getPoolSize()).toBeGreaterThan(0);
 
     engine.clearEnginePool();
     expect(engine.getPoolSize()).toBe(0);
   });
 });
-

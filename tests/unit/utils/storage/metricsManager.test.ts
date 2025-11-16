@@ -107,4 +107,3 @@ describe('MetricsManager', () => {
     spy.mockRestore();
   });
 });
-

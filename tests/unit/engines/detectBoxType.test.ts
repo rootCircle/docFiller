@@ -223,10 +223,7 @@ describe('DetectBoxType', () => {
       const lastLabel = labels[labels.length - 1];
       const otherInput = document.createElement('div');
       otherInput.innerHTML = '<input type="text" />';
-      lastLabel?.parentElement?.insertBefore(
-        otherInput,
-        lastLabel.nextSibling,
-      );
+      lastLabel?.parentElement?.insertBefore(otherInput, lastLabel.nextSibling);
 
       const element = document.querySelector('div')!;
       expect(detector['isMultiCorrect'](element)).toBe(false);
@@ -252,7 +249,7 @@ describe('DetectBoxType', () => {
       const element = document.querySelector('div')!;
       const labels = element.querySelectorAll('label');
       const lastLabel = labels[labels.length - 1];
-      
+
       // Add "Other" input after last label
       const otherDiv = document.createElement('div');
       otherDiv.innerHTML = '<input type="text" />';
@@ -336,7 +333,7 @@ describe('DetectBoxType', () => {
       const element = document.querySelector('div')!;
       const labels = element.querySelectorAll('label');
       const lastLabel = labels[labels.length - 1];
-      
+
       const otherDiv = document.createElement('div');
       otherDiv.innerHTML = '<input type="text" />';
       lastLabel?.parentElement?.appendChild(otherDiv);
@@ -364,7 +361,7 @@ describe('DetectBoxType', () => {
       const element = document.querySelector('div')!;
       const labels = element.querySelectorAll('label');
       const lastLabel = labels[labels.length - 1];
-      
+
       const otherDiv = document.createElement('div');
       otherDiv.innerHTML = '<input type="text" />';
       lastLabel?.parentElement?.appendChild(otherDiv);
@@ -740,4 +737,3 @@ describe('DetectBoxType', () => {
     });
   });
 });
-

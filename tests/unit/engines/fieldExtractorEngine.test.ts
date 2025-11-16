@@ -21,7 +21,7 @@ describe('FieldExtractorEngine', () => {
       `;
       const element = document.querySelector('div')!;
       const result = extractor.getFields(element, QType.TEXT);
-      
+
       expect(result.title).toBe('Question Title');
     });
 
@@ -36,7 +36,7 @@ describe('FieldExtractorEngine', () => {
       `;
       const element = document.querySelector('div')!;
       const result = extractor.getFields(element, QType.MULTI_CORRECT);
-      
+
       expect(result.title).toBe('Select an option');
       expect(result.options).toBeDefined();
     });
@@ -51,7 +51,7 @@ describe('FieldExtractorEngine', () => {
       `;
       const element = document.querySelector('div')!;
       const result = extractor.getFields(element, QType.TEXT);
-      
+
       expect(result.title).toBe('My Question');
     });
 
@@ -59,7 +59,7 @@ describe('FieldExtractorEngine', () => {
       document.body.innerHTML = `<div><input type="text" /></div>`;
       const element = document.querySelector('div')!;
       const result = extractor.getFields(element, QType.TEXT);
-      
+
       expect(result.title).toBe('');
     });
 
@@ -71,7 +71,7 @@ describe('FieldExtractorEngine', () => {
       `;
       const element = document.querySelector('div')!;
       const result = extractor.getFields(element, QType.TEXT);
-      
+
       expect(result.title).toBeTruthy();
     });
   });
@@ -88,7 +88,7 @@ describe('FieldExtractorEngine', () => {
       `;
       const element = document.querySelector('div')!;
       const result = extractor.getFields(element, QType.TEXT);
-      
+
       // Description extraction depends on specific DOM structure
       expect(result.description !== undefined).toBe(true);
     });
@@ -101,8 +101,10 @@ describe('FieldExtractorEngine', () => {
       `;
       const element = document.querySelector('div')!;
       const result = extractor.getFields(element, QType.TEXT);
-      
-      expect(result.description === null || result.description === '').toBe(true);
+
+      expect(result.description === null || result.description === '').toBe(
+        true,
+      );
     });
   });
 
@@ -116,7 +118,7 @@ describe('FieldExtractorEngine', () => {
         `;
         const element = document.querySelector('div')!;
         const result = extractor.getFields(element, QType.TEXT);
-        
+
         expect(result.dom).toBeTruthy();
         expect(result.dom).toBeInstanceOf(HTMLInputElement);
       });
@@ -131,7 +133,7 @@ describe('FieldExtractorEngine', () => {
         `;
         const element = document.querySelector('div')!;
         const result = extractor.getFields(element, QType.TEXT_EMAIL);
-        
+
         expect(result.dom).toBeTruthy();
         expect(result.dom).toBeInstanceOf(HTMLInputElement);
       });
@@ -144,7 +146,7 @@ describe('FieldExtractorEngine', () => {
         `;
         const element = document.querySelector('div')!;
         const result = extractor.getFields(element, QType.TEXT_EMAIL);
-        
+
         expect(result.dom).toBeTruthy();
       });
     });
@@ -158,7 +160,7 @@ describe('FieldExtractorEngine', () => {
         `;
         const element = document.querySelector('div')!;
         const result = extractor.getFields(element, QType.PARAGRAPH);
-        
+
         expect(result.dom).toBeTruthy();
         expect(result.dom).toBeInstanceOf(HTMLTextAreaElement);
       });
@@ -173,7 +175,7 @@ describe('FieldExtractorEngine', () => {
         `;
         const element = document.querySelector('div')!;
         const result = extractor.getFields(element, QType.TEXT_URL);
-        
+
         expect(result.dom).toBeTruthy();
       });
     });
@@ -194,7 +196,7 @@ describe('FieldExtractorEngine', () => {
         `;
         const element = document.querySelector('div')!;
         const result = extractor.getFields(element, QType.MULTI_CORRECT);
-        
+
         expect(result.options).toBeDefined();
         expect(Array.isArray(result.options)).toBe(true);
       });
@@ -203,7 +205,7 @@ describe('FieldExtractorEngine', () => {
         document.body.innerHTML = `<div></div>`;
         const element = document.querySelector('div')!;
         const result = extractor.getFields(element, QType.MULTI_CORRECT);
-        
+
         expect(result.options).toEqual([]);
       });
     });
@@ -222,7 +224,7 @@ describe('FieldExtractorEngine', () => {
         `;
         const element = document.querySelector('div')!;
         const result = extractor.getFields(element, QType.MULTIPLE_CHOICE);
-        
+
         expect(result.options).toBeDefined();
         expect(Array.isArray(result.options)).toBe(true);
       });
@@ -241,7 +243,7 @@ describe('FieldExtractorEngine', () => {
         `;
         const element = document.querySelector('div')!;
         const result = extractor.getFields(element, QType.DROPDOWN);
-        
+
         expect(result.options).toBeDefined();
         // First option (Choose) should be skipped
         expect(result.options!.length).toBe(2);
@@ -252,7 +254,7 @@ describe('FieldExtractorEngine', () => {
         document.body.innerHTML = `<div></div>`;
         const element = document.querySelector('div')!;
         const result = extractor.getFields(element, QType.DROPDOWN);
-        
+
         expect(result.options).toEqual([]);
       });
     });
@@ -275,7 +277,7 @@ describe('FieldExtractorEngine', () => {
         `;
         const element = document.querySelector('div')!;
         const result = extractor.getFields(element, QType.LINEAR_SCALE_OR_STAR);
-        
+
         expect(result.bounds).toBeDefined();
         expect(result.options).toBeDefined();
       });
@@ -294,7 +296,7 @@ describe('FieldExtractorEngine', () => {
         `;
         const element = document.querySelector('div')!;
         const result = extractor.getFields(element, QType.DATE);
-        
+
         expect(result.year).toBeTruthy();
         expect(result.month).toBeTruthy();
         expect(result.date).toBeTruthy();
@@ -308,7 +310,7 @@ describe('FieldExtractorEngine', () => {
         `;
         const element = document.querySelector('div')!;
         const result = extractor.getFields(element, QType.DATE);
-        
+
         expect(result.chromeDateField).toBeTruthy();
       });
     });
@@ -323,7 +325,7 @@ describe('FieldExtractorEngine', () => {
         `;
         const element = document.querySelector('div')!;
         const result = extractor.getFields(element, QType.TIME);
-        
+
         expect(result.hour).toBeTruthy();
         expect(result.minute).toBeTruthy();
       });
@@ -340,7 +342,7 @@ describe('FieldExtractorEngine', () => {
         `;
         const element = document.querySelector('div')!;
         const result = extractor.getFields(element, QType.DURATION);
-        
+
         expect(result.hour).toBeTruthy();
         expect(result.minute).toBeTruthy();
         expect(result.second).toBeTruthy();
@@ -360,7 +362,7 @@ describe('FieldExtractorEngine', () => {
         `;
         const element = document.querySelector('div')!;
         const result = extractor.getFields(element, QType.DATE_AND_TIME);
-        
+
         expect(result.year).toBeTruthy();
         expect(result.month).toBeTruthy();
         expect(result.date).toBeTruthy();
@@ -380,7 +382,7 @@ describe('FieldExtractorEngine', () => {
         `;
         const element = document.querySelector('div')!;
         const result = extractor.getFields(element, QType.TIME_WITH_MERIDIEM);
-        
+
         expect(result.hour).toBeTruthy();
         expect(result.minute).toBeTruthy();
         expect(result.meridiem).toBeTruthy();
@@ -417,7 +419,7 @@ describe('FieldExtractorEngine', () => {
         `;
         const element = document.querySelector('div')!;
         const result = extractor.getFields(element, QType.MULTIPLE_CHOICE_GRID);
-        
+
         expect(result.rowColumnOption).toBeDefined();
         expect(result.rowArray).toBeDefined();
         expect(result.columnArray).toBeDefined();
@@ -450,7 +452,7 @@ describe('FieldExtractorEngine', () => {
         `;
         const element = document.querySelector('div')!;
         const result = extractor.getFields(element, QType.CHECKBOX_GRID);
-        
+
         expect(result.rowColumnOption).toBeDefined();
       });
     });
@@ -460,9 +462,9 @@ describe('FieldExtractorEngine', () => {
     it('should handle missing elements gracefully', () => {
       document.body.innerHTML = `<div></div>`;
       const element = document.querySelector('div')!;
-      
+
       const result = extractor.getFields(element, QType.TEXT);
-      
+
       expect(result).toBeDefined();
       expect(result.title).toBe('');
     });
@@ -470,9 +472,9 @@ describe('FieldExtractorEngine', () => {
     it('should handle malformed HTML', () => {
       document.body.innerHTML = `<div><broken></div>`;
       const element = document.querySelector('div')!;
-      
+
       const result = extractor.getFields(element, QType.TEXT);
-      
+
       expect(result).toBeDefined();
     });
 
@@ -486,11 +488,8 @@ describe('FieldExtractorEngine', () => {
       `;
       const element = document.querySelector('div')!;
       const result = extractor.getFields(element, QType.TEXT);
-      
+
       expect(result.title).toBeTruthy();
     });
   });
 });
-
-
-

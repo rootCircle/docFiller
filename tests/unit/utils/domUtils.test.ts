@@ -87,11 +87,6 @@ describe('domUtils', () => {
     expect(callback).toHaveBeenCalledWith([one, two]);
 
     ifElementsExist(['first', 'third'], callback, 'test');
-    expect(warn).toHaveBeenCalledWith(
-      'Missing elements: third in test',
-    );
+    expect(warn).toHaveBeenCalledWith('Missing elements: third in test');
   });
 });
-
-
-

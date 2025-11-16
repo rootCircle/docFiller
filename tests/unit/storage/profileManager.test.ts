@@ -15,7 +15,7 @@ describe('ProfileManager', () => {
   describe('loadProfiles', () => {
     it('should load default profiles when no custom profiles exist', async () => {
       const profiles = await loadProfiles();
-      
+
       // Should contain default profile
       expect(profiles[DEFAULT_PROPERTIES.defaultProfileKey]).toBeDefined();
       expect(profiles[DEFAULT_PROPERTIES.defaultProfileKey]).toEqual(
@@ -31,15 +31,15 @@ describe('ProfileManager', () => {
         is_custom: true,
         is_magic: false,
       };
-      
+
       await browser.storage.sync.set({
         customProfiles: {
           'custom-id': customProfile,
         },
       });
-      
+
       const profiles = await loadProfiles();
-      
+
       // Should have both default and custom
       expect(profiles[DEFAULT_PROPERTIES.defaultProfileKey]).toBeDefined();
       expect(profiles['custom-id']).toEqual(customProfile);
@@ -52,7 +52,7 @@ describe('ProfileManager', () => {
         is_custom: false,
         is_magic: false,
       };
-      
+
       await browser.storage.sync.set({
         customProfiles: {
           [DEFAULT_PROPERTIES.defaultProfileKey]: builtInAsDuplicate,
@@ -64,15 +64,15 @@ describe('ProfileManager', () => {
           },
         },
       });
-      
+
       const profiles = await loadProfiles();
       const customProfiles = await browser.storage.sync.get('customProfiles');
-      
+
       // Should not duplicate built-in profile
       expect(
         customProfiles.customProfiles?.[DEFAULT_PROPERTIES.defaultProfileKey],
       ).toBeUndefined();
-      
+
       // Should keep valid custom profile
       expect(customProfiles.customProfiles?.['valid-custom']).toBeDefined();
     });
@@ -85,15 +85,15 @@ describe('ProfileManager', () => {
         is_custom: false,
         is_magic: true,
       };
-      
+
       await browser.storage.sync.set({
         customProfiles: {
           [DEFAULT_PROPERTIES.defaultProfileKey]: magicProfile,
         },
       });
-      
+
       const profiles = await loadProfiles();
-      
+
       // Magic profile should be preserved
       expect(profiles[DEFAULT_PROPERTIES.defaultProfileKey]).toEqual(
         magicProfile,
@@ -107,15 +107,15 @@ describe('ProfileManager', () => {
         is_custom: true,
         is_magic: false,
       };
-      
+
       await browser.storage.sync.set({
         customProfiles: {
           [DEFAULT_PROPERTIES.defaultProfileKey]: customWithBuiltInKey,
         },
       });
-      
+
       const profiles = await loadProfiles();
-      
+
       // Custom profile should be preserved
       expect(profiles[DEFAULT_PROPERTIES.defaultProfileKey]).toEqual(
         customWithBuiltInKey,
@@ -126,9 +126,9 @@ describe('ProfileManager', () => {
       await browser.storage.sync.set({
         customProfiles: {},
       });
-      
+
       const profiles = await loadProfiles();
-      
+
       // Should still have default profile
       expect(profiles[DEFAULT_PROPERTIES.defaultProfileKey]).toBeDefined();
     });
@@ -136,7 +136,7 @@ describe('ProfileManager', () => {
     it('should handle missing customProfiles key', async () => {
       // Don't set customProfiles at all
       const profiles = await loadProfiles();
-      
+
       // Should still have default profile
       expect(profiles[DEFAULT_PROPERTIES.defaultProfileKey]).toBeDefined();
     });
@@ -152,12 +152,12 @@ describe('ProfileManager', () => {
         is_custom: true,
         is_magic: false,
       };
-      
+
       await saveCustomProfile(newProfile);
-      
+
       const result = await browser.storage.sync.get('customProfiles');
       const savedProfiles = result.customProfiles as Profiles;
-      
+
       // Find the saved profile (key is generated)
       const savedProfileKey = Object.keys(savedProfiles)[0];
       expect(savedProfiles[savedProfileKey!]).toEqual(newProfile);
@@ -170,20 +170,20 @@ describe('ProfileManager', () => {
         is_custom: true,
         is_magic: false,
       };
-      
+
       const profile2: Profile = {
         name: 'User 2',
         age: '35',
         is_custom: true,
         is_magic: false,
       };
-      
+
       await saveCustomProfile(profile1);
       await saveCustomProfile(profile2);
-      
+
       const result = await browser.storage.sync.get('customProfiles');
       const savedProfiles = result.customProfiles as Profiles;
-      
+
       expect(Object.keys(savedProfiles)).toHaveLength(2);
     });
 
@@ -194,25 +194,25 @@ describe('ProfileManager', () => {
         is_custom: true,
         is_magic: false,
       };
-      
+
       await browser.storage.sync.set({
         customProfiles: {
           'existing-id': existingProfile,
         },
       });
-      
+
       const newProfile: Profile = {
         name: 'New',
         age: '30',
         is_custom: true,
         is_magic: false,
       };
-      
+
       await saveCustomProfile(newProfile);
-      
+
       const result = await browser.storage.sync.get('customProfiles');
       const savedProfiles = result.customProfiles as Profiles;
-      
+
       expect(savedProfiles['existing-id']).toEqual(existingProfile);
       expect(Object.keys(savedProfiles)).toHaveLength(2);
     });
@@ -221,19 +221,19 @@ describe('ProfileManager', () => {
   describe('getSelectedProfileKey', () => {
     it('should return selected profile key from storage', async () => {
       const selectedKey = 'test-profile-key';
-      
+
       await browser.storage.sync.set({
         selectedProfileKey: selectedKey,
       });
-      
+
       const result = await getSelectedProfileKey();
-      
+
       expect(result).toBe(selectedKey);
     });
 
     it('should return default profile key when not set', async () => {
       const result = await getSelectedProfileKey();
-      
+
       expect(result).toBe(DEFAULT_PROPERTIES.defaultProfileKey);
     });
 
@@ -241,9 +241,9 @@ describe('ProfileManager', () => {
       await browser.storage.sync.set({
         selectedProfileKey: DEFAULT_PROPERTIES.defaultProfileKey,
       });
-      
+
       const result = await getSelectedProfileKey();
-      
+
       expect(result).toBe(DEFAULT_PROPERTIES.defaultProfileKey);
     });
   });
@@ -253,7 +253,7 @@ describe('ProfileManager', () => {
       // 1. Load initial profiles (should have defaults)
       let profiles = await loadProfiles();
       expect(profiles[DEFAULT_PROPERTIES.defaultProfileKey]).toBeDefined();
-      
+
       // 2. Save a custom profile
       const customProfile: Profile = {
         name: 'Integration Test',
@@ -262,15 +262,15 @@ describe('ProfileManager', () => {
         is_custom: true,
         is_magic: false,
       };
-      
+
       await saveCustomProfile(customProfile);
-      
+
       // 3. Load profiles again (should include new custom)
       profiles = await loadProfiles();
       const customKeys = Object.keys(profiles).filter(
         (key) => key !== DEFAULT_PROPERTIES.defaultProfileKey,
       );
-      
+
       expect(customKeys.length).toBeGreaterThan(0);
     });
 
@@ -282,19 +282,19 @@ describe('ProfileManager', () => {
         is_custom: true,
         is_magic: false,
       };
-      
+
       await saveCustomProfile(customProfile);
-      
+
       // Get the generated key
       const result = await browser.storage.sync.get('customProfiles');
       const savedProfiles = result.customProfiles as Profiles;
       const customKey = Object.keys(savedProfiles)[0];
-      
+
       // Select the profile
       await browser.storage.sync.set({
         selectedProfileKey: customKey,
       });
-      
+
       // Verify selection
       const selectedKey = await getSelectedProfileKey();
       expect(selectedKey).toBe(customKey);
@@ -307,33 +307,32 @@ describe('ProfileManager', () => {
         is_custom: false,
         is_magic: false,
       };
-      
+
       const validCustom: Profile = {
         name: 'Valid',
         age: '30',
         is_custom: true,
         is_magic: false,
       };
-      
+
       await browser.storage.sync.set({
         customProfiles: {
           [DEFAULT_PROPERTIES.defaultProfileKey]: duplicateBuiltIn,
           'valid-custom-id': validCustom,
         },
       });
-      
+
       // Load profiles (should trigger cleanup)
       await loadProfiles();
-      
+
       // Verify cleanup happened
       const cleaned = await browser.storage.sync.get('customProfiles');
       const cleanedProfiles = cleaned.customProfiles as Profiles;
-      
-      expect(cleanedProfiles[DEFAULT_PROPERTIES.defaultProfileKey]).toBeUndefined();
+
+      expect(
+        cleanedProfiles[DEFAULT_PROPERTIES.defaultProfileKey],
+      ).toBeUndefined();
       expect(cleanedProfiles['valid-custom-id']).toBeDefined();
     });
   });
 });
-
-
-

@@ -9,7 +9,7 @@ export default defineConfig({
     exclude: [
       '**/node_modules/**',
       '**/build/**',
-      '**/tests/e2e/**',  // E2E tests run with Playwright
+      '**/tests/e2e/**', // E2E tests run with Playwright
     ],
     coverage: {
       provider: 'v8',

@@ -21,25 +21,27 @@ describe('ValidatorEngine', () => {
     });
 
     it('should return false for null extractedValue', () => {
-      const result = validator.validate(QType.TEXT, null as any, { text: 'test' });
+      const result = validator.validate(QType.TEXT, null as any, {
+        text: 'test',
+      });
       expect(result).toBe(false);
     });
 
     it('should handle Date string conversion in response', () => {
       const dateString = '2024-01-15T10:30:00.000Z';
       const response: any = { date: dateString };
-      
+
       const result = validator.validate(QType.DATE, {}, response);
-      
+
       expect(result).toBe(true);
       expect(response.date).toBeInstanceOf(Date);
     });
 
     it('should return false for invalid date string', () => {
       const response: any = { date: 'invalid-date' };
-      
+
       const result = validator.validate(QType.DATE, {}, response);
-      
+
       expect(result).toBe(false);
     });
   });
@@ -90,7 +92,9 @@ describe('ValidatorEngine', () => {
 
   describe('validateParagraph', () => {
     it('should validate non-empty paragraph', () => {
-      const response = { text: 'This is a paragraph with multiple lines.\nLine 2.' };
+      const response = {
+        text: 'This is a paragraph with multiple lines.\nLine 2.',
+      };
       const result = validator.validate(QType.PARAGRAPH, {}, response);
       expect(result).toBe(true);
     });
@@ -134,7 +138,9 @@ describe('ValidatorEngine', () => {
     });
 
     it('should validate email with dots', () => {
-      const response = { genericResponse: { answer: 'first.last@example.com' } };
+      const response = {
+        genericResponse: { answer: 'first.last@example.com' },
+      };
       const result = validator.validate(QType.TEXT_EMAIL, {}, response);
       expect(result).toBe(true);
     });
@@ -166,7 +172,9 @@ describe('ValidatorEngine', () => {
     });
 
     it('should reject URL with newlines', () => {
-      const response = { genericResponse: { answer: 'https://example.com\nnext' } };
+      const response = {
+        genericResponse: { answer: 'https://example.com\nnext' },
+      };
       const result = validator.validate(QType.TEXT_URL, {}, response);
       expect(result).toBe(false);
     });
@@ -212,7 +220,11 @@ describe('ValidatorEngine', () => {
     describe('validateTimeWithMeridiem', () => {
       it('should validate time with meridiem', () => {
         const response = { date: new Date('2024-01-01T14:30:00') };
-        const result = validator.validate(QType.TIME_WITH_MERIDIEM, {}, response);
+        const result = validator.validate(
+          QType.TIME_WITH_MERIDIEM,
+          {},
+          response,
+        );
         expect(result).toBe(true);
       });
     });
@@ -228,7 +240,11 @@ describe('ValidatorEngine', () => {
     describe('validateDateWithoutYear', () => {
       it('should validate date without year', () => {
         const response = { date: new Date('2024-03-15') };
-        const result = validator.validate(QType.DATE_WITHOUT_YEAR, {}, response);
+        const result = validator.validate(
+          QType.DATE_WITHOUT_YEAR,
+          {},
+          response,
+        );
         expect(result).toBe(true);
       });
     });
@@ -236,7 +252,11 @@ describe('ValidatorEngine', () => {
     describe('validateDateTimeWithoutYear', () => {
       it('should validate date-time without year', () => {
         const response = { date: new Date('2024-03-15T14:30:00') };
-        const result = validator.validate(QType.DATE_TIME_WITHOUT_YEAR, {}, response);
+        const result = validator.validate(
+          QType.DATE_TIME_WITHOUT_YEAR,
+          {},
+          response,
+        );
         expect(result).toBe(true);
       });
     });
@@ -244,7 +264,11 @@ describe('ValidatorEngine', () => {
     describe('validateDateTimeWithMeridiem', () => {
       it('should validate date-time with meridiem', () => {
         const response = { date: new Date('2024-03-15T14:30:00') };
-        const result = validator.validate(QType.DATE_TIME_WITH_MERIDIEM, {}, response);
+        const result = validator.validate(
+          QType.DATE_TIME_WITH_MERIDIEM,
+          {},
+          response,
+        );
         expect(result).toBe(true);
       });
     });
@@ -272,12 +296,13 @@ describe('ValidatorEngine', () => {
         ],
       };
       const response = {
-        multiCorrect: [
-          { optionText: 'Option 1' },
-          { optionText: 'Option 3' },
-        ],
+        multiCorrect: [{ optionText: 'Option 1' }, { optionText: 'Option 3' }],
       };
-      const result = validator.validate(QType.MULTI_CORRECT, extractedValue, response);
+      const result = validator.validate(
+        QType.MULTI_CORRECT,
+        extractedValue,
+        response,
+      );
       expect(result).toBe(true);
     });
 
@@ -291,7 +316,11 @@ describe('ValidatorEngine', () => {
       const response = {
         multiCorrect: [{ optionText: 'option 1' }],
       };
-      const result = validator.validate(QType.MULTI_CORRECT, extractedValue, response);
+      const result = validator.validate(
+        QType.MULTI_CORRECT,
+        extractedValue,
+        response,
+      );
       expect(result).toBe(true);
     });
 
@@ -305,20 +334,26 @@ describe('ValidatorEngine', () => {
       const response = {
         multiCorrect: [{ optionText: 'Option 3' }],
       };
-      const result = validator.validate(QType.MULTI_CORRECT, extractedValue, response);
+      const result = validator.validate(
+        QType.MULTI_CORRECT,
+        extractedValue,
+        response,
+      );
       expect(result).toBe(false);
     });
 
     it('should handle whitespace in options', () => {
       const extractedValue: ExtractedValue = {
-        options: [
-          { data: '  Option 1  ', dom: null as any },
-        ],
+        options: [{ data: '  Option 1  ', dom: null as any }],
       };
       const response = {
         multiCorrect: [{ optionText: 'Option 1' }],
       };
-      const result = validator.validate(QType.MULTI_CORRECT, extractedValue, response);
+      const result = validator.validate(
+        QType.MULTI_CORRECT,
+        extractedValue,
+        response,
+      );
       expect(result).toBe(true);
     });
 
@@ -327,7 +362,11 @@ describe('ValidatorEngine', () => {
         options: [{ data: 'Option 1', dom: null as any }],
       };
       const response = {};
-      const result = validator.validate(QType.MULTI_CORRECT, extractedValue, response);
+      const result = validator.validate(
+        QType.MULTI_CORRECT,
+        extractedValue,
+        response,
+      );
       expect(result).toBe(false);
     });
   });
@@ -402,7 +441,11 @@ describe('ValidatorEngine', () => {
       const response = {
         multipleChoice: { optionText: 'Option 1' },
       };
-      const result = validator.validate(QType.MULTIPLE_CHOICE, extractedValue, response);
+      const result = validator.validate(
+        QType.MULTIPLE_CHOICE,
+        extractedValue,
+        response,
+      );
       expect(result).toBe(true);
     });
 
@@ -413,7 +456,11 @@ describe('ValidatorEngine', () => {
       const response = {
         multipleChoice: { optionText: 'OPTION 1' },
       };
-      const result = validator.validate(QType.MULTIPLE_CHOICE, extractedValue, response);
+      const result = validator.validate(
+        QType.MULTIPLE_CHOICE,
+        extractedValue,
+        response,
+      );
       expect(result).toBe(true);
     });
 
@@ -424,7 +471,11 @@ describe('ValidatorEngine', () => {
       const response = {
         multipleChoice: { optionText: 'Option 2' },
       };
-      const result = validator.validate(QType.MULTIPLE_CHOICE, extractedValue, response);
+      const result = validator.validate(
+        QType.MULTIPLE_CHOICE,
+        extractedValue,
+        response,
+      );
       expect(result).toBe(false);
     });
 
@@ -435,7 +486,11 @@ describe('ValidatorEngine', () => {
       const response = {
         multipleChoice: { optionText: 123 as any },
       };
-      const result = validator.validate(QType.MULTIPLE_CHOICE, extractedValue, response);
+      const result = validator.validate(
+        QType.MULTIPLE_CHOICE,
+        extractedValue,
+        response,
+      );
       expect(result).toBe(false);
     });
   });
@@ -490,7 +545,11 @@ describe('ValidatorEngine', () => {
       const response = {
         linearScale: { answer: 3 },
       };
-      const result = validator.validate(QType.LINEAR_SCALE_OR_STAR, extractedValue, response);
+      const result = validator.validate(
+        QType.LINEAR_SCALE_OR_STAR,
+        extractedValue,
+        response,
+      );
       expect(result).toBe(true);
     });
 
@@ -504,7 +563,11 @@ describe('ValidatorEngine', () => {
       const response = {
         linearScale: { answer: 5 },
       };
-      const result = validator.validate(QType.LINEAR_SCALE_OR_STAR, extractedValue, response);
+      const result = validator.validate(
+        QType.LINEAR_SCALE_OR_STAR,
+        extractedValue,
+        response,
+      );
       expect(result).toBe(false);
     });
   });
@@ -603,14 +666,15 @@ describe('ValidatorEngine', () => {
       const response = {
         checkboxGrid: [
           {
-            cols: [
-              { data: 'Col A' },
-              { data: 'Col B' },
-            ],
+            cols: [{ data: 'Col A' }, { data: 'Col B' }],
           },
         ],
       };
-      const result = validator.validate(QType.CHECKBOX_GRID, extractedValue, response);
+      const result = validator.validate(
+        QType.CHECKBOX_GRID,
+        extractedValue,
+        response,
+      );
       expect(result).toBe(true);
     });
 
@@ -633,7 +697,11 @@ describe('ValidatorEngine', () => {
           },
         ],
       };
-      const result = validator.validate(QType.CHECKBOX_GRID, extractedValue, response);
+      const result = validator.validate(
+        QType.CHECKBOX_GRID,
+        extractedValue,
+        response,
+      );
       expect(result).toBe(true);
     });
 
@@ -653,7 +721,11 @@ describe('ValidatorEngine', () => {
           },
         ],
       };
-      const result = validator.validate(QType.CHECKBOX_GRID, extractedValue, response);
+      const result = validator.validate(
+        QType.CHECKBOX_GRID,
+        extractedValue,
+        response,
+      );
       expect(result).toBe(false);
     });
   });
@@ -669,7 +741,11 @@ describe('ValidatorEngine', () => {
       const response = {
         genericResponse: { answer: 'Option 1' },
       };
-      const result = validator.validate(QType.DROPDOWN, extractedValue, response);
+      const result = validator.validate(
+        QType.DROPDOWN,
+        extractedValue,
+        response,
+      );
       expect(result).toBe(true);
     });
 
@@ -680,7 +756,11 @@ describe('ValidatorEngine', () => {
       const response = {
         genericResponse: { answer: 'Option 2' },
       };
-      const result = validator.validate(QType.DROPDOWN, extractedValue, response);
+      const result = validator.validate(
+        QType.DROPDOWN,
+        extractedValue,
+        response,
+      );
       expect(result).toBe(false);
     });
 
@@ -689,11 +769,12 @@ describe('ValidatorEngine', () => {
         options: [{ data: 'Option 1', dom: null as any }],
       };
       const response = {};
-      const result = validator.validate(QType.DROPDOWN, extractedValue, response);
+      const result = validator.validate(
+        QType.DROPDOWN,
+        extractedValue,
+        response,
+      );
       expect(result).toBe(false);
     });
   });
 });
-
-
-

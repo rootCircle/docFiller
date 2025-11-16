@@ -21,7 +21,8 @@ vi.mock('@utils/storage/getProperties', () => ({
   getGeminiApiKey: (...args: unknown[]) => getGeminiApiKeyMock(...args),
   getMistralApiKey: (...args: unknown[]) => getMistralApiKeyMock(...args),
   getAnthropicApiKey: (...args: unknown[]) => getAnthropicApiKeyMock(...args),
-  getSkipMarkedSetting: (...args: unknown[]) => getSkipMarkedSettingMock(...args),
+  getSkipMarkedSetting: (...args: unknown[]) =>
+    getSkipMarkedSettingMock(...args),
   getEnableOpacityOnSkippedQuestions: vi.fn(),
 }));
 
@@ -46,7 +47,8 @@ vi.mock('@utils/storage/setProperties', () => ({
   setMistralApiKey: (...args: unknown[]) => setMistralApiKeyMock(...args),
   setAnthropicApiKey: (...args: unknown[]) => setAnthropicApiKeyMock(...args),
   setEnableDarkTheme: (...args: unknown[]) => setEnableDarkThemeMock(...args),
-  setToggleSkipMarkedStatus: (...args: unknown[]) => setToggleSkipMarkedMock(...args),
+  setToggleSkipMarkedStatus: (...args: unknown[]) =>
+    setToggleSkipMarkedMock(...args),
 }));
 
 const validateMock = vi.fn();
@@ -119,13 +121,19 @@ describe('options/options - with rich DOM stub', () => {
 
     // Intercept addEventListener for DOMContentLoaded
     const originalAddEventListener = document.addEventListener;
-    vi.spyOn(document, 'addEventListener').mockImplementation((event, handler) => {
-      if (event === 'DOMContentLoaded' && typeof handler === 'function') {
-        domContentLoadedHandler = handler as () => Promise<void>;
-      } else {
-        originalAddEventListener.call(document, event as string, handler as EventListener);
-      }
-    });
+    vi.spyOn(document, 'addEventListener').mockImplementation(
+      (event, handler) => {
+        if (event === 'DOMContentLoaded' && typeof handler === 'function') {
+          domContentLoadedHandler = handler as () => Promise<void>;
+        } else {
+          originalAddEventListener.call(
+            document,
+            event as string,
+            handler as EventListener,
+          );
+        }
+      },
+    );
 
     // Build complete DOM structure
     document.body.innerHTML = `
@@ -210,13 +218,13 @@ describe('options/options - with rich DOM stub', () => {
     getMistralApiKeyMock.mockResolvedValue('test-mistral-key');
     getAnthropicApiKeyMock.mockResolvedValue('test-anthropic-key');
     getSkipMarkedSettingMock.mockResolvedValue(true);
-    
+
     // Mock validation
-    validateMock.mockResolvedValue({ 
-      invalidEngines: [], 
-      isConsensusEnabled: false 
+    validateMock.mockResolvedValue({
+      invalidEngines: [],
+      isConsensusEnabled: false,
     });
-    
+
     // Mock all action functions
     setSleepDurationMock.mockResolvedValue(undefined);
     setLLMModelMock.mockResolvedValue(undefined);
@@ -228,7 +236,7 @@ describe('options/options - with rich DOM stub', () => {
     setAnthropicApiKeyMock.mockResolvedValue(undefined);
     setEnableDarkThemeMock.mockResolvedValue(undefined);
     setToggleSkipMarkedMock.mockResolvedValue(undefined);
-    
+
     metricsInitializeMock.mockResolvedValue(undefined);
     createProfileCardsMock.mockResolvedValue(undefined);
     handleProfileFormSubmitMock.mockResolvedValue(undefined);
@@ -246,14 +254,14 @@ describe('options/options - with rich DOM stub', () => {
   const loadOptionsPage = async () => {
     // Import the module (registers DOMContentLoaded)
     await import('@options/options');
-    
+
     // Trigger DOMContentLoaded
     if (domContentLoadedHandler) {
       await domContentLoadedHandler();
     }
-    
+
     // Wait for any pending promises
-    await new Promise(resolve => setTimeout(resolve, 0));
+    await new Promise((resolve) => setTimeout(resolve, 0));
   };
 
   it('initializes all settings and UI components', async () => {
@@ -266,37 +274,48 @@ describe('options/options - with rich DOM stub', () => {
     expect(initializePasswordFieldMock).toHaveBeenCalled();
     expect(createProfileCardsMock).toHaveBeenCalled();
     expect(validateMock).toHaveBeenCalled();
-    
+
     // MetricsUI initialization is optional (wrapped in try-catch)
     // So we just verify it was attempted, not that it succeeded
   });
 
   it('saves API and consensus settings when save button clicked', async () => {
     await loadOptionsPage();
-    
-    const saveButton = document.getElementById('saveApiButton') as HTMLButtonElement;
-    const llmModelSelect = document.getElementById('llmModel') as HTMLSelectElement;
+
+    const saveButton = document.getElementById(
+      'saveApiButton',
+    ) as HTMLButtonElement;
+    const llmModelSelect = document.getElementById(
+      'llmModel',
+    ) as HTMLSelectElement;
     llmModelSelect.value = 'Gemini';
-    
+
     saveButton.click();
-    await new Promise(resolve => setTimeout(resolve, 10));
+    await new Promise((resolve) => setTimeout(resolve, 10));
 
     expect(setLLMModelMock).toHaveBeenCalledWith('Gemini');
     expect(setEnableConsensusMock).toHaveBeenCalled();
     expect(setLLMWeightsMock).toHaveBeenCalled();
-    expect(showToastMock).toHaveBeenCalledWith('API & Consensus saved.', 'success');
+    expect(showToastMock).toHaveBeenCalledWith(
+      'API & Consensus saved.',
+      'success',
+    );
   });
 
   it('toggles skip marked status and persists', async () => {
     await loadOptionsPage();
-    
-    const toggleButton = document.getElementById('skipMarkedToggleButton') as HTMLDivElement;
+
+    const toggleButton = document.getElementById(
+      'skipMarkedToggleButton',
+    ) as HTMLDivElement;
     toggleButton.click();
-    await new Promise(resolve => setTimeout(resolve, 10));
+    await new Promise((resolve) => setTimeout(resolve, 10));
 
     expect(setToggleSkipMarkedMock).toHaveBeenCalled();
     expect(getSkipMarkedSettingMock).toHaveBeenCalledTimes(2); // Once on load, once after toggle
-    expect(showToastMock).toHaveBeenCalledWith('Skip already filled: On', 'success');
+    expect(showToastMock).toHaveBeenCalledWith(
+      'Skip already filled: On',
+      'success',
+    );
   });
 });
-

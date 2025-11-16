@@ -94,6 +94,3 @@ describe('contentScript/index', () => {
     expect(disposeMock).toHaveBeenCalled();
   });
 });
-
-
-

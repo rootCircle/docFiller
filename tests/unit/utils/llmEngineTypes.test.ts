@@ -28,4 +28,3 @@ describe('llmEngineTypes', () => {
     expect(LLM_REQUIREMENTS[LLMEngineType.Ollama].requiresApiKey).toBe(false);
   });
 });
-

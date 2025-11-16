@@ -48,21 +48,21 @@ describe('background/index', () => {
     installedListeners = [];
     startupListeners = [];
 
-    (browser.runtime.onMessage.addListener as unknown as vi.Mock).mockImplementation(
-      (callback: any) => {
-        messageListeners.push(callback);
-      },
-    );
-    (browser.runtime.onInstalled.addListener as unknown as vi.Mock).mockImplementation(
-      (callback: any) => {
-        installedListeners.push(callback);
-      },
-    );
-    (browser.runtime.onStartup.addListener as unknown as vi.Mock).mockImplementation(
-      (callback: any) => {
-        startupListeners.push(callback);
-      },
-    );
+    (
+      browser.runtime.onMessage.addListener as unknown as vi.Mock
+    ).mockImplementation((callback: any) => {
+      messageListeners.push(callback);
+    });
+    (
+      browser.runtime.onInstalled.addListener as unknown as vi.Mock
+    ).mockImplementation((callback: any) => {
+      installedListeners.push(callback);
+    });
+    (
+      browser.runtime.onStartup.addListener as unknown as vi.Mock
+    ).mockImplementation((callback: any) => {
+      startupListeners.push(callback);
+    });
 
     await import('@background/index');
   });
@@ -112,4 +112,3 @@ describe('background/index', () => {
     expect(response).toBeUndefined();
   });
 });
-

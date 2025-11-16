@@ -228,9 +228,9 @@ describe('LLMEngine', () => {
 
     expect(patch('hello', QType.TEXT)).toEqual({ text: 'hello' });
     expect(patch(new Date(), QType.DATE)).toHaveProperty('date');
-    expect(
-      patch({ answer: 3 } as any, QType.LINEAR_SCALE_OR_STAR),
-    ).toEqual({ linearScale: { answer: 3 } });
+    expect(patch({ answer: 3 } as any, QType.LINEAR_SCALE_OR_STAR)).toEqual({
+      linearScale: { answer: 3 },
+    });
   });
 
   it('getParser returns appropriate parser types for different question types', () => {
@@ -245,4 +245,3 @@ describe('LLMEngine', () => {
     expect(structuredFromNames).toHaveBeenCalled();
   });
 });
-

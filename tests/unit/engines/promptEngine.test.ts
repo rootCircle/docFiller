@@ -176,11 +176,7 @@ describe('PromptEngine', () => {
       const value = {
         title: 'Preferred programming language?',
         description: 'Choose your primary language',
-        options: [
-          { data: 'JavaScript' },
-          { data: 'Python' },
-          { data: 'Java' },
-        ],
+        options: [{ data: 'JavaScript' }, { data: 'Python' }, { data: 'Java' }],
         other: { data: 'Other' },
       };
       const prompt = promptEngine.getPrompt(
@@ -627,10 +623,11 @@ describe('PromptEngine', () => {
         rowArray: ['R1'],
         columnArray: ['C1'],
       });
-      const mcGridPrompt = promptEngine.getPrompt(
-        QType.MULTIPLE_CHOICE_GRID,
-        { title: 'Grid', rowArray: ['R1'], columnArray: ['C1'] },
-      );
+      const mcGridPrompt = promptEngine.getPrompt(QType.MULTIPLE_CHOICE_GRID, {
+        title: 'Grid',
+        rowArray: ['R1'],
+        columnArray: ['C1'],
+      });
 
       expect(gridPrompt).toContain('format');
       expect(mcGridPrompt).toContain('order');
@@ -720,7 +717,11 @@ describe('PromptEngine', () => {
     it('should handle emojis in options', () => {
       const value = {
         title: 'Pick your mood',
-        options: [{ data: '😊 Happy' }, { data: '😢 Sad' }, { data: '😐 Neutral' }],
+        options: [
+          { data: '😊 Happy' },
+          { data: '😢 Sad' },
+          { data: '😐 Neutral' },
+        ],
       };
       const prompt = promptEngine.getPrompt(QType.MULTIPLE_CHOICE, value);
       expect(prompt).toContain('😊 Happy');
@@ -737,6 +738,3 @@ describe('PromptEngine', () => {
     });
   });
 });
-
-
-

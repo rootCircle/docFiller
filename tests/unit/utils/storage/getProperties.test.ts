@@ -97,6 +97,3 @@ describe('storage/getProperties', () => {
     expect(await getIsEnabled()).toBe(false);
   });
 });
-
-
-

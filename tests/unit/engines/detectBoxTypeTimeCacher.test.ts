@@ -35,7 +35,9 @@ describe('DetectBoxTypeTimeCacher', () => {
     ]);
 
     // Remove month input and reuse cache without invalidation
-    element.querySelector<HTMLInputElement>('input[aria-label="Month"]')?.remove();
+    element
+      .querySelector<HTMLInputElement>('input[aria-label="Month"]')
+      ?.remove();
     const cached = cacher.getTimeParams(element, false);
     expect(cached[2]).toBe(true); // still cached as true
 
@@ -54,6 +56,3 @@ describe('DetectBoxTypeTimeCacher', () => {
     expect(result[8]).toBe(true);
   });
 });
-
-
-
