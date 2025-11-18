@@ -25,6 +25,13 @@ const build = async (watch: boolean) => {
       bundle: true,
       // minify: true,
       outdir: './build/src',
+      loader: {
+        '.tsx': 'tsx',
+        '.ts': 'ts',
+        '.jsx': 'jsx',
+        '.js': 'js',
+      },
+      jsx: 'automatic',
     });
     await buildContext.watch();
   } else {
@@ -33,6 +40,13 @@ const build = async (watch: boolean) => {
       bundle: true,
       // minify: true,
       outdir: './build/src',
+      loader: {
+        '.tsx': 'tsx',
+        '.ts': 'ts',
+        '.jsx': 'jsx',
+        '.js': 'js',
+      },
+      jsx: 'automatic',
     });
 
     if (buildStatus.errors.length > 0) {
@@ -42,7 +56,7 @@ const build = async (watch: boolean) => {
         // biome-ignore lint/suspicious/noConsole: build script output for development
         console.error(message.text);
       }
-      throw new Error('Error building the ts files!');
+      throw new Error('Error building the source files!');
     }
 
     if (buildStatus.warnings.length > 0) {

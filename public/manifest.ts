@@ -53,7 +53,7 @@ export async function getManifest() {
       'https://docs.google.com/forms/d/e/*/viewform',
     ],
     action: {
-      default_popup: 'src/popup/index.html',
+      default_popup: 'src/popup/index-react.html',
       default_title: 'docFiller',
     },
     options_ui: {
