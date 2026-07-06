@@ -1,8 +1,8 @@
 import { EMPTY_STRING } from '@utils/settings';
 
 enum LLMEngineType {
-  ChatGPT = 'gpt-4.1-mini',
-  Gemini = 'gemini-2.5-flash-lite',
+  ChatGPT = 'gpt-5.5',
+  Gemini = 'gemini-3.1-flash-lite',
   Ollama = 'qwen3:4b',
   Anthropic = 'claude-4-sonnet-latest',
   Mistral = 'mistral-large-latest',

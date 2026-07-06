@@ -92,7 +92,7 @@ export class LLMEngine {
     switch (engine) {
       case LLMEngineType.ChatGPT:
         this.instances[engine] = new ChatOpenAI({
-          model: 'gpt-4.1-mini',
+          model: 'gpt-5.5',
           temperature: 0,
           maxRetries: 2,
           apiKey: this.apiKeys['chatGptApiKey'] as string,
@@ -100,7 +100,7 @@ export class LLMEngine {
         break;
       case LLMEngineType.Gemini:
         this.instances[engine] = new ChatGoogleGenerativeAI({
-          model: 'gemini-2.5-flash-lite',
+          model: 'gemini-3.1-flash-lite',
           temperature: 0,
           maxRetries: 2,
           apiKey: this.apiKeys['geminiApiKey'] as string,
