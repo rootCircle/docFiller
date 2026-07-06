@@ -73,7 +73,7 @@
     "cross-env": "^10.1.0",
     "cspell": "^9.8.0",
     "esbuild": "^0.25.12",
-    "globals": "^16.5.0",
+    "globals": "^17.7.0",
     "husky": "^9.1.7",
     "prettier": "^3.9.4",
     "web-ext": "^9.4.0",
