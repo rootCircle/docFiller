@@ -1,8 +1,21 @@
 # Changelog
 
-## v1.8.1 [Unreleased] (as of 2025-11-14)
+## v1.9.1 [Unreleased] (as of 2026-07-07)
 
 - Pending changes
+
+## v1.9.0 (2026-07-07)
+
+- ci: Update chrome extension publish action to `wdzeng/chrome-extension@v2`
+- build: adjust esbuild minification for environments
+- feat: make Ollama model configurable and fix API key link toggling
+- refactor: use LLMEngineType enum value as model ID in instantiateEngine
+- chore: update Anthropic model to claude-sonnet-5
+- chore: migrate LangChain to v1.x and Zod to v4
+- chore: data_collection_permissions
+- deps: biome 2.5.2
+- chore: biome 2.3 migrate
+- feat: update to latest models for gemini/openai
 
 ## v1.8.0 (2025-11-14)
 
