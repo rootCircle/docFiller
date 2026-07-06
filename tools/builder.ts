@@ -24,7 +24,7 @@ const build = async (watch: boolean) => {
     const buildContext = await esbuild.context({
       entryPoints: entrypoints,
       bundle: true,
-      // minify: true,
+      minify: false,
       outdir: './build/src',
       // @anthropic-ai/sdk barrel-exports beta/environments/work which pulls in
       // Node.js-only agent-toolset files. Externalize all node: built-ins so
@@ -36,7 +36,7 @@ const build = async (watch: boolean) => {
     const buildStatus = await esbuild.build({
       entryPoints: entrypoints,
       bundle: true,
-      // minify: true,
+      minify: true,
       outdir: './build/src',
       // @anthropic-ai/sdk barrel-exports beta/environments/work which pulls in
       // Node.js-only agent-toolset files. Externalize all node: built-ins so
