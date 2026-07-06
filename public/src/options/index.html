@@ -190,6 +190,28 @@
                 <a id="singleApiKeyLink" target="_blank" class="get-api-key"
                   >Get API Key</a
                 >
+                <div
+                  id="singleOllamaModelContainer"
+                  class="hidden"
+                  style="margin-top: 10px"
+                >
+                  <label for="singleOllamaModel" class="single-api-label"
+                    >Ollama Model</label
+                  >
+                  <input
+                    type="text"
+                    id="singleOllamaModel"
+                    name="singleOllamaModel"
+                    placeholder="e.g. qwen3.5:4b"
+                    style="
+                      width: 100%;
+                      margin-top: 5px;
+                      padding: 8px;
+                      border-radius: 4px;
+                      border: 1px solid var(--border-color, #ccc);
+                    "
+                  />
+                </div>
               </div>
             </div>
             <div id="consensusWeights" class="hidden">
@@ -292,17 +314,13 @@
 
               <div class="form-group">
                 <div>
-                  <label for="ollamaApiKey">Ollama API Key</label>
-                  <div class="password-container">
-                    <input
-                      type="password"
-                      id="ollamaApiKey"
-                      name="ollamaApiKey"
-                      class="password-input"
-                      disabled
-                      placeholder="No API key is required for Ollama! Ensure Ollama is installed locally on your system"
-                    />
-                  </div>
+                  <label for="ollamaModel">Ollama Model</label>
+                  <input
+                    type="text"
+                    id="ollamaModel"
+                    name="ollamaModel"
+                    placeholder="e.g. qwen3.5:4b"
+                  />
                 </div>
                 <div>
                   <label for="weightOllama">Weight</label>

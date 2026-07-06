@@ -1,9 +1,7 @@
-import { EMPTY_STRING } from '@utils/settings';
-
 enum LLMEngineType {
   ChatGPT = 'gpt-5.5',
   Gemini = 'gemini-3.1-flash-lite',
-  Ollama = 'qwen3:4b',
+  Ollama = 'qwen3.5:4b',
   Anthropic = 'claude-sonnet-5',
   Mistral = 'mistral-large-latest',
   ChromeAI = 'chrome-gemini-nano',
@@ -66,7 +64,7 @@ function getAPIPlatformSourceLink(modelType: LLMEngineType): string {
       return 'https://makersuite.google.com/app/apikey';
     case LLMEngineType.Ollama:
     case LLMEngineType.ChromeAI:
-      return EMPTY_STRING; // ChromeAI, Ollama doesn't need an API key link
+      return ''; // ChromeAI, Ollama doesn't need an API key link
     case LLMEngineType.Mistral:
       return 'https://console.mistral.ai/api-keys/';
     case LLMEngineType.Anthropic:

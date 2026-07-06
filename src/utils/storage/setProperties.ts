@@ -63,6 +63,10 @@ export async function setAnthropicApiKey(value: string): Promise<void> {
   return await setStorageItem('anthropicApiKey', value);
 }
 
+export async function setOllamaModel(value: string): Promise<void> {
+  return await setStorageItem('ollamaModel', value);
+}
+
 export async function setIsEnabled(value: boolean): Promise<void> {
   return await setStorageItem('automaticFillingEnabled', value);
 }

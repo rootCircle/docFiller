@@ -18,6 +18,7 @@ import {
   getChatGptApiKey,
   getGeminiApiKey,
   getMistralApiKey,
+  getOllamaModel,
 } from '@utils/storage/getProperties';
 import { MetricsManager } from '@utils/storage/metricsManager';
 import {
@@ -65,6 +66,7 @@ export class LLMEngine {
       geminiApiKey: undefined,
       mistralApiKey: undefined,
       anthropicApiKey: undefined,
+      ollamaModel: undefined,
     };
 
     this.fetchApiKeys()
@@ -87,6 +89,7 @@ export class LLMEngine {
     this.apiKeys['geminiApiKey'] = await getGeminiApiKey();
     this.apiKeys['mistralApiKey'] = await getMistralApiKey();
     this.apiKeys['anthropicApiKey'] = await getAnthropicApiKey();
+    this.apiKeys['ollamaModel'] = await getOllamaModel();
   }
   public instantiateEngine(engine: LLMEngineType): LLMInstance {
     switch (engine) {
@@ -108,7 +111,7 @@ export class LLMEngine {
         break;
       case LLMEngineType.Ollama:
         this.instances[engine] = new ChatOllama({
-          model: engine,
+          model: this.apiKeys['ollamaModel'] || LLMEngineType.Ollama,
           temperature: 0,
           maxRetries: 2,
         });

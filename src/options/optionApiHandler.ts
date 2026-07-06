@@ -22,13 +22,15 @@ function updateApiKeyLink(
 
   const apiLink = getAPIPlatformSourceLink(selectedModelType);
   if (apiLink === '') {
-    apiKeyInputLink.style.display = 'none';
-    warningMessage.style.display = 'block';
+    apiKeyInputLink.classList.add('hidden');
+    warningMessage.classList.remove('hidden');
+    warningMessage.style.display = 'block'; // keeping inline just in case
   } else {
     apiKeyInputLink.href = apiLink;
     apiKeyInputLink.textContent = 'Get API Key';
-    apiKeyInputLink.style.display = 'block';
-    warningMessage.style.display = 'none';
+    apiKeyInputLink.classList.remove('hidden');
+    warningMessage.classList.add('hidden');
+    warningMessage.style.display = 'none'; // keeping inline just in case
   }
 }
 
@@ -47,11 +49,6 @@ function updateConsensusApiLinks(
       getModelName(LLMEngineType.ChatGPT),
     );
     updateConsensusApiLink('geminiApiKey', getModelName(LLMEngineType.Gemini));
-    updateConsensusApiLink('ollamaApiKey', getModelName(LLMEngineType.Ollama));
-    updateConsensusApiLink(
-      'chromeAIApiKey',
-      getModelName(LLMEngineType.ChromeAI),
-    );
     updateConsensusApiLink(
       'mistralApiKey',
       getModelName(LLMEngineType.Mistral),
@@ -110,6 +107,15 @@ function updateApiKeyInputField(
     apiKeyInput.placeholder = '';
     apiKeyContainer?.classList.remove('warning');
     passwordToggleButton?.classList.remove('hidden');
+  }
+
+  const singleOllamaModelContainer = document.getElementById(
+    'singleOllamaModelContainer',
+  );
+  if (llmModelSelect.value === getModelName(LLMEngineType.Ollama)) {
+    singleOllamaModelContainer?.classList.remove('hidden');
+  } else {
+    singleOllamaModelContainer?.classList.add('hidden');
   }
 }
 

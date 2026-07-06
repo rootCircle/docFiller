@@ -1,5 +1,5 @@
 import { DEFAULT_PROPERTIES } from '@utils/defaultProperties';
-import { getModelName, type LLMEngineType } from '@utils/llmEngineTypes';
+import { getModelName, LLMEngineType } from '@utils/llmEngineTypes';
 import { EMPTY_STRING } from '@utils/settings';
 import { getStorageItem } from '@utils/storage/storageHelper';
 
@@ -64,6 +64,10 @@ async function getMistralApiKey(): Promise<string> {
 async function getAnthropicApiKey(): Promise<string> {
   return (await getStorageItem<string>('anthropicApiKey')) ?? EMPTY_STRING;
 }
+
+async function getOllamaModel(): Promise<string> {
+  return (await getStorageItem<string>('ollamaModel')) ?? LLMEngineType.Ollama;
+}
 async function getIsEnabled(): Promise<boolean> {
   return (
     (await getStorageItem<boolean>('automaticFillingEnabled')) ??
@@ -81,6 +85,7 @@ export {
   getGeminiApiKey,
   getMistralApiKey,
   getAnthropicApiKey,
+  getOllamaModel,
   getIsEnabled,
   getSkipMarkedSetting,
 };

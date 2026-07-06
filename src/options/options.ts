@@ -10,6 +10,7 @@ import {
   getLLMModel,
   getLLMWeights,
   getMistralApiKey,
+  getOllamaModel,
   getSkipMarkedSetting,
   getSleepDuration,
 } from '@utils/storage/getProperties';
@@ -22,6 +23,7 @@ import {
   setLLMModel,
   setLLMWeights,
   setMistralApiKey,
+  setOllamaModel,
   setSleepDuration,
   setToggleSkipMarkedStatus,
 } from '@utils/storage/setProperties';
@@ -117,6 +119,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     safeGetElementById<HTMLInputElement>('singleApiKey');
   const apiKeyInputLink =
     safeGetElementById<HTMLAnchorElement>('singleApiKeyLink');
+  const singleOllamaModelInput =
+    safeGetElementById<HTMLInputElement>('singleOllamaModel');
+  const ollamaModelInput = safeGetElementById<HTMLInputElement>('ollamaModel');
   const saveApiButton = safeGetElementById<HTMLButtonElement>('saveApiButton');
   const saveAdvancedButton =
     safeGetElementById<HTMLButtonElement>('saveAdvancedButton');
@@ -250,6 +255,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  if (singleOllamaModelInput && ollamaModelInput) {
+    singleOllamaModelInput.addEventListener('input', () => {
+      ollamaModelInput.value = singleOllamaModelInput.value;
+    });
+    ollamaModelInput.addEventListener('input', () => {
+      singleOllamaModelInput.value = ollamaModelInput.value;
+    });
+  }
+
   if (enableConsensusCheckbox) {
     enableConsensusCheckbox.addEventListener('change', () => {
       updateConsensusApiLinks(enableConsensusCheckbox);
@@ -337,6 +351,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const geminiApiKey = geminiApiKeyInput?.value ?? '';
     const mistralApiKey = mistralApiKeyInput?.value ?? '';
     const anthropicApiKey = anthropicApiKeyInput?.value ?? '';
+    const ollamaModelVal =
+      ollamaModelInput?.value ||
+      singleOllamaModelInput?.value ||
+      LLMEngineType.Ollama;
 
     const llmWeights: Record<LLMEngineType, number> = {
       [LLMEngineType.ChatGPT]: Number.parseFloat(
@@ -367,6 +385,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       setGeminiApiKey(geminiApiKey),
       setMistralApiKey(mistralApiKey),
       setAnthropicApiKey(anthropicApiKey),
+      setOllamaModel(ollamaModelVal),
     ]);
   };
 
@@ -426,6 +445,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         geminiApiKey,
         mistralApiKey,
         anthropicApiKey,
+        ollamaModelVal,
         skipMarked,
       ] = await Promise.all([
         getSleepDuration(),
@@ -437,6 +457,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         getGeminiApiKey(),
         getMistralApiKey(),
         getAnthropicApiKey(),
+        getOllamaModel(),
         getSkipMarkedSetting(),
       ]);
 
@@ -468,6 +489,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (geminiApiKeyInput) geminiApiKeyInput.value = geminiApiKey;
       if (mistralApiKeyInput) mistralApiKeyInput.value = mistralApiKey;
       if (anthropicApiKeyInput) anthropicApiKeyInput.value = anthropicApiKey;
+      if (singleOllamaModelInput) singleOllamaModelInput.value = ollamaModelVal;
+      if (ollamaModelInput) ollamaModelInput.value = ollamaModelVal;
 
       if (singleApiKeyInput && llmModelSelect) {
         updateApiKeyInputField(singleApiKeyInput, llmModelSelect);
