@@ -60,14 +60,13 @@ jobs:
 
       - name: Upload to Chrome Web Store
         if: ${{ inputs.upload_chrome }}
-        uses: mobilefirstllc/cws-publish@latest
+        uses: wdzeng/chrome-extension@v2
         with:
-          action: 'publish'  # one of: upload, publish, testers
-          extension_id: goibiampjlgcdjdfakjepniopldpijcd
-          zip_file: web-ext-artifacts/docfiller-${{ env.MINIFIED_VERSION }}-chromium.zip
-          client_id: ${{ secrets.CHROME_CLIENT_ID }}
-          client_secret: ${{ secrets.CHROME_CLIENT_SECRET }}
-          refresh_token: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          extension-id: goibiampjlgcdjdfakjepniopldpijcd
+          zip-path: web-ext-artifacts/docfiller-${{ env.MINIFIED_VERSION }}-chromium.zip
+          client-id: ${{ secrets.CHROME_CLIENT_ID }}
+          client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
         continue-on-error: true
       
       - uses: wdzeng/firefox-addon@v1
