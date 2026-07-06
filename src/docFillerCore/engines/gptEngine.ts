@@ -123,7 +123,7 @@ export class LLMEngine {
         break;
       case LLMEngineType.Anthropic:
         this.instances[engine] = new ChatAnthropic({
-          model: 'claude-4-sonnet-latest',
+          model: 'claude-sonnet-5',
           temperature: 0,
           maxRetries: 2,
           apiKey: this.apiKeys['anthropicApiKey'] as string,

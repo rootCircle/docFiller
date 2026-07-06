@@ -4,7 +4,7 @@ enum LLMEngineType {
   ChatGPT = 'gpt-5.5',
   Gemini = 'gemini-3.1-flash-lite',
   Ollama = 'qwen3:4b',
-  Anthropic = 'claude-4-sonnet-latest',
+  Anthropic = 'claude-sonnet-5',
   Mistral = 'mistral-large-latest',
   ChromeAI = 'chrome-gemini-nano',
 }
