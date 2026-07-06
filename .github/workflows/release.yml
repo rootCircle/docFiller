@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           persist-credentials: false
 
@@ -58,7 +58,7 @@ jobs:
 
       - name: Create GitHub Release
         id: create_release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -74,6 +74,7 @@ jobs:
         uses: wdzeng/chrome-extension@v2
         with:
           extension-id: goibiampjlgcdjdfakjepniopldpijcd
+          publisher-id: ${{ secrets.PUBLISHER_ID }}
           zip-path: web-ext-artifacts/docfiller-${{ env.MINIFIED_VERSION }}-chromium.zip
           client-id: ${{ secrets.CHROME_CLIENT_ID }}
           client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
