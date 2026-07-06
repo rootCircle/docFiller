@@ -19,7 +19,7 @@ import {
   loadProfiles,
 } from '@utils/storage/profiles/profileManager';
 import { getStorageItem, setStorageItem } from '@utils/storage/storageHelper';
-import browser from 'webextension-polyfill';
+import { sendLongLivedMessage } from '@utils/portMessage';
 
 async function runDocFillerEngine() {
   const questions = new QuestionExtractorEngine().getValidQuestions();
@@ -71,22 +71,26 @@ async function runDocFillerEngine() {
   const settings = Settings.getInstance();
 
   if (profiles[selectedProfile]?.is_magic) {
-    const questionsToSend = [];
+    const questionsToSend: string[] = [];
     for (const ques of questions) {
       const fieldType = checker.detectType(ques);
       if (fieldType !== null) {
         const fieldValue = fields.getFields(ques, fieldType);
-        questionsToSend.push(fieldValue.title);
+        questionsToSend.push(fieldValue.title || '');
       }
     }
-    const response: { value?: { system_prompt: string } } =
-      await browser.runtime.sendMessage({
+    const currentModel = await settings.getCurrentLLMModel();
+    const response = await sendLongLivedMessage<{ system_prompt: string }>(
+      'llm-api-call',
+      {
         type: 'MAGIC_PROMPT_GEN',
         questions: questionsToSend,
-        model: await settings.getCurrentLLMModel(),
-      });
-    if (response?.value) {
-      profiles[selectedProfile].system_prompt = response.value.system_prompt;
+        model: currentModel,
+      },
+    );
+
+    if (response?.system_prompt) {
+      profiles[selectedProfile].system_prompt = response.system_prompt;
     }
     try {
       const existingCustom =
@@ -95,7 +99,7 @@ async function runDocFillerEngine() {
         ...existingCustom,
         [selectedProfile]: {
           ...profiles[selectedProfile],
-          system_prompt: response.value?.system_prompt,
+          system_prompt: response?.system_prompt,
         },
       });
     } catch (error) {

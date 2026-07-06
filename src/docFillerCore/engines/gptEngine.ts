@@ -25,9 +25,9 @@ import {
   getSelectedProfileKey,
   loadProfiles,
 } from '@utils/storage/profiles/profileManager';
+import { sendLongLivedMessage } from '@utils/portMessage';
 import { DatetimeOutputParser } from '@langchain/classic/output_parsers';
 import { z } from 'zod';
-import browser from 'webextension-polyfill';
 
 type LLMInstance =
   | ChatOpenAI
@@ -114,6 +114,7 @@ export class LLMEngine {
           model: this.apiKeys['ollamaModel'] || LLMEngineType.Ollama,
           temperature: 0,
           maxRetries: 2,
+          numCtx: 32768,
         });
         break;
       case LLMEngineType.Mistral:
@@ -145,7 +146,7 @@ export class LLMEngine {
     return this.instances[engine] as LLMInstance;
   }
 
-  public async getResponse(
+  public getResponse(
     promptText: string,
     questionType: QType,
     engineType: LLMEngineType,
@@ -157,41 +158,9 @@ export class LLMEngine {
       model: engineType,
     };
 
-    try {
-      const response = (await browser.runtime.sendMessage(item)) as {
-        value?: LLMResponse | null;
-        error?: string | object;
-      };
-
-      if (!response) {
-        throw new Error(
-          'No response received from browser.runtime.sendMessage',
-        );
-      }
-
-      if (typeof response !== 'object') {
-        throw new Error(
-          `Invalid response type: expected object, got ${typeof response}`,
-        );
-      }
-
-      if (response?.error) {
-        const errorMessage =
-          typeof response.error === 'string'
-            ? response.error
-            : JSON.stringify(response.error);
-        throw new Error(errorMessage);
-      }
-
-      return response.value ?? null;
-    } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: debugging error in LLM engine
-      console.error('Error getting LLM response ↴');
-      // biome-ignore lint/suspicious/noConsole: debugging error in LLM engine
-      console.error(error);
-      return null;
-    }
+    return sendLongLivedMessage<LLMResponse>('llm-api-call', item);
   }
+
   async invokeMagicLLM(questions: string[]): Promise<MagicPromptResponse> {
     try {
       // biome-ignore lint/suspicious/noConsole: debugging error in LLM engine
