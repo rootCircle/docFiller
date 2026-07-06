@@ -92,7 +92,7 @@ export class LLMEngine {
     switch (engine) {
       case LLMEngineType.ChatGPT:
         this.instances[engine] = new ChatOpenAI({
-          model: 'gpt-5.5',
+          model: engine,
           temperature: 0,
           maxRetries: 2,
           apiKey: this.apiKeys['chatGptApiKey'] as string,
@@ -100,7 +100,7 @@ export class LLMEngine {
         break;
       case LLMEngineType.Gemini:
         this.instances[engine] = new ChatGoogleGenerativeAI({
-          model: 'gemini-3.1-flash-lite',
+          model: engine,
           temperature: 0,
           maxRetries: 2,
           apiKey: this.apiKeys['geminiApiKey'] as string,
@@ -108,14 +108,14 @@ export class LLMEngine {
         break;
       case LLMEngineType.Ollama:
         this.instances[engine] = new ChatOllama({
-          model: 'qwen3:4b',
+          model: engine,
           temperature: 0,
           maxRetries: 2,
         });
         break;
       case LLMEngineType.Mistral:
         this.instances[engine] = new ChatMistralAI({
-          model: 'mistral-large-latest',
+          model: engine,
           temperature: 0,
           maxRetries: 2,
           apiKey: this.apiKeys['mistralApiKey'] as string,
@@ -123,7 +123,7 @@ export class LLMEngine {
         break;
       case LLMEngineType.Anthropic:
         this.instances[engine] = new ChatAnthropic({
-          model: 'claude-sonnet-5',
+          model: engine,
           temperature: 0,
           maxRetries: 2,
           apiKey: this.apiKeys['anthropicApiKey'] as string,
