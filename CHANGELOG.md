@@ -1,8 +1,21 @@
 # Changelog
 
-## v1.9.1 [Unreleased] (as of 2026-07-07)
+## v1.10.1 [Unreleased] (as of 2026-07-07)
 
 - Pending changes
+
+## v1.10.0 (2026-07-07)
+
+This release enables local LLMs as a first-class citizen by introducing long-lived ports for reliable communication.
+
+- feat: add Safari extension support
+- fix(llm): replace sendMessage with long-lived ports for LLM requests
+- deps: node >=20 and uuid v14
+- build(deps-dev): bump esbuild from 0.25.12 to 0.28.1 (#112)
+- build(deps-dev): bump concurrently from 9.2.3 to 10.0.3 (#113)
+- build(deps-dev): bump globals from 16.5.0 to 17.7.0 (#114)
+- build(deps-dev): bump @types/chrome from 0.1.43 to 0.2.2 (#115)
+- ci: upgrade node version, PUBLISHER_ID for chrome extensions
 
 ## v1.9.0 (2026-07-07)
 
