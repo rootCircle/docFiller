@@ -16,6 +16,7 @@ const cleanBuildFolder = async () => {
     throw error;
   }
 };
+
 const build = async (watch: boolean) => {
   const entrypoints = await entryPoints();
   await copyContents('./public', './build');
@@ -25,6 +26,10 @@ const build = async (watch: boolean) => {
       bundle: true,
       // minify: true,
       outdir: './build/src',
+      // @anthropic-ai/sdk barrel-exports beta/environments/work which pulls in
+      // Node.js-only agent-toolset files. Externalize all node: built-ins so
+      // esbuild doesn't try to bundle them in the browser extension context.
+      external: ['node:*'],
     });
     await buildContext.watch();
   } else {
@@ -33,6 +38,10 @@ const build = async (watch: boolean) => {
       bundle: true,
       // minify: true,
       outdir: './build/src',
+      // @anthropic-ai/sdk barrel-exports beta/environments/work which pulls in
+      // Node.js-only agent-toolset files. Externalize all node: built-ins so
+      // esbuild doesn't try to bundle them in the browser extension context.
+      external: ['node:*'],
     });
 
     if (buildStatus.errors.length > 0) {

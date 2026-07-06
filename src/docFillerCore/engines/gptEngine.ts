@@ -24,7 +24,7 @@ import {
   getSelectedProfileKey,
   loadProfiles,
 } from '@utils/storage/profiles/profileManager';
-import { DatetimeOutputParser } from 'langchain/output_parsers';
+import { DatetimeOutputParser } from '@langchain/classic/output_parsers';
 import { z } from 'zod';
 import browser from 'webextension-polyfill';
 
@@ -465,22 +465,19 @@ Count and incorporate ALL question domains to ensure comprehensive expertise.`;
           .object({
             optionText: z
               .string()
-              .nullable()
-              .optional()
+              .nullish()
               .describe(
                 "The text of the option. Optional if 'isOther' is true.",
               ),
             isOther: z
               .boolean()
-              .nullable()
-              .optional()
+              .nullish()
               .describe(
                 "Indicates if this is an 'other' option. This field is required.",
               ),
             otherOptionValue: z
               .string()
-              .nullable()
-              .optional()
+              .nullish()
               .describe(
                 "The value for the 'other' option. Must be provided if 'isOther' is true.",
               ),
