@@ -12,6 +12,7 @@ const r = (...args: string[]) => {
 
 const CHROMIUM_BASED = ['chrome', 'chromium', 'edge', 'brave', 'opera'];
 const FIREFOX_BASED = ['firefox'];
+const SAFARI_BASED = ['safari'];
 
 export async function getManifest() {
   if (!(await fs.pathExists(r('package.json')))) {
@@ -25,14 +26,17 @@ export async function getManifest() {
   }
   const isFirefoxBased = FIREFOX_BASED.includes(targetBrowser);
   const isChromiumBased = CHROMIUM_BASED.includes(targetBrowser);
-  if (!isFirefoxBased && !isChromiumBased) {
+  const isSafariBased = SAFARI_BASED.includes(targetBrowser);
+  if (!isFirefoxBased && !isChromiumBased && !isSafariBased) {
     throw new Error(
-      `Unsupported or unspecified browser: ${targetBrowser}. Supported browsers: ${[...CHROMIUM_BASED, ...FIREFOX_BASED].join(', ')}`,
+      `Unsupported or unspecified browser: ${targetBrowser}. Supported browsers: ${[...CHROMIUM_BASED, ...FIREFOX_BASED, ...SAFARI_BASED].join(', ')}`,
     );
   }
-  if (isFirefoxBased && isChromiumBased) {
+  if (
+    [isFirefoxBased, isChromiumBased, isSafariBased].filter(Boolean).length > 1
+  ) {
     throw new Error(
-      'Both Firefox and Chromium based browsers are specified. Please specify only one.',
+      'Multiple browser types specified. Please specify only one.',
     );
   }
 
@@ -83,7 +87,7 @@ export async function getManifest() {
       if (isFirefoxBased) {
         return { scripts: ['src/background/index.js'] };
       }
-      if (isChromiumBased) {
+      if (isChromiumBased || isSafariBased) {
         return { service_worker: 'src/background/index.js' };
       }
       throw new Error('Unsupported browser type');
@@ -99,6 +103,12 @@ export async function getManifest() {
         },
         gecko_android: {
           strict_min_version: '142.0',
+        },
+      }),
+      ...(isSafariBased && {
+        safari: {
+          strict_min_version: '15.4',
+          strict_max_version: '*',
         },
       }),
     },

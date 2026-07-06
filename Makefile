@@ -16,6 +16,9 @@ build-firefox:
 build-chromium:
 	bun run build:chromium
 
+build-safari:
+	bun run build:safari
+
 spell:
 	bun run spell
 

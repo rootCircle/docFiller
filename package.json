@@ -27,11 +27,14 @@
     "watch": "bun tools/watcher.ts",
     "build:firefox": "BROWSER=firefox bun tools/bundler.ts",
     "build:chromium": "BROWSER=chromium bun tools/bundler.ts",
+    "build:safari": "BROWSER=safari bun tools/bundler.ts",
     "package:firefox": "BROWSER=firefox bun tools/bundler.ts && web-ext build --source-dir=build --overwrite-dest && BROWSER=firefox bun run tools/packageRename.ts",
     "package:chromium": "BROWSER=chromium bun tools/bundler.ts && web-ext build --source-dir=build --overwrite-dest && BROWSER=chromium bun run tools/packageRename.ts",
+    "package:safari": "BROWSER=safari bun tools/bundler.ts && web-ext build --source-dir=build --overwrite-dest && BROWSER=safari bun run tools/packageRename.ts",
     "dev:firefox": "cross-env BROWSER=firefox bun tools/bundler.ts && concurrently --kill-others \"cross-env BROWSER=firefox bun tools/watcher.ts\" \"web-ext run --source-dir=build\"",
     "dev:chromium": "cross-env BROWSER=chromium bun tools/bundler.ts && concurrently --kill-others \"cross-env BROWSER=chromium bun tools/watcher.ts\" \"web-ext run -t chromium --source-dir=build\"",
     "dev:firefox-android": "cross-env BROWSER=firefox bun tools/bundler.ts && concurrently --kill-others \"cross-env BROWSER=firefox bun tools/watcher.ts\" \"web-ext run -t firefox-android --source-dir=build\"",
+    "dev:safari": "cross-env BROWSER=safari bun tools/bundler.ts && concurrently --kill-others \"cross-env BROWSER=safari bun tools/watcher.ts\"",
     "format": "biome format --write && prettier --write '**/*.{json,md,html}' '!build/**' '!node_modules/**' '!web-ext-artifacts/**'",
     "format:check": "biome format && prettier --check '**/*.{json,md,html}' '!build/**' '!node_modules/**' '!web-ext-artifacts/**'",
     "webext:lint": "web-ext lint --source-dir=build",
@@ -39,7 +42,7 @@
     "lint:fix": "biome lint --write",
     "typecheck": "tsc --noEmit",
     "spell": "cspell \"**/*.{ts,js,md,json,txt,html,css}\" \"Makefile\" --gitignore --cache",
-    "precommit": "bun run lint && bun run format:check && bun run typecheck && bun run spell && bun run build:firefox && web-ext lint --source-dir=build && bun run build:chromium",
+    "precommit": "bun run lint && bun run format:check && bun run typecheck && bun run spell && bun run build:firefox && web-ext lint --source-dir=build && bun run build:chromium && bun run build:safari",
     "prepare": "husky"
   },
   "type": "module",
@@ -56,27 +59,27 @@
     "zod": "^4.4.3"
   },
   "peerDependencies": {
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   },
   "optionalDependencies": {
-    "@esbuild/linux-x64": "^0.25.12"
+    "@esbuild/linux-x64": "^0.28.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.2",
     "@types/chrome": "^0.2.2",
     "@types/firefox-webext-browser": "^143.0.0",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^24.13.2",
+    "@types/node": "^26.1.0",
     "@types/webextension-polyfill": "^0.12.5",
-    "chokidar": "^4.0.3",
+    "chokidar": "^5.0.0",
     "concurrently": "^10.0.3",
     "cross-env": "^10.1.0",
-    "cspell": "^9.8.0",
+    "cspell": "^10.0.1",
     "esbuild": "^0.28.1",
     "globals": "^17.7.0",
     "husky": "^9.1.7",
     "prettier": "^3.9.4",
-    "web-ext": "^9.4.0",
+    "web-ext": "^10.4.0",
     "webextension-polyfill": "^0.12.0"
   }
 }
