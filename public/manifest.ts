@@ -92,10 +92,13 @@ export async function getManifest() {
       ...(isFirefoxBased && {
         gecko: {
           id: 'docFiller@rootcircle.github.io',
-          strict_min_version: '109.0',
+          strict_min_version: '140.0',
+          data_collection_permissions: {
+            required: ['websiteContent'],
+          },
         },
         gecko_android: {
-          strict_min_version: '120.0',
+          strict_min_version: '142.0',
         },
       }),
     },
