@@ -44,37 +44,37 @@
   },
   "type": "module",
   "dependencies": {
-    "@langchain/anthropic": "^0.3.25",
-    "@langchain/community": "^0.3.49",
-    "@langchain/google-genai": "^0.2.16",
-    "@langchain/mistralai": "^0.2.1",
-    "@langchain/ollama": "^0.2.3",
-    "@langchain/openai": "^0.6.3",
-    "langchain": "^0.3.30",
-    "uuid": "^13.0.0"
+    "@langchain/anthropic": "^0.3.34",
+    "@langchain/community": "^0.3.59",
+    "@langchain/google-genai": "^0.2.18",
+    "@langchain/mistralai": "^0.2.3",
+    "@langchain/ollama": "^0.2.4",
+    "@langchain/openai": "^0.6.17",
+    "langchain": "^0.3.37",
+    "uuid": "^13.0.2"
   },
   "peerDependencies": {
     "typescript": "^5.9.3"
   },
   "optionalDependencies": {
-    "@esbuild/linux-x64": "^0.25.11"
+    "@esbuild/linux-x64": "^0.25.12"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.3.0",
-    "@types/chrome": "^0.1.24",
+    "@biomejs/biome": "^2.5.2",
+    "@types/chrome": "^0.1.43",
     "@types/firefox-webext-browser": "^143.0.0",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^24.9.1",
-    "@types/webextension-polyfill": "^0.12.4",
+    "@types/node": "^24.13.2",
+    "@types/webextension-polyfill": "^0.12.5",
     "chokidar": "^4.0.3",
-    "concurrently": "^9.2.1",
+    "concurrently": "^9.2.3",
     "cross-env": "^10.1.0",
-    "cspell": "^9.2.2",
-    "esbuild": "^0.25.11",
-    "globals": "^16.4.0",
+    "cspell": "^9.8.0",
+    "esbuild": "^0.25.12",
+    "globals": "^16.5.0",
     "husky": "^9.1.7",
-    "prettier": "^3.6.2",
-    "web-ext": "^9.1.0",
+    "prettier": "^3.9.4",
+    "web-ext": "^9.4.0",
     "webextension-polyfill": "^0.12.0"
   }
 }

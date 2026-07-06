@@ -67,9 +67,7 @@ export class QuestionExtractorEngine {
         'img,iframe,input,div[role=checkbox],div[role=radio],div[role=listbox]',
       ) &&
         element.childElementCount > 0 &&
-        element.childNodes &&
-        element.childNodes[0] &&
-        element.childNodes[0].childNodes &&
+        element.childNodes?.[0]?.childNodes &&
         element.childNodes[0].childNodes.length > 1,
     );
   }
@@ -92,9 +90,7 @@ export class QuestionExtractorEngine {
     return Boolean(
       element.querySelector('img') &&
         element.childElementCount > 0 &&
-        element.childNodes &&
-        element.childNodes[0] &&
-        element.childNodes[0].childNodes &&
+        element.childNodes?.[0]?.childNodes &&
         element.childNodes[0].childNodes.length > 1,
     );
   }

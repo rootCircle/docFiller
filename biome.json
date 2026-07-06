@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.0/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.2/schema.json",
   "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
   "files": { "ignoreUnknown": false, "includes": ["**"], "maxSize": 8388608 },
   "formatter": {
@@ -24,7 +24,14 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
+      "a11y": {
+        "noSvgWithoutTitle": "off",
+        "useButtonType": "off",
+        "noLabelWithoutControl": "off",
+        "useValidAnchor": "off",
+        "noNoninteractiveElementToInteractiveRole": "off"
+      },
       "complexity": {
         "noForEach": "off",
         "noExtraBooleanCast": "error",
@@ -34,7 +41,8 @@
         "noUselessTypeConstraint": "error",
         "useLiteralKeys": "off",
         "noAdjacentSpacesInRegex": "error",
-        "noCommaOperator": "error"
+        "noCommaOperator": "error",
+        "noImportantStyles": "off"
       },
       "correctness": {
         "noConstAssign": "error",
