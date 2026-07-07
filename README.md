@@ -17,6 +17,10 @@
 <p align="center">Automated <em>Google Forms</em> filling web extension using GenAI. Making boring form filling easy!</p>
 </p>
 
+> [!WARNING]
+> **Maintenance Mode**
+> This project is currently in maintenance mode. We are no longer actively developing new features, but we will continue to provide critical bug fixes and review community contributions.
+
 <div align="center">
 
 |     Browser      |                                                                          Firefox & Firefox Android                                                                          |                                                                                                Chrome                                                                                                 |                                                                                                                                             Edge                                                                                                                                              |
