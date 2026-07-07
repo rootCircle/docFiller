@@ -28,6 +28,14 @@ This document provides instructions for installing the Web Extension on various 
 5. **Select the extension package**: Navigate to the folder where you downloaded the extension package and select it.
 6. **Confirm installation**: You should now see the extension added to the list of installed extensions.
 
+## Orion Browser (iOS / macOS)
+
+1. **Download the extension package**: Download the Firefox release artifact (`docfiller-...-firefox.zip`) from the [GitHub Releases](https://github.com/rootCircle/docFiller/releases) page. Alternatively, clone the project and run `bun run build:firefox` to build it locally.
+2. **Open Orion Browser**: On your iOS or macOS device, open the Orion Browser.
+3. **Install from file**: Go to Settings -> Extensions -> Install from File (or tap the `+` icon to install from file).
+4. **Select the Firefox artifact**: Choose the `docfiller-...-firefox.zip` file you downloaded.
+5. **Confirm installation**: The extension should now be installed and ready to use in Orion!
+
 ## Usage Instructions
 
 Once the extension is installed, you can start using it immediately. Open any google form link in the browser and check the magic of docFiller auto-filling all forms by default. The specific functionality of the extension will depend on its purpose, so please refer to its documentation for more information.

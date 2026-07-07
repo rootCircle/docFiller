@@ -41,6 +41,7 @@ jobs:
         run: |
           bun run package:firefox
           bun run package:chromium
+          bun run package:safari
 
       - name: Assemble release notes
         run: |

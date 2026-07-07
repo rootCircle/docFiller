@@ -58,6 +58,10 @@ jobs:
         run: |
           bun run package:chromium
 
+      - name: Package extension (Safari)
+        run: |
+          bun run package:safari
+
       - name: Upload to Chrome Web Store
         if: ${{ inputs.upload_chrome }}
         uses: wdzeng/chrome-extension@v2

@@ -40,7 +40,7 @@
 ### Features
 
 - **Automated Google Forms Filling**: Fill Google forms automatically with predefined data using AI.
-- **Cross-Browser Compatibility**: Supports major browsers including Mozilla Firefox, Google Chrome, and Microsoft Edge.
+- **Cross-Browser Compatibility**: Supports major browsers including Mozilla Firefox, Google Chrome, Microsoft Edge, and iOS/macOS via [Orion Browser](https://browser.kagi.com/).
 - **Customizable**: Easily configurable to adapt to different use cases and requirements.
 
 ### How It Works
