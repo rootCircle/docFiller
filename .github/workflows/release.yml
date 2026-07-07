@@ -75,7 +75,7 @@ jobs:
         uses: wdzeng/chrome-extension@v2
         with:
           extension-id: goibiampjlgcdjdfakjepniopldpijcd
-          publisher-id: ${{ secrets.PUBLISHER_ID }}
+          publisher-id: ${{ secrets.CHROME_PUBLISHER_ID }}
           zip-path: web-ext-artifacts/docfiller-${{ env.MINIFIED_VERSION }}-chromium.zip
           client-id: ${{ secrets.CHROME_CLIENT_ID }}
           client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
